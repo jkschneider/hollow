@@ -4,15 +4,15 @@ import com.netflix.hollow.api.consumer.HollowConsumer;
 import com.netflix.hollow.api.consumer.InMemoryBlobStore;
 import com.netflix.hollow.api.producer.HollowProducer;
 import com.netflix.hollow.api.producer.fs.HollowInMemoryBlobStager;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowConsumerMetricsTests {
 
     private InMemoryBlobStore blobStore;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         blobStore = new InMemoryBlobStore();
     }
@@ -33,10 +33,10 @@ public class HollowConsumerMetricsTests {
         consumer.triggerRefreshTo(version);
 
         HollowConsumerMetrics hollowConsumerMetrics = consumer.getMetrics();
-        Assert.assertEquals(version, consumer.getCurrentVersionId());
-        Assert.assertEquals(hollowConsumerMetrics.getCurrentVersion(), consumer.getCurrentVersionId());
-        Assert.assertEquals(hollowConsumerMetrics.getRefreshSucceded(), 1);
-        Assert.assertEquals(hollowConsumerMetrics.getTotalPopulatedOrdinals(), 1);
+        Assertions.assertEquals(version, consumer.getCurrentVersionId());
+        Assertions.assertEquals(hollowConsumerMetrics.getCurrentVersion(), consumer.getCurrentVersionId());
+        Assertions.assertEquals(hollowConsumerMetrics.getRefreshSucceded(), 1);
+        Assertions.assertEquals(hollowConsumerMetrics.getTotalPopulatedOrdinals(), 1);
     }
 
     @Test
@@ -47,8 +47,8 @@ public class HollowConsumerMetricsTests {
         } catch (Exception ignored) { }
 
         HollowConsumerMetrics hollowConsumerMetrics = consumer.getMetrics();
-        Assert.assertEquals(hollowConsumerMetrics.getRefreshFailed(), 1);
-        Assert.assertEquals(hollowConsumerMetrics.getTotalPopulatedOrdinals(), 0);
+        Assertions.assertEquals(hollowConsumerMetrics.getRefreshFailed(), 1);
+        Assertions.assertEquals(hollowConsumerMetrics.getTotalPopulatedOrdinals(), 0);
     }
 
     @Test
@@ -72,8 +72,8 @@ public class HollowConsumerMetricsTests {
         } catch (Exception ignored) { }
 
         HollowConsumerMetrics hollowConsumerMetrics = consumer.getMetrics();
-        Assert.assertEquals(hollowConsumerMetrics.getRefreshFailed(), 1);
-        Assert.assertEquals(hollowConsumerMetrics.getRefreshSucceded(), 1);
-        Assert.assertEquals(hollowConsumerMetrics.getTotalPopulatedOrdinals(), 1);
+        Assertions.assertEquals(hollowConsumerMetrics.getRefreshFailed(), 1);
+        Assertions.assertEquals(hollowConsumerMetrics.getRefreshSucceded(), 1);
+        Assertions.assertEquals(hollowConsumerMetrics.getTotalPopulatedOrdinals(), 1);
     }
 }

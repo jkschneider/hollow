@@ -23,9 +23,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests to verify that HollowProducerListener objects provided to HollowProducers
@@ -34,7 +34,7 @@ import org.junit.Test;
 public class HollowProducerListenerTest {
     private InMemoryBlobStore blobStore;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         blobStore = new InMemoryBlobStore();
     }
@@ -78,9 +78,9 @@ public class HollowProducerListenerTest {
 
         try {
             producer.runCycle(ws -> ws.add(new Top(1)));
-            Assert.fail();
+            Assertions.fail();
         } catch (VetoableListener.ListenerVetoException e) {
-            Assert.assertEquals("VETOED", e.getMessage());
+            Assertions.assertEquals("VETOED", e.getMessage());
         }
     }
 
@@ -113,9 +113,9 @@ public class HollowProducerListenerTest {
 
         try {
             producer.runCycle(ws -> ws.add(new Top(1)));
-            Assert.fail();
+            Assertions.fail();
         } catch (RuntimeException e) {
-            Assert.assertEquals("VETOED", e.getMessage());
+            Assertions.assertEquals("VETOED", e.getMessage());
         }
     }
 
@@ -141,7 +141,7 @@ public class HollowProducerListenerTest {
             }
 
             @Override public void onProducerRestoreStart(long restoreVersion) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onProducerRestoreComplete(
@@ -149,11 +149,11 @@ public class HollowProducerListenerTest {
                 if (status.getCause() instanceof AssertionError) {
                     return;
                 }
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onCycleSkip(CycleSkipReason reason) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             long newDeltaChainVersion;
@@ -165,7 +165,7 @@ public class HollowProducerListenerTest {
 
             @Override public void onCycleStart(long version) {
                 reportCaller();
-                Assert.assertEquals(newDeltaChainVersion, version);
+                Assertions.assertEquals(newDeltaChainVersion, version);
             }
 
             @Override public void onCycleComplete(
@@ -174,14 +174,14 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onCycleStart"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
-                Assert.assertEquals(newDeltaChainVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onCycleStart"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(newDeltaChainVersion, version);
             }
 
             @Override public void onIntegrityCheckStart(long version) {
                 reportCaller();
-                Assert.assertEquals(newDeltaChainVersion, version);
+                Assertions.assertEquals(newDeltaChainVersion, version);
             }
 
             @Override public void onIntegrityCheckComplete(
@@ -190,14 +190,14 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onIntegrityCheckStart"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
-                Assert.assertEquals(newDeltaChainVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onIntegrityCheckStart"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(newDeltaChainVersion, version);
             }
 
             @Override public void onPopulateStart(long version) {
                 reportCaller();
-                Assert.assertEquals(newDeltaChainVersion, version);
+                Assertions.assertEquals(newDeltaChainVersion, version);
             }
 
             @Override public void onPopulateComplete(Status status, long version, Duration elapsed) {
@@ -205,18 +205,18 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onPopulateStart"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
-                Assert.assertEquals(newDeltaChainVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onPopulateStart"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(newDeltaChainVersion, version);
             }
 
             @Override public void onNoDeltaAvailable(long version) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onPublishStart(long version) {
                 reportCaller();
-                Assert.assertEquals(newDeltaChainVersion, version);
+                Assertions.assertEquals(newDeltaChainVersion, version);
             }
 
             @Override public void onBlobStage(Status status, HollowProducer.Blob blob, Duration elapsed) {
@@ -224,14 +224,14 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertEquals(HollowProducer.Blob.Type.SNAPSHOT, blob.getType());
-                Assert.assertTrue(callCount.containsKey("onPublishStart"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(HollowProducer.Blob.Type.SNAPSHOT, blob.getType());
+                Assertions.assertTrue(callCount.containsKey("onPublishStart"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
             }
 
             @Override public void onBlobPublishAsync(
                     CompletableFuture<HollowProducer.Blob> blob) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onBlobPublish(Status status, HollowProducer.Blob blob, Duration elapsed) {
@@ -239,9 +239,9 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertEquals(HollowProducer.Blob.Type.SNAPSHOT, blob.getType());
-                Assert.assertTrue(callCount.containsKey("onBlobStage"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(HollowProducer.Blob.Type.SNAPSHOT, blob.getType());
+                Assertions.assertTrue(callCount.containsKey("onBlobStage"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
             }
 
             @Override public void onPublishComplete(Status status, long version, Duration elapsed) {
@@ -249,34 +249,34 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onBlobPublish"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
-                Assert.assertEquals(newDeltaChainVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onBlobPublish"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(newDeltaChainVersion, version);
             }
 
             @Override public void onValidationStatusStart(long version) {
                 reportCaller();
-                Assert.assertEquals(newDeltaChainVersion, version);
+                Assertions.assertEquals(newDeltaChainVersion, version);
             }
 
             @Override public void onValidationStatusComplete(
                     ValidationStatus status, long version, Duration elapsed) {
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onValidationStatusStart"));
-                Assert.assertTrue(status.passed());
-                Assert.assertEquals(newDeltaChainVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onValidationStatusStart"));
+                Assertions.assertTrue(status.passed());
+                Assertions.assertEquals(newDeltaChainVersion, version);
             }
 
             @Override public void onAnnouncementStart(long version) {
                 reportCaller();
-                Assert.assertEquals(newDeltaChainVersion, version);
+                Assertions.assertEquals(newDeltaChainVersion, version);
             }
 
             @Override
             public void onAnnouncementStart(HollowProducer.ReadState readState) {
                 reportCaller();
-                Assert.assertEquals(newDeltaChainVersion, readState.getVersion());
-                Assert.assertNotNull("Read state engine should not be null.", readState.getStateEngine());
+                Assertions.assertEquals(newDeltaChainVersion, readState.getVersion());
+                Assertions.assertNotNull(readState.getStateEngine(), "Read state engine should not be null.");
             }
 
             @Override public void onAnnouncementComplete(
@@ -285,9 +285,9 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onAnnouncementStart"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
-                Assert.assertEquals(newDeltaChainVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onAnnouncementStart"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(newDeltaChainVersion, version);
             }
         }
 
@@ -297,9 +297,9 @@ public class HollowProducerListenerTest {
 
         producer.runCycle(ws -> ws.add(new Top(1)));
 
-        Assert.assertTrue(ls.callCount.entrySet().stream().filter(c -> !c.getKey().equals("onAnnouncementStart")).allMatch(c -> c.getValue() == 1));
-        Assert.assertEquals(ls.callCount.get("onAnnouncementStart").intValue(), 2);
-        Assert.assertEquals(16, ls.callCount.size());
+        Assertions.assertTrue(ls.callCount.entrySet().stream().filter(c -> !c.getKey().equals("onAnnouncementStart")).allMatch(c -> c.getValue() == 1));
+        Assertions.assertEquals(ls.callCount.get("onAnnouncementStart").intValue(), 2);
+        Assertions.assertEquals(16, ls.callCount.size());
 
     }
 
@@ -324,11 +324,11 @@ public class HollowProducerListenerTest {
                 AnnouncementListener {
 
             @Override public void onProducerInit(Duration elapsed) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onProducerRestoreStart(long restoreVersion) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onProducerRestoreComplete(
@@ -336,17 +336,17 @@ public class HollowProducerListenerTest {
                 if (status.getCause() instanceof AssertionError) {
                     return;
                 }
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onCycleSkip(CycleSkipReason reason) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             long cycleStartVersion;
 
             @Override public void onNewDeltaChain(long version) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onCycleStart(long version) {
@@ -360,14 +360,14 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onCycleStart"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onCycleStart"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(cycleStartVersion, version);
             }
 
             @Override public void onIntegrityCheckStart(long version) {
                 reportCaller();
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertEquals(cycleStartVersion, version);
             }
 
             @Override public void onIntegrityCheckComplete(
@@ -376,14 +376,14 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onIntegrityCheckStart"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onIntegrityCheckStart"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(cycleStartVersion, version);
             }
 
             @Override public void onPopulateStart(long version) {
                 reportCaller();
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertEquals(cycleStartVersion, version);
             }
 
             @Override public void onPopulateComplete(Status status, long version, Duration elapsed) {
@@ -391,18 +391,18 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onPopulateStart"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onPopulateStart"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(cycleStartVersion, version);
             }
 
             @Override public void onNoDeltaAvailable(long version) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onPublishStart(long version) {
                 reportCaller();
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertEquals(cycleStartVersion, version);
             }
 
             @Override public void onBlobStage(Status status, HollowProducer.Blob blob, Duration elapsed) {
@@ -410,13 +410,13 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onPublishStart"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertTrue(callCount.containsKey("onPublishStart"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
             }
 
             @Override public void onBlobPublishAsync(
                     CompletableFuture<HollowProducer.Blob> blob) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onBlobPublish(Status status, HollowProducer.Blob blob, Duration elapsed) {
@@ -424,8 +424,8 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onBlobStage"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertTrue(callCount.containsKey("onBlobStage"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
             }
 
             @Override public void onPublishComplete(Status status, long version, Duration elapsed) {
@@ -433,34 +433,34 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onBlobPublish"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onBlobPublish"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(cycleStartVersion, version);
             }
 
             @Override public void onValidationStatusStart(long version) {
                 reportCaller();
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertEquals(cycleStartVersion, version);
             }
 
             @Override public void onValidationStatusComplete(
                     ValidationStatus status, long version, Duration elapsed) {
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onValidationStatusStart"));
-                Assert.assertTrue(status.passed());
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onValidationStatusStart"));
+                Assertions.assertTrue(status.passed());
+                Assertions.assertEquals(cycleStartVersion, version);
             }
 
             @Override public void onAnnouncementStart(long version) {
                 reportCaller();
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertEquals(cycleStartVersion, version);
             }
 
             @Override
             public void onAnnouncementStart(HollowProducer.ReadState readState) {
                 reportCaller();
-                Assert.assertEquals(cycleStartVersion, readState.getVersion());
-                Assert.assertNotNull("Read state engine should not be null.", readState.getStateEngine());
+                Assertions.assertEquals(cycleStartVersion, readState.getVersion());
+                Assertions.assertNotNull(readState.getStateEngine(), "Read state engine should not be null.");
             }
 
             @Override public void onAnnouncementComplete(
@@ -469,9 +469,9 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onAnnouncementStart"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onAnnouncementStart"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(cycleStartVersion, version);
             }
         }
 
@@ -480,14 +480,14 @@ public class HollowProducerListenerTest {
 
         producer.runCycle(ws -> ws.add(new Top(2)));
 
-        Assert.assertTrue(ls.callCount.entrySet().stream()
+        Assertions.assertTrue(ls.callCount.entrySet().stream()
                 .filter(e -> !e.getKey().equals("onBlobStage"))
                 .filter(e -> !e.getKey().equals("onBlobPublish"))
                 .map(Map.Entry::getValue)
                 .allMatch(c -> c == 1));
-        Assert.assertEquals(3, ls.callCount.get("onBlobStage").intValue());
-        Assert.assertEquals(3, ls.callCount.get("onBlobPublish").intValue());
-        Assert.assertEquals(12, ls.callCount.size());
+        Assertions.assertEquals(3, ls.callCount.get("onBlobStage").intValue());
+        Assertions.assertEquals(3, ls.callCount.get("onBlobPublish").intValue());
+        Assertions.assertEquals(12, ls.callCount.size());
     }
 
     @Test
@@ -510,11 +510,11 @@ public class HollowProducerListenerTest {
                 AnnouncementListener {
 
             @Override public void onProducerInit(Duration elapsed) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onProducerRestoreStart(long restoreVersion) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onProducerRestoreComplete(
@@ -522,17 +522,17 @@ public class HollowProducerListenerTest {
                 if (status.getCause() instanceof AssertionError) {
                     return;
                 }
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onCycleSkip(CycleSkipReason reason) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             long cycleStartVersion;
 
             @Override public void onNewDeltaChain(long version) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onCycleStart(long version) {
@@ -546,13 +546,13 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onCycleStart"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onCycleStart"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(cycleStartVersion, version);
             }
 
             @Override public void onIntegrityCheckStart(long version) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onIntegrityCheckComplete(
@@ -560,12 +560,12 @@ public class HollowProducerListenerTest {
                 if (status.getCause() instanceof AssertionError) {
                     return;
                 }
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onPopulateStart(long version) {
                 reportCaller();
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertEquals(cycleStartVersion, version);
             }
 
             @Override public void onPopulateComplete(Status status, long version, Duration elapsed) {
@@ -573,62 +573,62 @@ public class HollowProducerListenerTest {
                     return;
                 }
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onPopulateStart"));
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
-                Assert.assertEquals(cycleStartVersion, version);
+                Assertions.assertTrue(callCount.containsKey("onPopulateStart"));
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertEquals(cycleStartVersion, version);
             }
 
             @Override public void onNoDeltaAvailable(long version) {
                 reportCaller();
-                Assert.assertTrue(callCount.containsKey("onPopulateComplete"));
+                Assertions.assertTrue(callCount.containsKey("onPopulateComplete"));
             }
 
             @Override public void onPublishStart(long version) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onBlobStage(Status status, HollowProducer.Blob blob, Duration elapsed) {
                 if (status.getCause() instanceof AssertionError) {
                     return;
                 }
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onBlobPublishAsync(
                     CompletableFuture<HollowProducer.Blob> blob) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onBlobPublish(Status status, HollowProducer.Blob blob, Duration elapsed) {
                 if (status.getCause() instanceof AssertionError) {
                     return;
                 }
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onPublishComplete(Status status, long version, Duration elapsed) {
                 if (status.getCause() instanceof AssertionError) {
                     return;
                 }
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onValidationStatusStart(long version) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onValidationStatusComplete(
                     ValidationStatus status, long version, Duration elapsed) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onAnnouncementStart(long version) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override
             public void onAnnouncementStart(HollowProducer.ReadState readState) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onAnnouncementComplete(
@@ -636,7 +636,7 @@ public class HollowProducerListenerTest {
                 if (status.getCause() instanceof AssertionError) {
                     return;
                 }
-                Assert.fail();
+                Assertions.fail();
             }
         }
 
@@ -645,8 +645,8 @@ public class HollowProducerListenerTest {
 
         producer.runCycle(ws -> ws.add(new Top(1)));
 
-        Assert.assertTrue(ls.callCount.values().stream().allMatch(c -> c == 1));
-        Assert.assertEquals(5, ls.callCount.size());
+        Assertions.assertTrue(ls.callCount.values().stream().allMatch(c -> c == 1));
+        Assertions.assertEquals(5, ls.callCount.size());
     }
 
     @Test
@@ -672,20 +672,20 @@ public class HollowProducerListenerTest {
         class Listeners extends BaseListener implements CycleListener {
             @Override public void onCycleSkip(CycleSkipReason reason) {
                 reportCaller();
-                Assert.assertEquals(HollowProducerListener.CycleSkipReason.NOT_PRIMARY_PRODUCER, reason);
+                Assertions.assertEquals(HollowProducerListener.CycleSkipReason.NOT_PRIMARY_PRODUCER, reason);
             }
 
             @Override public void onNewDeltaChain(long version) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onCycleStart(long version) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onCycleComplete(
                     Status status, HollowProducer.ReadState readState, long version, Duration elapsed) {
-                Assert.fail();
+                Assertions.fail();
             }
         }
 
@@ -694,7 +694,7 @@ public class HollowProducerListenerTest {
 
         producer.runCycle(ws -> ws.add(new Top(1)));
 
-        Assert.assertEquals(1, ls.callCount.size());
+        Assertions.assertEquals(1, ls.callCount.size());
     }
 
     @Test
@@ -719,7 +719,7 @@ public class HollowProducerListenerTest {
 
         class Listeners extends BaseListener implements CycleListener {
             @Override public void onCycleSkip(CycleSkipReason reason) {
-                Assert.fail();
+                Assertions.fail();
             }
 
             @Override public void onNewDeltaChain(long version) {
@@ -741,7 +741,7 @@ public class HollowProducerListenerTest {
 
         producer.runCycle(ws -> ws.add(new Top(1)));
 
-        Assert.assertEquals(3, ls.callCount.size());
+        Assertions.assertEquals(3, ls.callCount.size());
     }
 
     @Test
@@ -768,13 +768,13 @@ public class HollowProducerListenerTest {
             }
 
             @Override public void onBlobPublish(Status status, HollowProducer.Blob blob, Duration elapsed) {
-                Assert.assertNotEquals(HollowProducer.Blob.Type.SNAPSHOT, blob.getType());
+                Assertions.assertNotEquals(HollowProducer.Blob.Type.SNAPSHOT, blob.getType());
             }
 
             @Override public void onBlobPublishAsync(CompletableFuture<HollowProducer.Blob> blob) {
                 reportCaller();
                 this.snapshotBlob = blob.thenApply(b -> {
-                    Assert.assertEquals(HollowProducer.Blob.Type.SNAPSHOT, b.getType());
+                    Assertions.assertEquals(HollowProducer.Blob.Type.SNAPSHOT, b.getType());
                     try {
                         InputStream contents = b.newInputStream();
                         contents.read();
@@ -794,8 +794,8 @@ public class HollowProducerListenerTest {
 
         producer.runCycle(ws -> ws.add(new Top(2)));
 
-        Assert.assertEquals(1, ls.callCount.size());
-        Assert.assertNotNull(ls.snapshotBlob);
+        Assertions.assertEquals(1, ls.callCount.size());
+        Assertions.assertNotNull(ls.snapshotBlob);
 
         HollowProducer.Blob b = ls.snapshotBlob.join();
     }
@@ -824,7 +824,7 @@ public class HollowProducerListenerTest {
             }
 
             @Override public void onBlobPublish(Status status, HollowProducer.Blob blob, Duration elapsed) {
-                Assert.assertNotEquals(HollowProducer.Blob.Type.SNAPSHOT, blob.getType());
+                Assertions.assertNotEquals(HollowProducer.Blob.Type.SNAPSHOT, blob.getType());
             }
 
             @Override public void onBlobPublishAsync(CompletableFuture<HollowProducer.Blob> blob) {
@@ -834,8 +834,8 @@ public class HollowProducerListenerTest {
 
             @Override public void onPublishComplete(Status status, long version, Duration elapsed) {
                 reportCaller();
-                Assert.assertEquals(Status.StatusType.FAIL, status.getType());
-                Assert.assertTrue(status.getCause() instanceof RejectedExecutionException);
+                Assertions.assertEquals(Status.StatusType.FAIL, status.getType());
+                Assertions.assertTrue(status.getCause() instanceof RejectedExecutionException);
             }
         }
 
@@ -844,19 +844,19 @@ public class HollowProducerListenerTest {
 
         try {
             producer.runCycle(ws -> ws.add(new Top(2)));
-            Assert.fail();
+            Assertions.fail();
         } catch (RejectedExecutionException e) {
         }
 
-        Assert.assertEquals(2, ls.callCount.size());
-        Assert.assertNotNull(ls.snapshotBlob);
-        Assert.assertTrue(ls.snapshotBlob.isCompletedExceptionally());
+        Assertions.assertEquals(2, ls.callCount.size());
+        Assertions.assertNotNull(ls.snapshotBlob);
+        Assertions.assertTrue(ls.snapshotBlob.isCompletedExceptionally());
 
         try {
             ls.snapshotBlob.join();
-            Assert.fail();
+            Assertions.fail();
         } catch (CompletionException e) {
-            Assert.assertTrue(e.getCause() instanceof RejectedExecutionException);
+            Assertions.assertTrue(e.getCause() instanceof RejectedExecutionException);
         }
     }
 

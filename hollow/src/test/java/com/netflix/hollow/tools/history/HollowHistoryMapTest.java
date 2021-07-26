@@ -24,15 +24,15 @@ import com.netflix.hollow.core.schema.HollowMapSchema;
 import com.netflix.hollow.core.write.HollowMapTypeWriteState;
 import com.netflix.hollow.core.write.HollowMapWriteRecord;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowHistoryMapTest extends AbstractStateEngineTest {
 
     private HollowMapSchema schema;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         schema = new HollowMapSchema("TestMap", "TestKey", "TestValue");
 
@@ -122,7 +122,7 @@ public class HollowHistoryMapTest extends AbstractStateEngineTest {
                     continue test;
             }
 
-            Assert.fail("Did not find expected entry (" + expectedEntries[i] + "," + expectedEntries[i+1] + ") for ordinal " + ordinal);
+            Assertions.fail("Did not find expected entry (" + expectedEntries[i] + "," + expectedEntries[i+1] + ") for ordinal " + ordinal);
         }
     }
 

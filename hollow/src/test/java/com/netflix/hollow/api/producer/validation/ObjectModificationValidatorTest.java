@@ -16,8 +16,8 @@
  */
 package com.netflix.hollow.api.producer.validation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -30,8 +30,9 @@ import com.netflix.hollow.api.objects.generic.GenericHollowObject;
 import com.netflix.hollow.api.producer.HollowProducer;
 import com.netflix.hollow.api.producer.fs.HollowInMemoryBlobStager;
 import com.netflix.hollow.core.write.objectmapper.HollowPrimaryKey;
+import org.junit.jupiter.api.Test;
+
 import java.util.function.BiPredicate;
-import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 public class ObjectModificationValidatorTest {
@@ -107,10 +108,12 @@ public class ObjectModificationValidatorTest {
         ArgumentCaptor<GenericHollowObject> afterCaptor =
                 ArgumentCaptor.forClass(GenericHollowObject.class);
         verify(filter).test(beforeCaptor.capture(), afterCaptor.capture());
-        assertEquals("Before value should be correct", "bar",
-                beforeCaptor.getValue().getObject("data").getString("value"));
-        assertEquals("After value should be correct", "baz",
-                afterCaptor.getValue().getObject("data").getString("value"));
+        assertEquals("bar",
+                beforeCaptor.getValue().getObject("data").getString("value"),
+                "Before value should be correct");
+        assertEquals("baz",
+                afterCaptor.getValue().getObject("data").getString("value"),
+                "After value should be correct");
     }
 
     @Test

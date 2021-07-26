@@ -16,10 +16,11 @@
 package com.netflix.hollow.api.codegen;
 
 import com.netflix.hollow.core.write.objectmapper.HollowPrimaryKey;
+import org.junit.jupiter.api.Test;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.junit.Test;
 
 public class HollowPrimitiveTypesAPIGeneratorTest extends AbstractHollowAPIGeneratorTest {
 

@@ -16,12 +16,13 @@
  */
 package com.netflix.hollow.core.write.objectmapper;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.netflix.hollow.core.AbstractStateEngineTest;
 import com.netflix.hollow.core.read.dataaccess.HollowObjectTypeDataAccess;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
-import org.junit.Test;
 
 /**
  * Checks String encoding handling in presence of JDK9 compressed String feature

@@ -1,6 +1,6 @@
 package com.netflix.hollow.core.memory.encoding;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.netflix.hollow.core.memory.EncodedByteBuffer;
 import com.netflix.hollow.core.memory.SegmentedByteArray;
@@ -12,8 +12,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests parity between on-heap and shared-memory consumer mode by reading test data from on-heap arrays vs. off-heap buffers
@@ -82,21 +82,21 @@ public class OnHeapArrayVsOffHeapBufferAcceptanceTest {
         // get a 16-bit element that is in the last 15 bits of the buffer
         try {
             testLongBuffer.getElementValue(numLongsWritten * Long.BYTES * 8 - 2 * 8, 17);
-            Assert.fail();
+            Assertions.fail();
         } catch (IllegalStateException e) {
             // this is expected
         } catch (Exception e) {
-            Assert.fail();
+            Assertions.fail();
         }
 
         // out of bounds long
         try {
             testLongBuffer.getElementValue(numLongsWritten * Long.BYTES * 8, 60);
-            Assert.fail();
+            Assertions.fail();
         } catch (IllegalStateException e) {
             // this is expected
         } catch (Exception e) {
-            Assert.fail();
+            Assertions.fail();
         }
     }
 
@@ -140,11 +140,11 @@ public class OnHeapArrayVsOffHeapBufferAcceptanceTest {
         // out of bounds read
         try {
             testByteBuffer.get(testFile.length());
-            Assert.fail();
+            Assertions.fail();
         } catch (IllegalStateException e) {
             // this is expected
         } catch (Exception e) {
-            Assert.fail();
+            Assertions.fail();
         }
     }
 

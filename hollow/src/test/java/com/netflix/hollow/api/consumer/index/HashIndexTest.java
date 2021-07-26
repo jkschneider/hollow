@@ -1,6 +1,7 @@
 package com.netflix.hollow.api.consumer.index;
 
 import static java.util.stream.Collectors.toList;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.netflix.hollow.api.consumer.HollowConsumer;
 import com.netflix.hollow.api.consumer.InMemoryBlobStore;
@@ -19,12 +20,10 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class HashIndexTest {
     // Map of primitive class to box class
@@ -45,7 +44,7 @@ public class HashIndexTest {
 
     private static DataModel.Consumer.Api api;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         InMemoryBlobStore blobStore = new InMemoryBlobStore();
 
@@ -74,20 +73,36 @@ public class HashIndexTest {
     }
 
     public static abstract class MatchTestParameterized<T extends HollowObject, Q> extends HashIndexTest {
-        final String path;
-        final Class<Q> type;
-        final Q value;
-        final Class<T> selectType;
+         String path;
+         Class<Q> type;
+         Q value;
+         Class<T> selectType;
 
-        MatchTestParameterized(String path, Class<Q> type, Q value, Class<T> selectType) {
+        void initMatchOnValuesTest(String path, Class<Q> type, Q value, Class<T> selectType) {
             this.path = path;
             this.type = type;
             this.value = value;
             this.selectType = selectType;
         }
 
-        @Test
-        public void test() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void test(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             HashIndex<T, Q> hi = HashIndex
                     .from(consumer, selectType)
                     .usingPath(path, type);
@@ -96,9 +111,9 @@ public class HashIndexTest {
                     .findMatches(value)
                     .collect(toList());
 
-            Assert.assertEquals(1, r.size());
-            Assert.assertTrue(selectType.isInstance(r.get(0)));
-            Assert.assertEquals(0, r.get(0).getOrdinal());
+            Assertions.assertEquals(1, r.size());
+            Assertions.assertTrue(selectType.isInstance(r.get(0)));
+            Assertions.assertEquals(0, r.get(0).getOrdinal());
         }
     }
 
@@ -128,43 +143,57 @@ public class HashIndexTest {
                 .collect(toList());
     }
 
-    @RunWith(Parameterized.class)
     public static class MatchOnValuesTest<Q> extends MatchTestParameterized<DataModel.Consumer.Values, Q> {
         // path[type] = value
-        @Parameters(name = "{index}: {0}[{1}] = {2}")
         public static Collection<Object[]> data() {
             return valuesDataProvider();
         }
 
-        public MatchOnValuesTest(String path, Class<Q> type, Q value) {
+        public void initMatchOnValuesTest(String path, Class<Q> type, Q value) {
             super(path, type, value, DataModel.Consumer.Values.class);
         }
     }
 
 
-    @RunWith(Parameterized.class)
     public static class MatchOnValuesIllegalTypeTest extends HashIndexTest {
         // path[type] = value
-        @Parameters(name = "{index}: {0}[{1}] = {2}")
         public static Collection<Object[]> data() {
             return valuesDataProvider();
         }
 
-        final String path;
-        final Class<?> type;
-        final Object value;
+         String path;
+         Class<?> type;
+         Object value;
 
-        public MatchOnValuesIllegalTypeTest(String path, Class<?> type, Object value) {
+        public void initMatchOnValuesTest(String path, Class<?> type, Object value) {
             this.path = path;
             this.type = type;
             this.value = value;
         }
 
-        @Test(expected = IllegalArgumentException.class)
-        public void test() {
-            HashIndex
-                    .from(consumer, DataModel.Consumer.Values.class)
-                    .usingPath(path, Object.class);
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void test(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
+            assertThrows(IllegalArgumentException.class, () -> {
+                HashIndex
+                        .from(consumer, DataModel.Consumer.Values.class)
+                        .usingPath(path, Object.class);
+            });
         }
     }
 
@@ -191,7 +220,7 @@ public class HashIndexTest {
             @FieldPath
             char[] _chars;
 
-            ValueFieldsQuery(DataModel.Producer.Values v) {
+            void initMatchOnValuesTest(DataModel.Producer.Values v) {
                 this._boolean = v._boolean;
                 this._byte = v._byte;
                 this._short = v._short;
@@ -209,8 +238,24 @@ public class HashIndexTest {
             }
         }
 
-        @Test
-        public void testFields() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testFields(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             HashIndex<DataModel.Consumer.Values, ValueFieldsQuery> hi = HashIndex
                     .from(consumer, DataModel.Consumer.Values.class)
                     .usingBean(ValueFieldsQuery.class);
@@ -218,8 +263,8 @@ public class HashIndexTest {
             List<DataModel.Consumer.Values> r = hi.findMatches(ValueFieldsQuery.create())
                     .collect(toList());
 
-            Assert.assertEquals(1, r.size());
-            Assert.assertEquals(0, r.get(0).getOrdinal());
+            Assertions.assertEquals(1, r.size());
+            Assertions.assertEquals(0, r.get(0).getOrdinal());
         }
 
         @SuppressWarnings("unused")
@@ -285,7 +330,7 @@ public class HashIndexTest {
                 return _chars;
             }
 
-            ValueMethodsQuery(DataModel.Producer.Values v) {
+            void initMatchOnValuesTest(DataModel.Producer.Values v) {
                 this._boolean = v._boolean;
                 this._byte = v._byte;
                 this._short = v._short;
@@ -303,8 +348,24 @@ public class HashIndexTest {
             }
         }
 
-        @Test
-        public void testMethods() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testMethods(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             HashIndex<DataModel.Consumer.Values, ValueMethodsQuery> hi = HashIndex
                     .from(consumer, DataModel.Consumer.Values.class)
                     .usingBean(ValueMethodsQuery.class);
@@ -312,8 +373,8 @@ public class HashIndexTest {
             List<DataModel.Consumer.Values> r = hi.findMatches(ValueMethodsQuery.create())
                     .collect(toList());
 
-            Assert.assertEquals(1, r.size());
-            Assert.assertEquals(0, r.get(0).getOrdinal());
+            Assertions.assertEquals(1, r.size());
+            Assertions.assertEquals(0, r.get(0).getOrdinal());
         }
     }
 
@@ -336,15 +397,13 @@ public class HashIndexTest {
                 .collect(toList());
     }
 
-    @RunWith(Parameterized.class)
     public static class MatchOnBoxesValuesTest<Q> extends MatchTestParameterized<DataModel.Consumer.Boxes, Q> {
         // path[type] = value
-        @Parameters(name = "{index}: {0}[{1}] = {2}")
         public static Collection<Object[]> data() {
             return boxesDataProvider();
         }
 
-        public MatchOnBoxesValuesTest(String path, Class<Q> type, Q value) {
+        public void initMatchOnValuesTest(String path, Class<Q> type, Q value) {
             super(path, type, value, DataModel.Consumer.Boxes.class);
         }
     }
@@ -368,24 +427,20 @@ public class HashIndexTest {
                 .collect(toList());
     }
 
-    @RunWith(Parameterized.class)
     public static class MatchOnInlineBoxesTest<Q> extends MatchTestParameterized<DataModel.Consumer.InlineBoxes, Q> {
         // path[type] = value
-        @Parameters(name = "{index}: {0}[{1}] = {2}")
         public static Collection<Object[]> data() {
             return inlineBoxesDataProvider();
         }
 
-        public MatchOnInlineBoxesTest(String path, Class<Q> type, Q value) {
+        public void initMatchOnValuesTest(String path, Class<Q> type, Q value) {
             super(path, type, value, DataModel.Consumer.InlineBoxes.class);
         }
     }
 
-    @RunWith(Parameterized.class)
     public static class MatchOnMappedReferencesTest<Q>
             extends MatchTestParameterized<DataModel.Consumer.MappedReferencesToValues, Q> {
         // path[type] = value
-        @Parameters(name = "{index}: {0}[{1}] = {2}")
         public static Collection<Object[]> data() {
             return Arrays.asList(
                     new Object[] {"date.value", long.class, 0L},
@@ -393,14 +448,12 @@ public class HashIndexTest {
             );
         }
 
-        public MatchOnMappedReferencesTest(String path, Class<Q> type, Q value) {
+        public void initMatchOnValuesTest(String path, Class<Q> type, Q value) {
             super(path, type, value, DataModel.Consumer.MappedReferencesToValues.class);
         }
     }
 
-    @RunWith(Parameterized.class)
     public static class MatchOnReferencesTest<Q extends HollowRecord> extends HashIndexTest {
-        @Parameters(name = "{index}: {0}[{1} = {2}]")
         public static Collection<Object[]> data() {
             return Arrays.asList(
                     args("values", DataModel.Consumer.Values.class,
@@ -424,18 +477,34 @@ public class HashIndexTest {
             return new Object[] {path, type, s};
         }
 
-        final String path;
-        final Class<Q> type;
-        final Q value;
+         String path;
+         Class<Q> type;
+         Q value;
 
-        public MatchOnReferencesTest(String path, Class<Q> type, Supplier<Q> value) {
+        public void initMatchOnValuesTest(String path, Class<Q> type, Supplier<Q> value) {
             this.path = path;
             this.type = type;
             this.value = value.get();
         }
 
-        @Test
-        public void test() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void test(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             HashIndex<DataModel.Consumer.References, Q> hi = HashIndex
                     .from(consumer, DataModel.Consumer.References.class)
                     .usingPath(path, type);
@@ -443,42 +512,56 @@ public class HashIndexTest {
             List<DataModel.Consumer.References> r = hi.findMatches(value)
                     .collect(toList());
 
-            Assert.assertEquals(1, r.size());
-            Assert.assertEquals(0, r.get(0).getOrdinal());
+            Assertions.assertEquals(1, r.size());
+            Assertions.assertEquals(0, r.get(0).getOrdinal());
         }
     }
 
 
-    @RunWith(Parameterized.class)
     public static class SelectOnValuesTest extends HashIndexTest {
         // path[type] = value
-        @Parameters(name = "{index}: {0}[{1}] = {2}")
         public static Collection<Object[]> data() {
             return valuesDataProvider();
         }
 
-        final String path;
-        final Class<?> type;
-        final Object value;
+         String path;
+         Class<?> type;
+         Object value;
 
-        public SelectOnValuesTest(String path, Class<?> type, Object value) {
+        public void initMatchOnValuesTest(String path, Class<?> type, Object value) {
             this.path = path;
             this.type = type;
             this.value = value;
         }
 
-        @Test(expected = IllegalArgumentException.class)
-        public void test() {
-            HashIndex
-                    .from(consumer, DataModel.Consumer.Values.class)
-                    .selectField(path, GenericHollowObject.class)
-                    .usingPath("values._int", int.class);
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void test(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
+            assertThrows(IllegalArgumentException.class, () -> {
+                HashIndex
+                        .from(consumer, DataModel.Consumer.Values.class)
+                        .selectField(path, GenericHollowObject.class)
+                        .usingPath("values._int", int.class);
+            });
         }
     }
 
-    @RunWith(Parameterized.class)
     public static class SelectTest<S extends HollowRecord> extends HashIndexTest {
-        @Parameters(name = "{index}: {0}[{1}]")
         public static Collection<Object[]> data() {
             return Arrays.asList(
                     args("boxes._string", DataModel.Consumer.HString.class),
@@ -509,16 +592,32 @@ public class HashIndexTest {
             return new Object[] {path, type};
         }
 
-        final String path;
-        final Class<S> type;
+         String path;
+         Class<S> type;
 
-        public SelectTest(String path, Class<S> type) {
+        public void initMatchOnValuesTest(String path, Class<S> type) {
             this.path = path;
             this.type = type;
         }
 
-        @Test
-        public void test() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void test(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             HashIndexSelect<DataModel.Consumer.References, S, Integer> hi = HashIndex
                     .from(consumer, DataModel.Consumer.References.class)
                     .selectField(path, type)
@@ -527,30 +626,63 @@ public class HashIndexTest {
             List<S> r = hi.findMatches(1)
                     .collect(toList());
 
-            Assert.assertEquals(1, r.size());
-            Assert.assertTrue(type.isInstance(r.get(0)));
-            Assert.assertEquals(0, r.get(0).getOrdinal());
+            Assertions.assertEquals(1, r.size());
+            Assertions.assertTrue(type.isInstance(r.get(0)));
+            Assertions.assertEquals(0, r.get(0).getOrdinal());
         }
     }
 
 
     public static class TestManyMatches extends HashIndexTest {
-        @Test
-        public void test() {
+
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void test(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             HashIndex<DataModel.Consumer.TypeA, Integer> hi = HashIndex
                     .from(consumer, DataModel.Consumer.TypeA.class)
                     .usingPath("i", int.class);
 
             List<DataModel.Consumer.TypeA> r = hi.findMatches(1)
                     .sorted(Comparator.comparingInt(HollowObject::getOrdinal)).collect(toList());
-            Assert.assertEquals(100, r.size());
+            Assertions.assertEquals(100, r.size());
             for (int i = 0; i < r.size(); i++) {
-                Assert.assertEquals(i, r.get(i).getOrdinal());
+                Assertions.assertEquals(i, r.get(i).getOrdinal());
             }
         }
 
-        @Test
-        public void testTypeAWithSelect() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testTypeAWithSelect(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             HashIndexSelect<DataModel.Consumer.TypeA, DataModel.Consumer.HString, Integer> hi = HashIndex
                     .from(consumer, DataModel.Consumer.TypeA.class)
                     .selectField("s", DataModel.Consumer.HString.class)
@@ -560,14 +692,30 @@ public class HashIndexTest {
                     .sorted(Comparator.comparingInt(HollowObject::getOrdinal))
                     .map(DataModel.Consumer.HString::getValue)
                     .collect(toList());
-            Assert.assertEquals(100, r.size());
+            Assertions.assertEquals(100, r.size());
             for (int i = 0; i < r.size(); i++) {
-                Assert.assertEquals("TypeA" + i, r.get(i));
+                Assertions.assertEquals("TypeA" + i, r.get(i));
             }
         }
 
-        @Test
-        public void testTypeBWithSelect() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testTypeBWithSelect(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             HashIndexSelect<DataModel.Consumer.TypeBSuffixed, DataModel.Consumer.HString, Integer> hi = HashIndex
                     .from(consumer, DataModel.Consumer.TypeBSuffixed.class)
                     .selectField("s", DataModel.Consumer.HString.class)
@@ -577,14 +725,30 @@ public class HashIndexTest {
                     .sorted(Comparator.comparingInt(HollowObject::getOrdinal))
                     .map(DataModel.Consumer.HString::getValue)
                     .collect(toList());
-            Assert.assertEquals(100, r.size());
+            Assertions.assertEquals(100, r.size());
             for (int i = 0; i < r.size(); i++) {
-                Assert.assertEquals("TypeB" + i, r.get(i));
+                Assertions.assertEquals("TypeB" + i, r.get(i));
             }
         }
 
-        @Test
-        public void testWithSelectRootTypeGenericHollowObject() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testWithSelectRootTypeGenericHollowObject(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             HashIndexSelect<DataModel.Consumer.TypeA, GenericHollowObject, Integer> hi = HashIndex
                     .from(consumer, DataModel.Consumer.TypeA.class)
                     .selectField("", GenericHollowObject.class)
@@ -594,11 +758,27 @@ public class HashIndexTest {
                     .sorted(Comparator.comparingInt(HollowObject::getOrdinal))
                     .mapToInt(gho -> gho.getInt("i"))
                     .allMatch(i -> i == 1);
-            Assert.assertTrue(r);
+            Assertions.assertTrue(r);
         }
 
-        @Test
-        public void testWithSelectGenericHollowObject() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testWithSelectGenericHollowObject(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             HashIndexSelect<DataModel.Consumer.TypeA, GenericHollowObject, Integer> hi = HashIndex
                     .from(consumer, DataModel.Consumer.TypeA.class)
                     .selectField("s", GenericHollowObject.class)
@@ -608,9 +788,9 @@ public class HashIndexTest {
                     .sorted(Comparator.comparingInt(HollowObject::getOrdinal))
                     .map(gho -> gho.getString("value"))
                     .collect(toList());
-            Assert.assertEquals(100, r.size());
+            Assertions.assertEquals(100, r.size());
             for (int i = 0; i < r.size(); i++) {
-                Assert.assertEquals("TypeA" + i, r.get(i));
+                Assertions.assertEquals("TypeA" + i, r.get(i));
             }
         }
     }
@@ -618,69 +798,173 @@ public class HashIndexTest {
 
     public static class ErrorsTest extends HashIndexTest {
         static class Unknown extends HollowObject {
-            Unknown(HollowObjectDelegate delegate, int ordinal) {
+
+            void initMatchOnValuesTest(HollowObjectDelegate delegate, int ordinal) {
                 super(delegate, ordinal);
             }
         }
 
-        @Test(expected = IllegalArgumentException.class)
-        public void testUnknownRootSelectType() {
-            HashIndex
-                    .from(consumer, Unknown.class)
-                    .usingPath("values", DataModel.Consumer.Values.class);
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testUnknownRootSelectType(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
+            assertThrows(IllegalArgumentException.class, () -> {
+                HashIndex
+                        .from(consumer, Unknown.class)
+                        .usingPath("values", DataModel.Consumer.Values.class);
+            });
         }
 
-        @Test(expected = IllegalArgumentException.class)
-        public void testUnknownSelectType() {
-            HashIndex
-                    .from(consumer, DataModel.Consumer.References.class)
-                    .selectField("values", Unknown.class)
-                    .usingPath("values", DataModel.Consumer.Values.class);
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testUnknownSelectType(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
+            assertThrows(IllegalArgumentException.class, () -> {
+                HashIndex
+                        .from(consumer, DataModel.Consumer.References.class)
+                        .selectField("values", Unknown.class)
+                        .usingPath("values", DataModel.Consumer.Values.class);
+            });
         }
 
-        @Test(expected = IllegalArgumentException.class)
-        public void testEmptyMatchPath() {
-            HashIndex
-                    .from(consumer, DataModel.Consumer.References.class)
-                    .usingPath("", DataModel.Consumer.References.class);
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testEmptyMatchPath(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
+            assertThrows(IllegalArgumentException.class, () -> {
+                HashIndex
+                        .from(consumer, DataModel.Consumer.References.class)
+                        .usingPath("", DataModel.Consumer.References.class);
+            });
         }
     }
 
     public static class GeneratedSuffixTest extends HashIndexTest {
-        @Test
-        public void testMatch() {
+
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testMatch(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             HashIndex<DataModel.Consumer.TypeBSuffixed, Integer> hi = HashIndex
                     .from(consumer, DataModel.Consumer.TypeBSuffixed.class)
                     .usingPath("i", int.class);
 
             List<DataModel.Consumer.TypeBSuffixed> r = hi.findMatches(1)
                     .sorted(Comparator.comparingInt(HollowObject::getOrdinal)).collect(toList());
-            Assert.assertEquals(100, r.size());
+            Assertions.assertEquals(100, r.size());
             for (int i = 0; i < r.size(); i++) {
-                Assert.assertEquals(i, r.get(i).getOrdinal());
+                Assertions.assertEquals(i, r.get(i).getOrdinal());
             }
         }
 
-        @Test
-        public void testSelect() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testSelect(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             HashIndexSelect<DataModel.Consumer.TypeWithTypeB, DataModel.Consumer.TypeBSuffixed, String> his =
                     HashIndex.from(consumer, DataModel.Consumer.TypeWithTypeB.class)
                             .selectField("typeB", DataModel.Consumer.TypeBSuffixed.class)
                             .usingPath("foo.value", String.class);
             List<Integer> r = his.findMatches("foo")
                     .map(HollowObject::getOrdinal).sorted().collect(Collectors.toList());
-            Assert.assertEquals(Arrays.asList(101, 102), r);
+            Assertions.assertEquals(Arrays.asList(101, 102), r);
         }
 
-        @Test
-        public void testSelectRootTypeSuffixed() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testSelectRootTypeSuffixed(String path, Class<S> type) {
+            initSelectTest(path, type);
+            initSelectOnValuesTest(path, type, value);
+            initMatchOnReferencesTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             HashIndexSelect<DataModel.Consumer.TypeBSuffixed, DataModel.Consumer.HString, Integer> his =
                     HashIndex.from(consumer, DataModel.Consumer.TypeBSuffixed.class)
                             .selectField("s", DataModel.Consumer.HString.class)
                             .usingPath("i", int.class);
             List<Integer> r = his.findMatches(7)
                     .map(HollowObject::getOrdinal).sorted().collect(Collectors.toList());
-            Assert.assertEquals(Arrays.asList(203, 206), r);
+            Assertions.assertEquals(Arrays.asList(203, 206), r);
         }
     }
 }

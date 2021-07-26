@@ -24,8 +24,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 public class HollowHashIndexTest extends AbstractStateEngineTest {
@@ -49,7 +52,7 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
 
         HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeA", "a1", new String[]{"a1", "ab.element.b1.value"});
 
-        Assert.assertNull("An entry that doesn't have any matches has a null iterator", index.findMatches(0, "notfound"));
+        Assertions.assertNull(index.findMatches(0, "notfound"), "An entry that doesn't have any matches has a null iterator");
         assertIteratorContainsAll(index.findMatches(1, "one").iterator(), 0);
         assertIteratorContainsAll(index.findMatches(1, "1").iterator(), 1);
         assertIteratorContainsAll(index.findMatches(2, "two").iterator(), 2);
@@ -71,7 +74,7 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
         roundTripSnapshot();
         HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeB", "", "b1.value");
 
-        Assert.assertNull(index.findMatches("one:"));
+        Assertions.assertNull(index.findMatches("one:"));
         assertIteratorContainsAll(index.findMatches("onez:").iterator(), 1);
     }
 
@@ -85,7 +88,7 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
         HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeBytes", "", "data");
 
         byte[] nonExistingBytes = {1};
-        Assert.assertNull(index.findMatches(nonExistingBytes));
+        Assertions.assertNull(index.findMatches(nonExistingBytes));
         assertIteratorContainsAll(index.findMatches(bytes).iterator(), 1);
     }
 
@@ -98,8 +101,8 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
         roundTripSnapshot();
         HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeTwoStrings", "", "b1.value", "b2.value");
 
-        Assert.assertNull(index.findMatches("one"));
-        Assert.assertNull(index.findMatches("one", "onez:"));
+        Assertions.assertNull(index.findMatches("one"));
+        Assertions.assertNull(index.findMatches("one", "onez:"));
         assertIteratorContainsAll(index.findMatches("onez:", "onez:").iterator(), 1);
     }
 
@@ -112,8 +115,8 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
         roundTripSnapshot();
         HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeTwoStrings", "", "b1.value", "b2.value");
 
-        Assert.assertNull(index.findMatches("one"));
-        Assert.assertNull(index.findMatches("one", "onez:"));
+        Assertions.assertNull(index.findMatches("one"));
+        Assertions.assertNull(index.findMatches("one", "onez:"));
         assertIteratorContainsAll(index.findMatches("onez:", "onez:").iterator(), 2);
     }
 
@@ -139,7 +142,7 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
         roundTripSnapshot();
         HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeInlinedString", "", "data");
 
-        Assert.assertNull(index.findMatches("one:"));
+        Assertions.assertNull(index.findMatches("one:"));
         assertIteratorContainsAll(index.findMatches("onez:").iterator(), 1);
     }
 
@@ -151,7 +154,7 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
         roundTripSnapshot();
         HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeLong", "", "data.value");
 
-        Assert.assertNull(index.findMatches(2L));
+        Assertions.assertNull(index.findMatches(2L));
         assertIteratorContainsAll(index.findMatches(3L).iterator(), 1);
     }
 
@@ -163,7 +166,7 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
         roundTripSnapshot();
         HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeDouble", "", "data.value");
 
-        Assert.assertNull(index.findMatches(2.0));
+        Assertions.assertNull(index.findMatches(2.0));
         assertIteratorContainsAll(index.findMatches(-8.0).iterator(), 1);
     }
 
@@ -175,7 +178,7 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
         roundTripSnapshot();
         HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeInteger", "", "data.value");
 
-        Assert.assertNull(index.findMatches(2));
+        Assertions.assertNull(index.findMatches(2));
         assertIteratorContainsAll(index.findMatches(-1).iterator(), 1);
     }
 
@@ -187,7 +190,7 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
         roundTripSnapshot();
         HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeFloat", "", "data.value");
 
-        Assert.assertNull(index.findMatches(2.0f));
+        Assertions.assertNull(index.findMatches(2.0f));
         assertIteratorContainsAll(index.findMatches(-1.0f).iterator(), 1);
     }
 
@@ -200,17 +203,19 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
         roundTripSnapshot();
         HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeC", "", "cd.d1.value");
 
-        Assert.assertNull(index.findMatches("none"));
+        Assertions.assertNull(index.findMatches("none"));
         assertIteratorContainsAll(index.findMatches("one").iterator(), 2);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFindingMatchForNullQueryValue() throws Exception {
-        mapper.add(new TypeB("one:"));
-        roundTripSnapshot();
-        HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeB", "", "b1.value");
-        index.findMatches(new Object[]{null});
-        Assert.fail("exception expected");
+        assertThrows(IllegalArgumentException.class, () -> {
+            mapper.add(new TypeB("one:"));
+            roundTripSnapshot();
+            HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeB", "", "b1.value");
+            index.findMatches(new Object[]{null});
+            Assertions.fail("exception expected");
+        });
     }
 
     @Test
@@ -228,7 +233,7 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
         index.listenForDeltaUpdates();
 
         // spot check initial mapper state
-        Assert.assertNull("An entry that doesn't have any matches has a null iterator", index.findMatches(0));
+        Assertions.assertNull(index.findMatches(0), "An entry that doesn't have any matches has a null iterator");
         assertIteratorContainsAll(index.findMatches(1).iterator(), 1, 0);
         assertIteratorContainsAll(index.findMatches(2).iterator(), 2);
         assertIteratorContainsAll(index.findMatches(3).iterator(), 3);
@@ -248,7 +253,7 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
 
         // verify the ordinals we get from the index match our new expected ones.
         assertIteratorContainsAll(index.findMatches(1).iterator(), 1, 0);
-        Assert.assertNull("A removed entry that doesn't have any matches", index.findMatches(2));
+        Assertions.assertNull(index.findMatches(2), "A removed entry that doesn't have any matches");
         assertIteratorContainsAll(index.findMatches(3).iterator(), 3);
         assertIteratorContainsAll(index.findMatches(4).iterator(), 5, 6, 7);
 
@@ -264,10 +269,10 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
 
         roundTripSnapshot();
         HollowHashIndex index = new HollowHashIndex(readStateEngine, "TypeInlinedString", "", "data");
-        Assert.assertEquals(index.getMatchFields().length, 1);
-        Assert.assertEquals(index.getMatchFields()[0], "data");
-        Assert.assertEquals(index.getType(), "TypeInlinedString");
-        Assert.assertEquals(index.getSelectField(), "");
+        Assertions.assertEquals(index.getMatchFields().length, 1);
+        Assertions.assertEquals(index.getMatchFields()[0], "data");
+        Assertions.assertEquals(index.getType(), "TypeInlinedString");
+        Assertions.assertEquals(index.getSelectField(), "");
     }
 
     private void assertIteratorContainsAll(HollowOrdinalIterator iter, int... expectedOrdinals) {
@@ -279,9 +284,9 @@ public class HollowHashIndexTest extends AbstractStateEngineTest {
         }
 
         for (int ord : expectedOrdinals) {
-            Assert.assertTrue(ordinalSet.contains(ord));
+            Assertions.assertTrue(ordinalSet.contains(ord));
         }
-        Assert.assertTrue(ordinalSet.size() == expectedOrdinals.length);
+        Assertions.assertTrue(ordinalSet.size() == expectedOrdinals.length);
 
     }
 

@@ -38,9 +38,9 @@ import com.netflix.hollow.tools.diff.count.HollowFieldDiff;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowDiffTest {
 
@@ -56,7 +56,7 @@ public class HollowDiffTest {
     HollowSetSchema setOfTypeDSchema;
     HollowMapSchema mapOfTypeCToTypeDSchema;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         typeASchema = new HollowObjectSchema("TypeA", 3);
         typeASchema.addField("a1", FieldType.STRING);
@@ -201,14 +201,14 @@ public class HollowDiffTest {
 
         List<HollowFieldDiff> fieldDiffs = typeDiff.getFieldDiffs();
 
-        Assert.assertEquals(3, fieldDiffs.size());
+        Assertions.assertEquals(3, fieldDiffs.size());
         assertContainsFieldDiff(fieldDiffs, "TypeA.a2.b2.element.c2 (BOOLEAN)", 2, 6);
         assertContainsFieldDiff(fieldDiffs, "TypeA.a2.b3.element.d3 (BYTES)", 2, 4);
         assertContainsFieldDiff(fieldDiffs, "TypeA.a3.value.d3 (BYTES)", 2, 4);
 
 
-        Assert.assertEquals(1, typeDiff.getUnmatchedOrdinalsInTo().size());
-        Assert.assertEquals(1, typeDiff.getUnmatchedOrdinalsInTo().size());
+        Assertions.assertEquals(1, typeDiff.getUnmatchedOrdinalsInTo().size());
+        Assertions.assertEquals(1, typeDiff.getUnmatchedOrdinalsInTo().size());
     }
 
     @Test
@@ -217,18 +217,18 @@ public class HollowDiffTest {
         HollowWriteStateEngine toStateEngine = newWriteStateEngine();
         HollowDiff diff = new HollowDiff(readEngine(fromStateEngine), readEngine(toStateEngine));
 
-        Assert.assertEquals(1, diff.getTypeDiffs().size());
+        Assertions.assertEquals(1, diff.getTypeDiffs().size());
 
         HollowTypeDiff typeDDiff = diff.getTypeDiff("TypeD");
-        Assert.assertNotNull(typeDDiff);
+        Assertions.assertNotNull(typeDDiff);
 
         HollowDiffMatcher matcher = typeDDiff.getMatcher();
-        Assert.assertNotNull(matcher);
+        Assertions.assertNotNull(matcher);
 
         List<String> matchPaths = matcher.getMatchPaths();
-        Assert.assertEquals(2, matchPaths.size());
-        Assert.assertEquals("d1", matchPaths.get(0));
-        Assert.assertEquals("d2", matchPaths.get(1));
+        Assertions.assertEquals(2, matchPaths.size());
+        Assertions.assertEquals("d1", matchPaths.get(0));
+        Assertions.assertEquals("d2", matchPaths.get(1));
     }
 
     @Test
@@ -241,20 +241,20 @@ public class HollowDiffTest {
         HollowDiff diff = new HollowDiff(readEngine(fromStateEngine), readEngine(toStateEngine));
         diff.calculateDiffs();
 
-        Assert.assertEquals(2, diff.getTypeDiffs().size());
+        Assertions.assertEquals(2, diff.getTypeDiffs().size());
         {
             HollowTypeDiff typeEDiff = diff.getTypeDiff("TypeE");
-            Assert.assertNotNull(typeEDiff);
+            Assertions.assertNotNull(typeEDiff);
 
             HollowDiffMatcher matcherE = typeEDiff.getMatcher();
-            Assert.assertNotNull(matcherE);
+            Assertions.assertNotNull(matcherE);
 
             List<String> matchPathsE = matcherE.getMatchPaths();
-            Assert.assertEquals(1, matchPathsE.size());
-            Assert.assertEquals("e1", matchPathsE.get(0));
+            Assertions.assertEquals(1, matchPathsE.size());
+            Assertions.assertEquals("e1", matchPathsE.get(0));
 
-            Assert.assertEquals( typeEDiff.getUnmatchedOrdinalsInFrom().size(), 0 );
-            Assert.assertEquals( typeEDiff.getUnmatchedOrdinalsInTo().size(), 1 );
+            Assertions.assertEquals( typeEDiff.getUnmatchedOrdinalsInFrom().size(), 0 );
+            Assertions.assertEquals( typeEDiff.getUnmatchedOrdinalsInTo().size(), 1 );
         }
     }
 
@@ -275,49 +275,49 @@ public class HollowDiffTest {
         HollowDiff diff = new HollowDiff(readEngine(fromStateEngine), readEngine(toStateEngine), true, true);
         diff.calculateDiffs();
 
-        Assert.assertEquals(5, diff.getTypeDiffs().size());
+        Assertions.assertEquals(5, diff.getTypeDiffs().size());
         { // Multi Field without Primary Key
             HollowTypeDiff typeDiff = diff.getTypeDiff("TypeC");
-            Assert.assertNotNull(typeDiff);
+            Assertions.assertNotNull(typeDiff);
 
             HollowDiffMatcher matcher = typeDiff.getMatcher();
-            Assert.assertNotNull(matcher);
+            Assertions.assertNotNull(matcher);
 
             // No Primary Key so not match Paths
             List<String> matchPaths = matcher.getMatchPaths();
-            Assert.assertEquals(0, matchPaths.size());
+            Assertions.assertEquals(0, matchPaths.size());
 
-            Assert.assertEquals( typeDiff.getUnmatchedOrdinalsInFrom().size(), 0 );
-            Assert.assertEquals( typeDiff.getUnmatchedOrdinalsInTo().size(), 1 );
+            Assertions.assertEquals( typeDiff.getUnmatchedOrdinalsInFrom().size(), 0 );
+            Assertions.assertEquals( typeDiff.getUnmatchedOrdinalsInTo().size(), 1 );
         }
 
         { // Single Field without Primary Key
             HollowTypeDiff typeDiff = diff.getTypeDiff("TypeF");
-            Assert.assertNotNull(typeDiff);
+            Assertions.assertNotNull(typeDiff);
 
             HollowDiffMatcher matcher = typeDiff.getMatcher();
-            Assert.assertNotNull(matcher);
+            Assertions.assertNotNull(matcher);
 
             // Automatic add single field
             List<String> matchPaths = matcher.getMatchPaths();
-            Assert.assertEquals(1, matchPaths.size());
-            Assert.assertEquals("f1", matchPaths.get(0));
+            Assertions.assertEquals(1, matchPaths.size());
+            Assertions.assertEquals("f1", matchPaths.get(0));
 
-            Assert.assertEquals( typeDiff.getUnmatchedOrdinalsInFrom().size(), 1 );
-            Assert.assertEquals( typeDiff.getUnmatchedOrdinalsInTo().size(), 2 );
+            Assertions.assertEquals( typeDiff.getUnmatchedOrdinalsInFrom().size(), 1 );
+            Assertions.assertEquals( typeDiff.getUnmatchedOrdinalsInTo().size(), 2 );
         }
     }
 
     private void assertContainsFieldDiff(List<HollowFieldDiff> diffs, String fieldId, int numDiffPairs, int totalDiffScores) {
         for(HollowFieldDiff diff : diffs) {
             if(fieldId.equals(diff.getFieldIdentifier().toString())) {
-                Assert.assertEquals(numDiffPairs, diff.getNumDiffs());
-                Assert.assertEquals(totalDiffScores, diff.getTotalDiffScore());
+                Assertions.assertEquals(numDiffPairs, diff.getNumDiffs());
+                Assertions.assertEquals(totalDiffScores, diff.getTotalDiffScore());
                 return;
             }
         }
 
-        Assert.fail();
+        Assertions.fail();
     }
 
     private HollowReadStateEngine readEngine(HollowWriteStateEngine writeEngine) throws IOException {

@@ -25,15 +25,15 @@ import com.netflix.hollow.core.schema.HollowObjectSchema.FieldType;
 import com.netflix.hollow.core.write.HollowObjectTypeWriteState;
 import com.netflix.hollow.core.write.HollowObjectWriteRecord;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowObjectLargeFieldTest extends AbstractStateEngineTest {
 
     HollowObjectSchema schema;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         schema = new HollowObjectSchema("TestObject", 3);
         schema.addField("longField", FieldType.LONG);
@@ -88,9 +88,9 @@ public class HollowObjectLargeFieldTest extends AbstractStateEngineTest {
         HollowObjectTypeReadState typeState = (HollowObjectTypeReadState) readStateEngine.getTypeState("TestObject");
         GenericHollowObject obj = new GenericHollowObject(new HollowObjectGenericDelegate(typeState), ordinal);
 
-        Assert.assertEquals(l, obj.getLong("longField"));
-        Assert.assertEquals(i, obj.getInt("intField"));
-        Assert.assertTrue(d == obj.getDouble("doubleField"));
+        Assertions.assertEquals(l, obj.getLong("longField"));
+        Assertions.assertEquals(i, obj.getInt("intField"));
+        Assertions.assertTrue(d == obj.getDouble("doubleField"));
     }
 
     @Override

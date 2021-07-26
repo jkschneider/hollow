@@ -25,8 +25,8 @@ import com.netflix.hollow.core.write.HollowWriteStateEngine;
 import com.netflix.hollow.core.write.objectmapper.HollowObjectMapper;
 import com.netflix.hollow.core.write.objectmapper.HollowPrimaryKey;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("unused")
 public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
@@ -50,9 +50,9 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
         int ord0 = idx.getMatchingOrdinal(1, 1.1d, "one");
         int ord2 = idx.getMatchingOrdinal(2, 2.2d, "two");
 
-        Assert.assertEquals(0, ord0);
-        Assert.assertEquals(1, ord1);
-        Assert.assertEquals(2, ord2);
+        Assertions.assertEquals(0, ord0);
+        Assertions.assertEquals(1, ord1);
+        Assertions.assertEquals(2, ord2);
         assertEquals(idx.getRecordKey(0), 1, 1.1d, "one");
         assertEquals(idx.getRecordKey(1), 1, 1.1d, "1");
         assertEquals(idx.getRecordKey(2), 2, 2.2d, "two");
@@ -69,10 +69,10 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
         ord2 = idx.getMatchingOrdinal(2, 2.2d, "two");
         int ord3 = idx.getMatchingOrdinal(3, 3.3d, "three");
 
-        Assert.assertEquals(0, ord0);
-        Assert.assertEquals(-1, ord1);
-        Assert.assertEquals(2, ord2);
-        Assert.assertEquals(3, ord3);
+        Assertions.assertEquals(0, ord0);
+        Assertions.assertEquals(-1, ord1);
+        Assertions.assertEquals(2, ord2);
+        Assertions.assertEquals(3, ord3);
         assertEquals(idx.getRecordKey(0), 1, 1.1d, "one");
         assertEquals(idx.getRecordKey(1), 1, 1.1d, "1"); // it is a ghost record (marked deleted but it is available)
         assertEquals(idx.getRecordKey(2), 2, 2.2d, "two");
@@ -95,7 +95,7 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
         HollowPrimaryKeyIndex idx = new HollowPrimaryKeyIndex(readStateEngine, "TypeA");
         idx.listenForDeltaUpdates();
 
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
 
         mapper.add(new TypeA(1, 1.1d, new TypeB("one")));
         mapper.add(new TypeA(1, 1.1d, new TypeB("1")));
@@ -104,8 +104,8 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
 
         roundTripDelta();
 
-        Assert.assertEquals(1, idx.getDuplicateKeys().size());
-        Assert.assertTrue(idx.containsDuplicates());
+        Assertions.assertEquals(1, idx.getDuplicateKeys().size());
+        Assertions.assertTrue(idx.containsDuplicates());
     }
 
     @Test
@@ -119,8 +119,8 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
 
         HollowPrimaryKeyIndex idx = new HollowPrimaryKeyIndex(readStateEngine, "Test", "test1");
 
-        Assert.assertEquals(-1, idx.getMatchingOrdinal(100));
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertEquals(-1, idx.getMatchingOrdinal(100));
+        Assertions.assertFalse(idx.containsDuplicates());
     }
 
     @Test
@@ -140,9 +140,9 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
         int ord0 = idx.getMatchingOrdinal(1, 1.1d, "one");
         int ord2 = idx.getMatchingOrdinal(2, 2.2d, "two");
 
-        Assert.assertEquals(0, ord0);
-        Assert.assertEquals(1, ord1);
-        Assert.assertEquals(2, ord2);
+        Assertions.assertEquals(0, ord0);
+        Assertions.assertEquals(1, ord1);
+        Assertions.assertEquals(2, ord2);
         assertEquals(idx.getRecordKey(0), 1, 1.1d, "one");
         assertEquals(idx.getRecordKey(1), 1, 1.1d, "1");
         assertEquals(idx.getRecordKey(2), 2, 2.2d, "two");
@@ -159,10 +159,10 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
         ord2 = idx.getMatchingOrdinal(2, 2.2d, "two");
         int ord3 = idx.getMatchingOrdinal(3, 3.3d, "three");
 
-        Assert.assertEquals(0, ord0);
-        Assert.assertEquals(-1, ord1);
-        Assert.assertEquals(2, ord2);
-        Assert.assertEquals(3, ord3);
+        Assertions.assertEquals(0, ord0);
+        Assertions.assertEquals(-1, ord1);
+        Assertions.assertEquals(2, ord2);
+        Assertions.assertEquals(3, ord3);
         assertEquals(idx.getRecordKey(0), 1, 1.1d, "one");
         assertEquals(idx.getRecordKey(1), 1, 1.1d, "1"); // it is a ghost record (marked deleted but it is available)
         assertEquals(idx.getRecordKey(2), 2, 2.2d, "two");
@@ -182,7 +182,7 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
         int a2Pos = ((HollowObjectSchema) readStateEngine.getTypeState(typeA).getSchema()).getPosition("a2");
         HollowPrimaryKeyIndex idx = new HollowPrimaryKeyIndex(readStateEngine, "TypeA", "a1");
         idx.listenForDeltaUpdates();
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
 
         // add dups
         int numOfDups = (int) (numOfItems * 0.2);
@@ -194,7 +194,7 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
             addDataForDupTesting(writeStateEngine, a1ValueStart, a2Value, numOfItems);
             addDataForDupTesting(writeStateEngine, a1dupValueStart, a2dupValues, numOfDups);
             roundTripDelta();
-            Assert.assertEquals(true, idx.containsDuplicates()); // Make sure there is dups
+            Assertions.assertEquals(true, idx.containsDuplicates()); // Make sure there is dups
 
             HollowObjectTypeReadState readTypeState = (HollowObjectTypeReadState) readStateEngine.getTypeState(typeA);
             for (int i = 0; i < readTypeState.maxOrdinal(); i++) {
@@ -207,9 +207,9 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
 
                 if (isInDupRange) {
                     // Not deterministic
-                    Assert.assertTrue(a2Val == a2Value || a2Val == a2dupValues);
+                    Assertions.assertTrue(a2Val == a2Value || a2Val == a2dupValues);
                 } else {
-                    Assert.assertTrue(a2Val == a2Value);
+                    Assertions.assertTrue(a2Val == a2Value);
                 }
             }
         }
@@ -217,7 +217,7 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
         { // remove dups
             addDataForDupTesting(writeStateEngine, a1ValueStart, a2Value, numOfItems);
             roundTripDelta();
-            Assert.assertFalse(idx.containsDuplicates()); // Make sure there is no dups
+            Assertions.assertFalse(idx.containsDuplicates()); // Make sure there is no dups
 
             HollowObjectTypeReadState readTypeState = (HollowObjectTypeReadState) readStateEngine.getTypeState(typeA);
             for (int i = 0; i < readTypeState.maxOrdinal(); i++) {
@@ -229,7 +229,7 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
                 // System.out.println("a1=" + a1Val + "\ta2=" + a2Val);
 
                 // Should be equal to base value
-                Assert.assertTrue(a2Val == a2Value);
+                Assertions.assertTrue(a2Val == a2Value);
             }
         }
 
@@ -237,7 +237,7 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
             addDataForDupTesting(writeStateEngine, a1ValueStart, a2Value, numOfItems);
             addDataForDupTesting(writeStateEngine, a1dupValueStart, a2dupValues, numOfDups);
             roundTripDelta();
-            Assert.assertEquals(true, idx.containsDuplicates()); // Make sure there is dups
+            Assertions.assertEquals(true, idx.containsDuplicates()); // Make sure there is dups
 
             HollowObjectTypeReadState readTypeState = (HollowObjectTypeReadState) readStateEngine.getTypeState(typeA);
             for (int i = 0; i < readTypeState.maxOrdinal(); i++) {
@@ -250,9 +250,9 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
 
                 if (isInDupRange) {
                     // Not deterministic
-                    Assert.assertTrue(a2Val == a2Value || a2Val == a2dupValues);
+                    Assertions.assertTrue(a2Val == a2Value || a2Val == a2dupValues);
                 } else {
-                    Assert.assertTrue(a2Val == a2Value);
+                    Assertions.assertTrue(a2Val == a2Value);
                 }
             }
         }
@@ -260,7 +260,7 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
         { // remove original
             addDataForDupTesting(writeStateEngine, a1dupValueStart, a2dupValues, numOfDups);
             roundTripDelta();
-            Assert.assertFalse(idx.containsDuplicates()); // Make sure there is no dups
+            Assertions.assertFalse(idx.containsDuplicates()); // Make sure there is no dups
 
             HollowObjectTypeReadState readTypeState = (HollowObjectTypeReadState) readStateEngine.getTypeState(typeA);
             for (int i = 0; i < readTypeState.maxOrdinal(); i++) {
@@ -270,7 +270,7 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
                 int ordinal = idx.getMatchingOrdinal(a1Val);
                 if (!isInDupRange) {
                     // should not be found if not in dup range
-                    Assert.assertTrue(ordinal < 0);
+                    Assertions.assertTrue(ordinal < 0);
                     continue;
                 }
 
@@ -278,7 +278,7 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
                 // System.out.println("a1=" + a1Val + "\ta2=" + a2Val);
 
                 // Make sure value is the Dup Values
-                Assert.assertTrue(a2Val == a2dupValues);
+                Assertions.assertTrue(a2Val == a2dupValues);
             }
         }
     }
@@ -294,9 +294,9 @@ public class HollowPrimaryKeyIndexTest extends AbstractStateEngineTest {
     }
 
     private static void assertEquals(Object[] actual, Object... expected) {
-        Assert.assertEquals(actual.length, expected.length);
+        Assertions.assertEquals(actual.length, expected.length);
         for (int i = 0; i < actual.length; i++) {
-            Assert.assertEquals(expected[i], actual[i]);
+            Assertions.assertEquals(expected[i], actual[i]);
         }
     }
 

@@ -36,8 +36,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.IntStream;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HollowSetCollectionTest {
 
@@ -68,14 +68,14 @@ public class HollowSetCollectionTest {
                 .map(o -> o.getInt("value"))
                 .sorted()
                 .collect(toList());
-        Assert.assertEquals(Arrays.asList(1, 2, 3), keys);
+        Assertions.assertEquals(Arrays.asList(1, 2, 3), keys);
 
         Iterator<HollowRecord> iterator = s.iterator();
         iterator.forEachRemaining(e -> {});
-        Assert.assertFalse(iterator.hasNext());
+        Assertions.assertFalse(iterator.hasNext());
         try {
             iterator.next();
-            Assert.fail();
+            Assertions.fail();
         } catch (NoSuchElementException e) {
         }
     }
@@ -106,23 +106,23 @@ public class HollowSetCollectionTest {
         assertSetEquals(s1, s4, false);
         assertSetEquals(s1, s5, false);
 
-        Assert.assertNotEquals(s1, new ArrayList<>(s1));
+        Assertions.assertNotEquals(s1, new ArrayList<>(s1));
     }
 
     static void assertSetEquals(Set<?> a, Set<?> b, boolean equal) {
         if (equal) {
-            Assert.assertEquals(a.hashCode(), b.hashCode());
-            Assert.assertEquals(a, b);
-            Assert.assertTrue(equalsUsingContains(a, b));
+            Assertions.assertEquals(a.hashCode(), b.hashCode());
+            Assertions.assertEquals(a, b);
+            Assertions.assertTrue(equalsUsingContains(a, b));
 
-            Assert.assertEquals(b, a);
-            Assert.assertTrue(equalsUsingContains(b, a));
+            Assertions.assertEquals(b, a);
+            Assertions.assertTrue(equalsUsingContains(b, a));
         } else {
-            Assert.assertNotEquals(a, b);
-            Assert.assertFalse(equalsUsingContains(a, b));
+            Assertions.assertNotEquals(a, b);
+            Assertions.assertFalse(equalsUsingContains(a, b));
 
-            Assert.assertNotEquals(b, a);
-            Assert.assertFalse(equalsUsingContains(b, a));
+            Assertions.assertNotEquals(b, a);
+            Assertions.assertFalse(equalsUsingContains(b, a));
         }
     }
 

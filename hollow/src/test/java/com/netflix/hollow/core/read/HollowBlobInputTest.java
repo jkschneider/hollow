@@ -1,9 +1,6 @@
 package com.netflix.hollow.core.read;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import com.netflix.hollow.api.consumer.HollowConsumer;
@@ -19,8 +16,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -40,7 +37,7 @@ public class HollowBlobInputTest {
     Path testFile;
     byte[] leadingBytes;
 
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         MockitoAnnotations.initMocks(this);
         testFile = Files.createTempFile(Paths.get(SCRATCH_DIR), "blobfile", "snapshot");

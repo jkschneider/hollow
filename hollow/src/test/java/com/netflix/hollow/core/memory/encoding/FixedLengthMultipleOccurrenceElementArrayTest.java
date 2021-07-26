@@ -16,19 +16,19 @@
  */
 package com.netflix.hollow.core.memory.encoding;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.netflix.hollow.core.memory.pool.WastefulRecycler;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FixedLengthMultipleOccurrenceElementArrayTest {
     private FixedLengthMultipleOccurrenceElementArray array;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         array = new FixedLengthMultipleOccurrenceElementArray(
                 WastefulRecycler.SMALL_ARRAY_RECYCLER, 10000L, 5, 4);
@@ -73,8 +73,9 @@ public class FixedLengthMultipleOccurrenceElementArrayTest {
         LongStream.range(0, 10000).forEach(nodeIndex -> {
             List<Long> elements = LongStream.range(0, 31).boxed().collect(Collectors.toList());
             elements.forEach(ordinal -> array.addElement(nodeIndex, ordinal));
-            assertEquals("nodeIndex " + nodeIndex + " should have correct elements", elements,
-                    array.getElements(nodeIndex));
+            assertEquals(elements,
+                    array.getElements(nodeIndex),
+                    "nodeIndex " + nodeIndex + " should have correct elements");
         });
     }
 }

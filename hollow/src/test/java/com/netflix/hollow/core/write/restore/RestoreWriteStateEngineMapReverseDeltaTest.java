@@ -26,8 +26,8 @@ import com.netflix.hollow.core.write.HollowMapTypeWriteState;
 import com.netflix.hollow.core.write.HollowMapWriteRecord;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class RestoreWriteStateEngineMapReverseDeltaTest extends AbstractStateEngineTest {
 
@@ -66,7 +66,7 @@ public class RestoreWriteStateEngineMapReverseDeltaTest extends AbstractStateEng
         
         int actualValueOrdinal = typeState.get(mapOrdinal, keyOrdinal, hashCode);
         
-        Assert.assertEquals(valueOrdinal, actualValueOrdinal);
+        Assertions.assertEquals(valueOrdinal, actualValueOrdinal);
     }
 
     

@@ -34,8 +34,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HollowObjectMapperTest extends AbstractStateEngineTest {
 
@@ -51,7 +51,7 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
         roundTripSnapshot();
 
 
-        Assert.assertEquals("{\"a1\": \"two\",\"a2\": 2,\"b\": {\"b1\": 20,\"b2\": 20000000,\"b3\": 2.2,\"b4\": \"two\",\"b5\": [2, 2, 2]},\"cList\": []}",
+        Assertions.assertEquals("{\"a1\": \"two\",\"a2\": 2,\"b\": {\"b1\": 20,\"b2\": 20000000,\"b3\": 2.2,\"b4\": \"two\",\"b5\": [2, 2, 2]},\"cList\": []}",
                 new HollowRecordJsonStringifier(false, true).stringify(readStateEngine, "TypeA", 0));
 
         //System.out.println("---------------------------------");
@@ -65,43 +65,43 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
         // Lists cannot contain null elements
         try {
             mapper.add(new TypeWithList("a", null, "c"));
-            Assert.fail("NullPointerException not thrown from List containing null elements");
+            Assertions.fail("NullPointerException not thrown from List containing null elements");
         } catch (NullPointerException e) {
             String m = e.getMessage();
-            Assert.assertNotNull(m);
-            Assert.assertTrue(m.contains("Lists"));
+            Assertions.assertNotNull(m);
+            Assertions.assertTrue(m.contains("Lists"));
         }
 
         // Sets cannot contain null elements
         try {
             mapper.add(new TypeWithSet("a", null, "c"));
-            Assert.fail("NullPointerException not thrown from Set containing null elements");
+            Assertions.fail("NullPointerException not thrown from Set containing null elements");
         } catch (NullPointerException e) {
             String m = e.getMessage();
-            Assert.assertNotNull(m);
-            Assert.assertTrue(m.contains("Sets"));
+            Assertions.assertNotNull(m);
+            Assertions.assertTrue(m.contains("Sets"));
         }
 
         // Maps cannot contain null keys
         try {
             mapper.add(new TypeWithMap("a", "a", null, "b", "c", "c"));
-            Assert.fail("NullPointerException not thrown from Map containing null keys");
+            Assertions.fail("NullPointerException not thrown from Map containing null keys");
         } catch (NullPointerException e) {
             String m = e.getMessage();
-            Assert.assertNotNull(m);
-            Assert.assertTrue(m.contains("Maps"));
-            Assert.assertTrue(m.contains("key"));
+            Assertions.assertNotNull(m);
+            Assertions.assertTrue(m.contains("Maps"));
+            Assertions.assertTrue(m.contains("key"));
         }
 
         // Maps cannot contain null values
         try {
             mapper.add(new TypeWithMap("a", "a", "b", null, "c", "c"));
-            Assert.fail("NullPointerException not thrown from Map containing null values");
+            Assertions.fail("NullPointerException not thrown from Map containing null values");
         } catch (NullPointerException e) {
             String m = e.getMessage();
-            Assert.assertNotNull(m);
-            Assert.assertTrue(m.contains("Maps"));
-            Assert.assertTrue(m.contains("value"));
+            Assertions.assertNotNull(m);
+            Assertions.assertTrue(m.contains("Maps"));
+            Assertions.assertTrue(m.contains("value"));
         }
     }
 
@@ -124,21 +124,21 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
 
         TypeWithAllFieldTypes expected = new TypeWithAllFieldTypes(1);
         TypeWithAllFieldTypes actual = new TypeWithAllFieldTypes(new GenericHollowObject(readStateEngine, "TypeWithAllFieldTypes", 0));
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
 
         expected = new TypeWithAllFieldTypes(2);
         actual = new TypeWithAllFieldTypes(new GenericHollowObject(readStateEngine, "TypeWithAllFieldTypes", 1));
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
 
         expected = new TypeWithAllFieldTypes(3);
         expected.nullFirstHalf();
         actual = new TypeWithAllFieldTypes(new GenericHollowObject(readStateEngine, "TypeWithAllFieldTypes", 2));
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
 
         expected = new TypeWithAllFieldTypes(4);
         expected.nullSecondHalf();
         actual = new TypeWithAllFieldTypes(new GenericHollowObject(readStateEngine, "TypeWithAllFieldTypes", 3));
-        Assert.assertEquals(expected, actual);
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
@@ -157,12 +157,12 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
 
         GenericHollowObject obj = new GenericHollowObject(readStateEngine, "TestEnum", twoOrdinal);
 
-        Assert.assertEquals("TWO", obj.getString("_name"));
+        Assertions.assertEquals("TWO", obj.getString("_name"));
 
         GenericHollowObject subObj = obj.getObject("testClass");
 
-        Assert.assertEquals(2, subObj.getInt("val1"));
-        Assert.assertEquals(3, subObj.getInt("val2"));
+        Assertions.assertEquals(2, subObj.getInt("val1"));
+        Assertions.assertEquals(3, subObj.getInt("val2"));
     }
 
     @Test
@@ -179,7 +179,7 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
 
         GenericHollowObject obj = new GenericHollowObject(readStateEngine, "Date", theOrdinal);
 
-        Assert.assertEquals(time, obj.getLong("value"));
+        Assertions.assertEquals(time, obj.getLong("value"));
     }
 
     @Test
@@ -197,9 +197,9 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
         schema.writeTo(baos);
 
         String schemeText = baos.toString();
-        Assert.assertTrue(schemeText.contains("notTransient"));
-        Assert.assertFalse(schemeText.contains("transientKeyword"));
-        Assert.assertFalse(schemeText.contains("annotatedTransient"));
+        Assertions.assertTrue(schemeText.contains("notTransient"));
+        Assertions.assertFalse(schemeText.contains("transientKeyword"));
+        Assertions.assertFalse(schemeText.contains("annotatedTransient"));
     }
 
     @Test
@@ -232,9 +232,9 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
         schema.writeTo(baos);
 
         String schemeText = baos.toString();
-        Assert.assertTrue(schemeText.contains("TestClassContainingTransientArray"));
-        Assert.assertFalse(schemeText.contains("int[]"));
-        Assert.assertFalse(schemeText.contains("intArray"));
+        Assertions.assertTrue(schemeText.contains("TestClassContainingTransientArray"));
+        Assertions.assertFalse(schemeText.contains("int[]"));
+        Assertions.assertFalse(schemeText.contains("intArray"));
     }
 
     @Test
@@ -252,9 +252,9 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
         schema.writeTo(baos);
 
         String schemeText = baos.toString();
-        Assert.assertTrue(schemeText.contains("TestClassContainingHollowTransientArray"));
-        Assert.assertFalse(schemeText.contains("int[]"));
-        Assert.assertFalse(schemeText.contains("intArray"));
+        Assertions.assertTrue(schemeText.contains("TestClassContainingHollowTransientArray"));
+        Assertions.assertFalse(schemeText.contains("int[]"));
+        Assertions.assertFalse(schemeText.contains("intArray"));
     }
 
     @Test
@@ -287,7 +287,7 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
         HollowObjectMapper mapper = new HollowObjectMapper(writeStateEngine);
         TypeWithAssignedOrdinal o = new TypeWithAssignedOrdinal();
         mapper.add(o);
-        Assert.assertNotEquals(HollowConstants.ORDINAL_NONE, o.__assigned_ordinal);
+        Assertions.assertNotEquals(HollowConstants.ORDINAL_NONE, o.__assigned_ordinal);
     }
 
     @Test
@@ -295,7 +295,7 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
         HollowObjectMapper mapper = new HollowObjectMapper(writeStateEngine);
         TypeWithFinalAssignedOrdinal o = new TypeWithFinalAssignedOrdinal();
         mapper.add(o);
-        Assert.assertNotEquals(HollowConstants.ORDINAL_NONE, o.__assigned_ordinal);
+        Assertions.assertNotEquals(HollowConstants.ORDINAL_NONE, o.__assigned_ordinal);
     }
 
     @Test
@@ -304,7 +304,7 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
         TypeWithAssignedOrdinal o = new TypeWithAssignedOrdinal();
         o.__assigned_ordinal = 1;
         mapper.add(o);
-        Assert.assertNotEquals(1, o.__assigned_ordinal);
+        Assertions.assertNotEquals(1, o.__assigned_ordinal);
     }
 
     @Test
@@ -312,7 +312,7 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
         HollowObjectMapper mapper = new HollowObjectMapper(writeStateEngine);
         TypeWithIntAssignedOrdinal o = new TypeWithIntAssignedOrdinal();
         mapper.add(o);
-        Assert.assertEquals(HollowConstants.ORDINAL_NONE, o.__assigned_ordinal);
+        Assertions.assertEquals(HollowConstants.ORDINAL_NONE, o.__assigned_ordinal);
     }
 
     @Test
@@ -322,7 +322,7 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
         o.__assigned_ordinal = 1;
         mapper.add(o);
         // int fields are ignored
-        Assert.assertEquals(1, o.__assigned_ordinal);
+        Assertions.assertEquals(1, o.__assigned_ordinal);
     }
 
     /**
@@ -337,9 +337,9 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
         try {
             HollowObjectMapper mapper = new HollowObjectMapper(writeStateEngine);
             mapper.initializeTypeState(clazz);
-            Assert.fail("Expected Exception not thrown");
+            Assertions.fail("Expected Exception not thrown");
         } catch (IllegalStateException e) {
-            Assert.assertTrue(String.format("missing expected fieldname %s in the message, was %s", expected, e.getMessage()), e.getMessage().contains(expected));
+            Assertions.assertTrue(e.getMessage().contains(expected), String.format("missing expected fieldname %s in the message, was %s", expected, e.getMessage()));
         }
     }
 
@@ -355,9 +355,9 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
         try {
             HollowObjectMapper mapper = new HollowObjectMapper(writeStateEngine);
             mapper.initializeTypeState(clazz);
-            Assert.fail("Expected Exception not thrown");
+            Assertions.fail("Expected Exception not thrown");
         } catch (IllegalArgumentException e) {
-            Assert.assertTrue(String.format("trying to generate schema based on interface %s, was %s", interfaceClazz.getSimpleName(), e.getMessage()), e.getMessage().contains(expected));
+            Assertions.assertTrue(e.getMessage().contains(expected), String.format("trying to generate schema based on interface %s, was %s", interfaceClazz.getSimpleName(), e.getMessage()));
         }
     }
 
@@ -373,9 +373,9 @@ public class HollowObjectMapperTest extends AbstractStateEngineTest {
         try {
             HollowObjectMapper mapper = new HollowObjectMapper(writeStateEngine);
             mapper.initializeTypeState(clazz);
-            Assert.fail("Expected Exception not thrown");
+            Assertions.fail("Expected Exception not thrown");
         } catch (IllegalArgumentException e) {
-            Assert.assertTrue(String.format("trying to generate schema based on array %s, was %s", arrayClass.getSimpleName(), e.getMessage()), e.getMessage().contains(expected));
+            Assertions.assertTrue(e.getMessage().contains(expected), String.format("trying to generate schema based on array %s, was %s", arrayClass.getSimpleName(), e.getMessage()));
         }
     }
 

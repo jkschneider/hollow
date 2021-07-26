@@ -31,9 +31,9 @@ import com.netflix.hollow.core.write.HollowObjectWriteRecord;
 import com.netflix.hollow.core.write.HollowWriteStateEngine;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowDiffMatcherTest {
 
@@ -44,7 +44,7 @@ public class HollowDiffMatcherTest {
     private HollowWriteStateEngine fromStateEngine;
     private HollowWriteStateEngine toStateEngine;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         fromSchema = new HollowObjectSchema("TestObject", 3);
         fromSchema.addField("int", FieldType.INT);
@@ -93,16 +93,16 @@ public class HollowDiffMatcherTest {
         IntList fromExtra = matcher.getExtraInFrom();
         IntList toExtra = matcher.getExtraInTo();
         
-        Assert.assertEquals((long)from3 << 32 | to3, matches.get(0));
-        Assert.assertEquals((long)from2 << 32 | to2, matches.get(1));
-        Assert.assertEquals((long)from1 << 32 | to1, matches.get(2));
-        Assert.assertEquals(3, matches.size());
+        Assertions.assertEquals((long)from3 << 32 | to3, matches.get(0));
+        Assertions.assertEquals((long)from2 << 32 | to2, matches.get(1));
+        Assertions.assertEquals((long)from1 << 32 | to1, matches.get(2));
+        Assertions.assertEquals(3, matches.size());
         
-        Assert.assertEquals(from4, fromExtra.get(0));
-        Assert.assertEquals(1, fromExtra.size());
+        Assertions.assertEquals(from4, fromExtra.get(0));
+        Assertions.assertEquals(1, fromExtra.size());
         
-        Assert.assertEquals(to4, toExtra.get(0));
-        Assert.assertEquals(1, toExtra.size());
+        Assertions.assertEquals(to4, toExtra.get(0));
+        Assertions.assertEquals(1, toExtra.size());
     }
     
     @Test
@@ -126,15 +126,15 @@ public class HollowDiffMatcherTest {
         
         matcher.calculateMatches();
         
-        Assert.assertEquals("1.1 one", matcher.getKeyDisplayString(fromState, from1));
-        Assert.assertEquals("2.2 two", matcher.getKeyDisplayString(fromState, from2));
-        Assert.assertEquals("3.3 three", matcher.getKeyDisplayString(fromState, from3));
-        Assert.assertEquals("1.1 four", matcher.getKeyDisplayString(fromState, from4));
+        Assertions.assertEquals("1.1 one", matcher.getKeyDisplayString(fromState, from1));
+        Assertions.assertEquals("2.2 two", matcher.getKeyDisplayString(fromState, from2));
+        Assertions.assertEquals("3.3 three", matcher.getKeyDisplayString(fromState, from3));
+        Assertions.assertEquals("1.1 four", matcher.getKeyDisplayString(fromState, from4));
 
-        Assert.assertEquals("1.1 one", matcher.getKeyDisplayString(toState, to1));
-        Assert.assertEquals("2.2 two", matcher.getKeyDisplayString(toState, to2));
-        Assert.assertEquals("3.3 three", matcher.getKeyDisplayString(toState, to3));
-        Assert.assertEquals("4.4 four", matcher.getKeyDisplayString(toState, to4));
+        Assertions.assertEquals("1.1 one", matcher.getKeyDisplayString(toState, to1));
+        Assertions.assertEquals("2.2 two", matcher.getKeyDisplayString(toState, to2));
+        Assertions.assertEquals("3.3 three", matcher.getKeyDisplayString(toState, to3));
+        Assertions.assertEquals("4.4 four", matcher.getKeyDisplayString(toState, to4));
     }
     
     private HollowObjectTypeReadState roundTripAndGetTypeState(HollowWriteStateEngine stateEngine) throws IOException {

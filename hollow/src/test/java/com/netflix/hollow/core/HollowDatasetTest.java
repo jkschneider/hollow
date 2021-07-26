@@ -1,14 +1,15 @@
 package com.netflix.hollow.core;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.netflix.hollow.core.schema.HollowSchema;
 import com.netflix.hollow.core.schema.HollowSchemaParser;
 import com.netflix.hollow.core.schema.SimpleHollowDataset;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.util.List;
-import org.junit.Test;
 
 public class HollowDatasetTest {
 

@@ -21,9 +21,9 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import com.netflix.hollow.api.producer.listener.CycleListener;
 import com.netflix.hollow.api.producer.validation.ValidationStatusListener;
 import java.time.Duration;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -43,7 +43,7 @@ public class ProducerListenerSupportTest {
     @Mock
     private ProducerAndValidationStatusListener producerAndValidationStatusListener;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         listenerSupport = new ProducerListenerSupport();
@@ -104,19 +104,19 @@ public class ProducerListenerSupportTest {
         s.fireCycleStart(1);
         s.fireCycleComplete(new Status.StageWithStateBuilder());
 
-        Assert.assertEquals(1, fcl.cycleStart);
-        Assert.assertEquals(1, fcl.cycleComplete);
-        Assert.assertEquals(0, fcl.scl.cycleStart);
-        Assert.assertEquals(0, fcl.scl.cycleComplete);
+        Assertions.assertEquals(1, fcl.cycleStart);
+        Assertions.assertEquals(1, fcl.cycleComplete);
+        Assertions.assertEquals(0, fcl.scl.cycleStart);
+        Assertions.assertEquals(0, fcl.scl.cycleComplete);
 
         s = ls.listeners();
         s.fireCycleStart(1);
         s.fireCycleComplete(new Status.StageWithStateBuilder());
 
-        Assert.assertEquals(2, fcl.cycleStart);
-        Assert.assertEquals(2, fcl.cycleComplete);
-        Assert.assertEquals(1, fcl.scl.cycleStart);
-        Assert.assertEquals(1, fcl.scl.cycleComplete);
+        Assertions.assertEquals(2, fcl.cycleStart);
+        Assertions.assertEquals(2, fcl.cycleComplete);
+        Assertions.assertEquals(1, fcl.scl.cycleStart);
+        Assertions.assertEquals(1, fcl.scl.cycleComplete);
     }
 
     @Test
@@ -164,19 +164,19 @@ public class ProducerListenerSupportTest {
         s.fireCycleStart(1);
         s.fireCycleComplete(new Status.StageWithStateBuilder());
 
-        Assert.assertEquals(1, fcl.cycleStart);
-        Assert.assertEquals(1, fcl.cycleComplete);
-        Assert.assertEquals(1, fcl.scl.cycleStart);
-        Assert.assertEquals(1, fcl.scl.cycleComplete);
+        Assertions.assertEquals(1, fcl.cycleStart);
+        Assertions.assertEquals(1, fcl.cycleComplete);
+        Assertions.assertEquals(1, fcl.scl.cycleStart);
+        Assertions.assertEquals(1, fcl.scl.cycleComplete);
 
         s = ls.listeners();
         s.fireCycleStart(1);
         s.fireCycleComplete(new Status.StageWithStateBuilder());
 
-        Assert.assertEquals(2, fcl.cycleStart);
-        Assert.assertEquals(2, fcl.cycleComplete);
-        Assert.assertEquals(1, fcl.scl.cycleStart);
-        Assert.assertEquals(1, fcl.scl.cycleComplete);
+        Assertions.assertEquals(2, fcl.cycleStart);
+        Assertions.assertEquals(2, fcl.cycleComplete);
+        Assertions.assertEquals(1, fcl.scl.cycleStart);
+        Assertions.assertEquals(1, fcl.scl.cycleComplete);
     }
 
     @Test
@@ -242,8 +242,8 @@ public class ProducerListenerSupportTest {
         ArgumentCaptor<Duration> elapsed = ArgumentCaptor.forClass(
                 Duration.class);
         Mockito.verify(listener).onProducerRestoreComplete(status.capture(), desired.capture(), reached.capture(), elapsed.capture());
-        Assert.assertNotNull(status.getValue());
-        Assert.assertNotNull(elapsed.getValue());
+        Assertions.assertNotNull(status.getValue());
+        Assertions.assertNotNull(elapsed.getValue());
     }
 
     @Test

@@ -26,9 +26,12 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowProducerValidationListenerTest {
 
@@ -37,7 +40,7 @@ public class HollowProducerValidationListenerTest {
     private Publisher publisher;
     private Announcer announcer;
 
-    @Before
+    @BeforeEach
     public void setup() {
         publisher = blob -> {};
         announcer = version -> {};
@@ -47,17 +50,19 @@ public class HollowProducerValidationListenerTest {
     public void testValidationListenerOnValidationSuccess() {
         createHollowProducerAndRunCycle("MovieWithPrimaryKey", true);
         assertOnValidationStatus(2, true);
-        Assert.assertTrue(validationListener.getVersion() > 0);
-        Assert.assertTrue(cycleAndValidationListener.getVersion() > 0);
-        Assert.assertEquals(cycleAndValidationListener.getCycleVersion(), cycleAndValidationListener.getVersion());
-        Assert.assertEquals(cycleAndValidationListener.getCycleVersion(), validationListener.getVersion());
+        Assertions.assertTrue(validationListener.getVersion() > 0);
+        Assertions.assertTrue(cycleAndValidationListener.getVersion() > 0);
+        Assertions.assertEquals(cycleAndValidationListener.getCycleVersion(), cycleAndValidationListener.getVersion());
+        Assertions.assertEquals(cycleAndValidationListener.getCycleVersion(), validationListener.getVersion());
     }
 
 
-    @Test(expected = ValidationStatusException.class)
+    @Test
     public void testValidationListenerOnFailure() {
-        createHollowProducerAndRunCycle("MovieWithoutPrimaryKey", true);
-        assertOnValidationStatus(2, false);
+        assertThrows(ValidationStatusException.class, () -> {
+            createHollowProducerAndRunCycle("MovieWithoutPrimaryKey", true);
+            assertOnValidationStatus(2, false);
+        });
     }
 
     @Test
@@ -67,21 +72,21 @@ public class HollowProducerValidationListenerTest {
 
         // Expecting only record count validator status
         ValidationResult validatorStatus = validationListener.getStatus().getResults().get(0);
-        Assert.assertNotNull(validatorStatus);
+        Assertions.assertNotNull(validatorStatus);
 
         // ValidationStatus builds record validator status based toString of RecordCountValidatorStatus for now.
-        Assert.assertEquals(ValidationResultType.PASSED, validatorStatus.getResultType());
-        Assert.assertNull(validatorStatus.getThrowable());
+        Assertions.assertEquals(ValidationResultType.PASSED, validatorStatus.getResultType());
+        Assertions.assertNull(validatorStatus.getThrowable());
 
         // Record count validator would have skipped validation because the previous record count is 0 in this test.
         // But that status for now is only passed as string through toString method of the validator.
-        Assert.assertTrue(validatorStatus.getMessage().contains("MovieWithPrimaryKey"));
-        Assert.assertTrue(validatorStatus.getMessage().contains("Previous record count is 0"));
+        Assertions.assertTrue(validatorStatus.getMessage().contains("MovieWithPrimaryKey"));
+        Assertions.assertTrue(validatorStatus.getMessage().contains("Previous record count is 0"));
 
         // Check details
-        Assert.assertTrue(validatorStatus.getName().startsWith(RecordCountVarianceValidator.class.getName()));
-        Assert.assertEquals("MovieWithPrimaryKey", validatorStatus.getDetails().get("Typename"));
-        Assert.assertEquals("3.0", validatorStatus.getDetails().get("AllowableVariancePercent"));
+        Assertions.assertTrue(validatorStatus.getName().startsWith(RecordCountVarianceValidator.class.getName()));
+        Assertions.assertEquals("MovieWithPrimaryKey", validatorStatus.getDetails().get("Typename"));
+        Assertions.assertEquals("3.0", validatorStatus.getDetails().get("AllowableVariancePercent"));
     }
 
     private void createHollowProducerAndRunCycle(final String typeName, boolean addPrimaryKeyValidator) {
@@ -118,11 +123,11 @@ public class HollowProducerValidationListenerTest {
 
     private void assertOnValidationStatus(int size, boolean passed) {
         ValidationStatus status = validationListener.getStatus();
-        Assert.assertNotNull(
-                "Stats null indicates HollowValidationFakeListener.onValidationComplete() was not called on runCycle.",
-                status);
-        Assert.assertEquals(size, status.getResults().size());
-        Assert.assertEquals(passed, status.passed());
+        Assertions.assertNotNull(
+                status,
+                "Stats null indicates HollowValidationFakeListener.onValidationComplete() was not called on runCycle.");
+        Assertions.assertEquals(size, status.getResults().size());
+        Assertions.assertEquals(passed, status.passed());
     }
 
 

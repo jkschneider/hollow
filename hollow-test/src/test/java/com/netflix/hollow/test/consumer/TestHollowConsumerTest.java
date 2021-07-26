@@ -17,8 +17,7 @@
 package com.netflix.hollow.test.consumer;
 
 import static com.netflix.hollow.core.HollowConstants.VERSION_NONE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.netflix.hollow.api.consumer.HollowConsumer.AnnouncementWatcher;
 import com.netflix.hollow.api.objects.generic.GenericHollowObject;
@@ -26,17 +25,14 @@ import com.netflix.hollow.core.read.dataaccess.HollowDataAccess;
 import com.netflix.hollow.core.write.HollowWriteStateEngine;
 import com.netflix.hollow.core.write.objectmapper.HollowPrimaryKey;
 import com.netflix.hollow.test.HollowWriteStateEngineBuilder;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class TestHollowConsumerTest {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void testAddSnapshot_version() throws Exception {
@@ -46,9 +42,9 @@ public class TestHollowConsumerTest {
             .withBlobRetriever(new TestBlobRetriever())
             .build();
         consumer.addSnapshot(latestVersion, new HollowWriteStateEngineBuilder().build());
-        assertEquals("Should be no version", AnnouncementWatcher.NO_ANNOUNCEMENT_AVAILABLE, consumer.getCurrentVersionId());
+        assertEquals(AnnouncementWatcher.NO_ANNOUNCEMENT_AVAILABLE, consumer.getCurrentVersionId(), "Should be no version");
         consumer.triggerRefresh();
-        assertEquals("Should be at latest version", latestVersion, consumer.getCurrentVersionId());
+        assertEquals(latestVersion, consumer.getCurrentVersionId(), "Should be at latest version");
     }
 
     @Test
@@ -62,8 +58,7 @@ public class TestHollowConsumerTest {
                 new HollowWriteStateEngineBuilder().add("foo").add(2).build());
         consumer.triggerRefresh();
         HollowDataAccess data = consumer.getAPI().getDataAccess();
-        assertEquals("Should have string and int",
-                new HashSet<>(Arrays.asList("String", "Integer")), data.getAllTypes());
+        assertEquals(new HashSet<>(Arrays.asList("String", "Integer")), data.getAllTypes(), "Should have string and int");
         assertEquals("foo",
                 new GenericHollowObject(data, "String", 0).getString("value"));
         assertEquals(2,
@@ -101,8 +96,9 @@ public class TestHollowConsumerTest {
 
         consumer.addSnapshot(version2, new HollowWriteStateEngineBuilder().build());
         consumer.triggerRefresh();
-        assertEquals("We haven't told announcementWatcher about version2 yet", version1,
-                consumer.getCurrentVersionId());
+        assertEquals(version1,
+                consumer.getCurrentVersionId(),
+                "We haven't told announcementWatcher about version2 yet");
 
         announcementWatcher.setLatestVersion(version2);
         consumer.triggerRefresh();
@@ -118,16 +114,16 @@ public class TestHollowConsumerTest {
 
         HollowWriteStateEngine state1 = new HollowWriteStateEngineBuilder().build();
         consumer.addSnapshot(snapshotVersion, state1);
-        assertEquals("Should be no version", VERSION_NONE, consumer.getCurrentVersionId());
+        assertEquals(VERSION_NONE, consumer.getCurrentVersionId(), "Should be no version");
         consumer.triggerRefreshTo(snapshotVersion);
-        assertEquals("Should be at snapshot version", snapshotVersion, consumer.getCurrentVersionId());
+        assertEquals(snapshotVersion, consumer.getCurrentVersionId(), "Should be at snapshot version");
 
         long deltaToVersion = 2l;
         HollowWriteStateEngine state2 = new HollowWriteStateEngineBuilder().build();
         consumer.addDelta(snapshotVersion, deltaToVersion, state2);
-        assertEquals("Should still be at snapshot version", snapshotVersion, consumer.getCurrentVersionId());
+        assertEquals(snapshotVersion, consumer.getCurrentVersionId(), "Should still be at snapshot version");
         consumer.triggerRefreshTo(deltaToVersion);
-        assertEquals("Should be at delta To version", deltaToVersion, consumer.getCurrentVersionId());
+        assertEquals(deltaToVersion, consumer.getCurrentVersionId(), "Should be at delta To version");
     }
 
     @Test
@@ -152,7 +148,7 @@ public class TestHollowConsumerTest {
         // SNAPSHOT
         consumer.applySnapshot(1l, state1);
         HollowDataAccess data = consumer.getAPI().getDataAccess();
-        assertEquals("Should have Movie and String", new HashSet<>(Arrays.asList("Movie", "String")), data.getAllTypes());
+        assertEquals(new HashSet<>(Arrays.asList("Movie", "String")), data.getAllTypes(), "Should have Movie and String");
         assertConsumerData(consumer, 0, new Movie(1, "first"));
 
         // DELTA
@@ -172,12 +168,13 @@ public class TestHollowConsumerTest {
 
     @Test
     public void testDeltaBeforeSnapshot_Unsupported() throws IOException  {
-        TestHollowConsumer consumer = new TestHollowConsumer.Builder().withBlobRetriever(new TestBlobRetriever()).build();
-        HollowWriteStateEngine state = new HollowWriteStateEngineBuilder(Collections.singletonList(Movie.class))
-                .add(new Movie(1, "first")).build();
-        thrown.expect(UnsupportedOperationException.class);
-        thrown.expectMessage("Delta can not be applied without first applying a snapshot");
-        consumer.applyDelta(1l, state);
+        Throwable exception = assertThrows(UnsupportedOperationException.class, () -> {
+            TestHollowConsumer consumer = new TestHollowConsumer.Builder().withBlobRetriever(new TestBlobRetriever()).build();
+            HollowWriteStateEngine state = new HollowWriteStateEngineBuilder(Collections.singletonList(Movie.class))
+                    .add(new Movie(1, "first")).build();
+            consumer.applyDelta(1l, state);
+        });
+        assertTrue(exception.getMessage().contains("Delta can not be applied without first applying a snapshot"));
     }
 
     // Assert that consumer data contains given movie object at given ordinal

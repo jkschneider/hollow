@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class FailedTransitionTest {
 
@@ -32,29 +32,29 @@ public class FailedTransitionTest {
         failer.set(true);
         try {
             consumer.triggerRefreshTo(version);
-            Assert.fail();
+            Assertions.fail();
         } catch (Exception e) {
             Throwable cause = e.getCause();
-            Assert.assertNotNull(cause);
-            Assert.assertTrue(cause instanceof IOException);
-            Assert.assertEquals("FAILED", cause.getMessage());
-            Assert.assertEquals(1, consumer.getNumFailedSnapshotTransitions());
+            Assertions.assertNotNull(cause);
+            Assertions.assertTrue(cause instanceof IOException);
+            Assertions.assertEquals("FAILED", cause.getMessage());
+            Assertions.assertEquals(1, consumer.getNumFailedSnapshotTransitions());
         }
 
         // Fail for existing transition
         failer.set(false);
         try {
             consumer.triggerRefreshTo(version);
-            Assert.fail();
+            Assertions.fail();
         } catch (RuntimeException e) {
-            Assert.assertEquals(1, consumer.getNumFailedSnapshotTransitions());
+            Assertions.assertEquals(1, consumer.getNumFailedSnapshotTransitions());
         }
 
         try {
             consumer.triggerRefreshTo(version);
-            Assert.fail();
+            Assertions.fail();
         } catch (RuntimeException e) {
-            Assert.assertEquals(1, consumer.getNumFailedSnapshotTransitions());
+            Assertions.assertEquals(1, consumer.getNumFailedSnapshotTransitions());
         }
 
 
@@ -65,7 +65,7 @@ public class FailedTransitionTest {
         // Pass for new transition
         // Consumer double snapshots
         consumer.triggerRefreshTo(version);
-        Assert.assertEquals(1, consumer.getNumFailedSnapshotTransitions());
+        Assertions.assertEquals(1, consumer.getNumFailedSnapshotTransitions());
     }
 
 
@@ -98,13 +98,13 @@ public class FailedTransitionTest {
         failer.set(true);
         try {
             consumer.triggerRefreshTo(version);
-            Assert.fail();
+            Assertions.fail();
         } catch (Exception e) {
             Throwable cause = e.getCause();
-            Assert.assertNotNull(cause);
-            Assert.assertTrue(cause instanceof IOException);
-            Assert.assertEquals("FAILED", cause.getMessage());
-            Assert.assertEquals(1, consumer.getNumFailedDeltaTransitions());
+            Assertions.assertNotNull(cause);
+            Assertions.assertTrue(cause instanceof IOException);
+            Assertions.assertEquals("FAILED", cause.getMessage());
+            Assertions.assertEquals(1, consumer.getNumFailedDeltaTransitions());
         }
 
 
@@ -137,13 +137,13 @@ public class FailedTransitionTest {
         failer.set(true);
         try {
             consumer.triggerRefreshTo(version);
-            Assert.fail();
+            Assertions.fail();
         } catch (Exception e) {
             Throwable cause = e.getCause();
-            Assert.assertNotNull(cause);
-            Assert.assertTrue(cause instanceof IOException);
-            Assert.assertEquals("FAILED", cause.getMessage());
-            Assert.assertEquals(1, consumer.getNumFailedSnapshotTransitions());
+            Assertions.assertNotNull(cause);
+            Assertions.assertTrue(cause instanceof IOException);
+            Assertions.assertEquals("FAILED", cause.getMessage());
+            Assertions.assertEquals(1, consumer.getNumFailedSnapshotTransitions());
         }
 
         // Pass on retry
@@ -181,13 +181,13 @@ public class FailedTransitionTest {
         failer.set(true);
         try {
             consumer.triggerRefreshTo(version);
-            Assert.fail();
+            Assertions.fail();
         } catch (Exception e) {
             Throwable cause = e.getCause();
-            Assert.assertNotNull(cause);
-            Assert.assertTrue(cause instanceof IOException);
-            Assert.assertEquals("FAILED", cause.getMessage());
-            Assert.assertEquals(1, consumer.getNumFailedDeltaTransitions());
+            Assertions.assertNotNull(cause);
+            Assertions.assertTrue(cause instanceof IOException);
+            Assertions.assertEquals("FAILED", cause.getMessage());
+            Assertions.assertEquals(1, consumer.getNumFailedDeltaTransitions());
         }
 
         // Pass on retry

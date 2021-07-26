@@ -1,11 +1,11 @@
 package com.netflix.hollow.core.util;
 
+import org.junit.jupiter.api.Test;
+
 import static com.netflix.hollow.core.util.Threads.daemonThread;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import org.junit.Test;
 
 // TODO(timt): tag as MEDIUM test
 public class ThreadsTest {

@@ -8,11 +8,9 @@ import com.netflix.hollow.core.index.HollowPrimaryKeyIndex;
 import com.netflix.hollow.core.write.objectmapper.HollowPrimaryKey;
 import java.util.Arrays;
 import java.util.stream.IntStream;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowProduceIncrementalMultithreadingTest {
 
@@ -21,13 +19,10 @@ public class HollowProduceIncrementalMultithreadingTest {
 
     private InMemoryBlobStore blobStore;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         blobStore = new InMemoryBlobStore();
     }
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void updateAndPublishUsingMultithreading() {
@@ -47,12 +42,12 @@ public class HollowProduceIncrementalMultithreadingTest {
 
             /// now we read the changes and assert
             HollowPrimaryKeyIndex idx = createPrimaryKeyIndex(versionAfterUpdate);
-            Assert.assertFalse(idx.containsDuplicates());
-            Assert.assertTrue(Arrays.stream(notModifiedElementIds)
+            Assertions.assertFalse(idx.containsDuplicates());
+            Assertions.assertTrue(Arrays.stream(notModifiedElementIds)
                     .boxed()
                     .map(elementId -> getHollowObject(idx, elementId))
                     .allMatch(obj -> obj.getInt("value") == obj.getInt("id")));
-            Assert.assertTrue(Arrays.stream(modifiedElementIds)
+            Assertions.assertTrue(Arrays.stream(modifiedElementIds)
                     .boxed()
                     .map(elementId -> getHollowObject(idx, elementId))
                     .allMatch(obj -> obj.getInt("value") != obj.getInt("id")));
@@ -77,11 +72,11 @@ public class HollowProduceIncrementalMultithreadingTest {
 
             /// now we read the changes and assert
             HollowPrimaryKeyIndex idx = createPrimaryKeyIndex(versionAfterDelete);
-            Assert.assertTrue(Arrays.stream(notModifiedElementIds)
+            Assertions.assertTrue(Arrays.stream(notModifiedElementIds)
                     .boxed()
                     .map(elementId -> getHollowObject(idx, elementId))
                     .allMatch(obj -> obj.getInt("value") == obj.getInt("id")));
-            Assert.assertTrue(Arrays.stream(deletedElementIds)
+            Assertions.assertTrue(Arrays.stream(deletedElementIds)
                     .boxed()
                     .map(elementId -> getOrdinal(idx, elementId))
                     .allMatch(ordinal -> ordinal == -1));

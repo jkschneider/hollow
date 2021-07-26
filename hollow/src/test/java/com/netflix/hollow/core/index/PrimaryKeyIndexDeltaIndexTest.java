@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class PrimaryKeyIndexDeltaIndexTest {
     @HollowPrimaryKey(fields = "id")
@@ -70,8 +70,8 @@ public class PrimaryKeyIndexDeltaIndexTest {
                     .toArray();
 
             Arrays.sort(ordinalsToKeep);
-            Assert.assertArrayEquals(ordinalsToKeep, matches);
-            Assert.assertFalse(index.containsDuplicates());
+            Assertions.assertArrayEquals(ordinalsToKeep, matches);
+            Assertions.assertFalse(index.containsDuplicates());
 
 
             // Add all ordinals back
@@ -88,8 +88,8 @@ public class PrimaryKeyIndexDeltaIndexTest {
                     .sorted()
                     .toArray();
 
-            Assert.assertEquals(upper, matches.length);
-            Assert.assertFalse(index.containsDuplicates());
+            Assertions.assertEquals(upper, matches.length);
+            Assertions.assertFalse(index.containsDuplicates());
         }
     }
 }

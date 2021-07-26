@@ -26,8 +26,8 @@ import com.netflix.hollow.core.write.objectmapper.HollowTypeName;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HollowSetHashKeyTest {
     
@@ -44,37 +44,37 @@ public class HollowSetHashKeyTest {
         GenericHollowObject obj = new GenericHollowObject(readEngine, "TestTopLevelObject", 0); 
         
         GenericHollowObject element = (GenericHollowObject) obj.getSet("setById").findElement(1);
-        Assert.assertEquals("US", element.getObject("country").getString("value"));
+        Assertions.assertEquals("US", element.getObject("country").getString("value"));
         element = (GenericHollowObject) obj.getSet("setById").findElement(2);
-        Assert.assertEquals("CA", element.getObject("country").getString("value"));
+        Assertions.assertEquals("CA", element.getObject("country").getString("value"));
         element = (GenericHollowObject) obj.getSet("setById").findElement(3);
-        Assert.assertEquals("IT", element.getObject("country").getString("value"));
+        Assertions.assertEquals("IT", element.getObject("country").getString("value"));
         element = (GenericHollowObject) obj.getSet("setById").findElement(4);
-        Assert.assertEquals("GB", element.getObject("country").getString("value"));
+        Assertions.assertEquals("GB", element.getObject("country").getString("value"));
         element = (GenericHollowObject) obj.getSet("setById").findElement(5);
-        Assert.assertEquals("IT", element.getObject("country").getString("value"));
+        Assertions.assertEquals("IT", element.getObject("country").getString("value"));
 
         element = (GenericHollowObject)obj.getSet("setByIdCountry").findElement(1, "US");
-        Assert.assertEquals(1, element.getInt("id"));
+        Assertions.assertEquals(1, element.getInt("id"));
         element = (GenericHollowObject)obj.getSet("setByIdCountry").findElement(2, "CA");
-        Assert.assertEquals(2, element.getInt("id"));
+        Assertions.assertEquals(2, element.getInt("id"));
         element = (GenericHollowObject)obj.getSet("setByIdCountry").findElement(3, "IT");
-        Assert.assertEquals(3, element.getInt("id"));
+        Assertions.assertEquals(3, element.getInt("id"));
         element = (GenericHollowObject)obj.getSet("setByIdCountry").findElement(4, "GB");
-        Assert.assertEquals(4, element.getInt("id"));
+        Assertions.assertEquals(4, element.getInt("id"));
         element = (GenericHollowObject)obj.getSet("setByIdCountry").findElement(5, "IT");
-        Assert.assertEquals(5, element.getInt("id"));
+        Assertions.assertEquals(5, element.getInt("id"));
         
         element = (GenericHollowObject)obj.getSet("intSet").findElement(100);
-        Assert.assertEquals(100, element.getInt("value"));
+        Assertions.assertEquals(100, element.getInt("value"));
         element = (GenericHollowObject)obj.getSet("intSet").findElement(200);
-        Assert.assertEquals(200, element.getInt("value"));
+        Assertions.assertEquals(200, element.getInt("value"));
         element = (GenericHollowObject)obj.getSet("intSet").findElement(300);
-        Assert.assertEquals(300, element.getInt("value"));
+        Assertions.assertEquals(300, element.getInt("value"));
         element = (GenericHollowObject)obj.getSet("intSet").findElement(400);
-        Assert.assertEquals(400, element.getInt("value"));
+        Assertions.assertEquals(400, element.getInt("value"));
         element = (GenericHollowObject)obj.getSet("intSet").findElement(500);
-        Assert.assertEquals(500, element.getInt("value"));
+        Assertions.assertEquals(500, element.getInt("value"));
     }
     
     

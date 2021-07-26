@@ -16,8 +16,8 @@
  */
 package com.netflix.hollow.core.read.filter;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HollowFilterConfigTest {
 
@@ -29,13 +29,13 @@ public class HollowFilterConfigTest {
         conf.addField("TypeB", "b1");
         conf.addField("TypeB", "b2");
 
-        Assert.assertTrue(conf.doesIncludeType("TypeA"));
-        Assert.assertTrue(conf.getObjectTypeConfig("TypeA").includesField("anyGivenField"));
-        Assert.assertTrue(conf.doesIncludeType("TypeB"));
-        Assert.assertTrue(conf.getObjectTypeConfig("TypeB").includesField("b1"));
-        Assert.assertFalse(conf.getObjectTypeConfig("TypeB").includesField("b3"));
-        Assert.assertFalse(conf.doesIncludeType("TypeC"));
-        Assert.assertFalse(conf.getObjectTypeConfig("TypeC").includesField("asdf"));
+        Assertions.assertTrue(conf.doesIncludeType("TypeA"));
+        Assertions.assertTrue(conf.getObjectTypeConfig("TypeA").includesField("anyGivenField"));
+        Assertions.assertTrue(conf.doesIncludeType("TypeB"));
+        Assertions.assertTrue(conf.getObjectTypeConfig("TypeB").includesField("b1"));
+        Assertions.assertFalse(conf.getObjectTypeConfig("TypeB").includesField("b3"));
+        Assertions.assertFalse(conf.doesIncludeType("TypeC"));
+        Assertions.assertFalse(conf.getObjectTypeConfig("TypeC").includesField("asdf"));
     }
 
     @Test
@@ -46,13 +46,13 @@ public class HollowFilterConfigTest {
         conf.addField("TypeB", "b1");
         conf.addField("TypeB", "b2");
 
-        Assert.assertFalse(conf.doesIncludeType("TypeA"));
-        Assert.assertFalse(conf.getObjectTypeConfig("TypeA").includesField("anyGivenField"));
-        Assert.assertTrue(conf.doesIncludeType("TypeB"));
-        Assert.assertFalse(conf.getObjectTypeConfig("TypeB").includesField("b1"));
-        Assert.assertTrue(conf.getObjectTypeConfig("TypeB").includesField("b3"));
-        Assert.assertTrue(conf.doesIncludeType("TypeC"));
-        Assert.assertTrue(conf.getObjectTypeConfig("TypeC").includesField("anyGivenField"));
+        Assertions.assertFalse(conf.doesIncludeType("TypeA"));
+        Assertions.assertFalse(conf.getObjectTypeConfig("TypeA").includesField("anyGivenField"));
+        Assertions.assertTrue(conf.doesIncludeType("TypeB"));
+        Assertions.assertFalse(conf.getObjectTypeConfig("TypeB").includesField("b1"));
+        Assertions.assertTrue(conf.getObjectTypeConfig("TypeB").includesField("b3"));
+        Assertions.assertTrue(conf.doesIncludeType("TypeC"));
+        Assertions.assertTrue(conf.getObjectTypeConfig("TypeC").includesField("anyGivenField"));
     }
 
     @Test
@@ -68,12 +68,12 @@ public class HollowFilterConfigTest {
 
         System.out.println(configStr);
 
-        Assert.assertFalse(conf.doesIncludeType("TypeA"));
-        Assert.assertFalse(conf.getObjectTypeConfig("TypeA").includesField("anyGivenField"));
-        Assert.assertTrue(conf.doesIncludeType("TypeB"));
-        Assert.assertFalse(conf.getObjectTypeConfig("TypeB").includesField("b1"));
-        Assert.assertTrue(conf.getObjectTypeConfig("TypeB").includesField("b3"));
-        Assert.assertTrue(conf.doesIncludeType("TypeC"));
-        Assert.assertTrue(conf.getObjectTypeConfig("TypeC").includesField("anyGivenField"));
+        Assertions.assertFalse(conf.doesIncludeType("TypeA"));
+        Assertions.assertFalse(conf.getObjectTypeConfig("TypeA").includesField("anyGivenField"));
+        Assertions.assertTrue(conf.doesIncludeType("TypeB"));
+        Assertions.assertFalse(conf.getObjectTypeConfig("TypeB").includesField("b1"));
+        Assertions.assertTrue(conf.getObjectTypeConfig("TypeB").includesField("b3"));
+        Assertions.assertTrue(conf.doesIncludeType("TypeC"));
+        Assertions.assertTrue(conf.getObjectTypeConfig("TypeC").includesField("anyGivenField"));
     }
 }

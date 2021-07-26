@@ -24,15 +24,15 @@ import com.netflix.hollow.core.write.HollowObjectTypeWriteState;
 import com.netflix.hollow.core.write.HollowObjectWriteRecord;
 import java.io.IOException;
 import java.util.BitSet;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowObjectShardedTest extends AbstractStateEngineTest {
 
     HollowObjectSchema schema;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         schema = new HollowObjectSchema("TestObject", 3);
         schema.addField("longField", FieldType.LONG);
@@ -58,14 +58,14 @@ public class HollowObjectShardedTest extends AbstractStateEngineTest {
         
         roundTripSnapshot();
         
-        Assert.assertEquals(4, readStateEngine.getTypeState("TestObject").numShards());
+        Assertions.assertEquals(4, readStateEngine.getTypeState("TestObject").numShards());
         
         for(int i=0;i<1000;i++) {
             GenericHollowObject obj = new GenericHollowObject(readStateEngine, "TestObject", i); 
             
-            Assert.assertEquals(i, obj.getLong("longField"));
-            Assert.assertEquals(i, obj.getInt("intField"));
-            Assert.assertEquals((double)i, obj.getDouble("doubleField"), 0);
+            Assertions.assertEquals(i, obj.getLong("longField"));
+            Assertions.assertEquals(i, obj.getInt("intField"));
+            Assertions.assertEquals((double)i, obj.getDouble("doubleField"), 0);
         }
 
         for(int i=0;i<1000;i++) {
@@ -87,9 +87,9 @@ public class HollowObjectShardedTest extends AbstractStateEngineTest {
         while(ordinal != -1) {
             GenericHollowObject obj = new GenericHollowObject(readStateEngine, "TestObject", ordinal);
             
-            Assert.assertEquals(expectedValue, obj.getLong("longField"));
-            Assert.assertEquals(expectedValue, obj.getInt("intField"));
-            Assert.assertEquals(expectedValue, obj.getDouble("doubleField"), 0);
+            Assertions.assertEquals(expectedValue, obj.getLong("longField"));
+            Assertions.assertEquals(expectedValue, obj.getInt("intField"));
+            Assertions.assertEquals(expectedValue, obj.getDouble("doubleField"), 0);
             
             expectedValue += 2;
             ordinal = populatedOrdinals.nextSetBit(ordinal+1);

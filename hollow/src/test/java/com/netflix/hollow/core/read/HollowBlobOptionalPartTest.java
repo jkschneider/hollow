@@ -41,8 +41,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Collections;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HollowBlobOptionalPartTest {
 
@@ -83,11 +83,11 @@ public class HollowBlobOptionalPartTest {
 
         GenericHollowObject obj = new GenericHollowObject(readEngine, "TypeA", 1);
 
-        Assert.assertEquals("2", obj.getObject("a1").getString("value"));
-        Assert.assertEquals(2, obj.getInt("a2"));
-        Assert.assertEquals(2L, obj.getObject("b").getLong("b2"));
+        Assertions.assertEquals("2", obj.getObject("a1").getString("value"));
+        Assertions.assertEquals(2, obj.getInt("a2"));
+        Assertions.assertEquals(2L, obj.getObject("b").getLong("b2"));
 
-        Assert.assertNull(readEngine.getTypeState("TypeC"));
+        Assertions.assertNull(readEngine.getTypeState("TypeC"));
     }
 
     @Test
@@ -124,12 +124,12 @@ public class HollowBlobOptionalPartTest {
 
         GenericHollowObject obj = new GenericHollowObject(consumer.getStateEngine(), "TypeA", 3);
 
-        Assert.assertEquals("4", obj.getObject("a1").getString("value"));
-        Assert.assertEquals(4, obj.getInt("a2"));
-        Assert.assertEquals(4L, obj.getObject("b").getLong("b2"));
+        Assertions.assertEquals("4", obj.getObject("a1").getString("value"));
+        Assertions.assertEquals(4, obj.getInt("a2"));
+        Assertions.assertEquals(4L, obj.getObject("b").getLong("b2"));
 
-        Assert.assertFalse(consumer.getStateEngine().getTypeState("TypeB").getPopulatedOrdinals().get(1));
-        Assert.assertNull(consumer.getStateEngine().getTypeState("TypeC"));
+        Assertions.assertFalse(consumer.getStateEngine().getTypeState("TypeB").getPopulatedOrdinals().get(1));
+        Assertions.assertNull(consumer.getStateEngine().getTypeState("TypeC"));
     }
     
     @Test
@@ -185,9 +185,9 @@ public class HollowBlobOptionalPartTest {
 
         try {
             reader.readSnapshot(mainPartInput, optionalPartInput, TypeFilter.newTypeFilter().build());
-            Assert.fail("Should have thrown Exception");
+            Assertions.fail("Should have thrown Exception");
         } catch(IllegalArgumentException ex) {
-            Assert.assertEquals("Optional blob part C does not appear to be matched with the main input", ex.getMessage());
+            Assertions.assertEquals("Optional blob part C does not appear to be matched with the main input", ex.getMessage());
         }
     }
 
@@ -273,9 +273,9 @@ public class HollowBlobOptionalPartTest {
         
         try {
             reader.applyDelta(mainPartInput, optionalPartInput);
-            Assert.fail("Should have thrown Exception");
+            Assertions.fail("Should have thrown Exception");
         } catch(IllegalArgumentException ex) {
-            Assert.assertEquals("Optional blob part B does not appear to be matched with the main input", ex.getMessage());
+            Assertions.assertEquals("Optional blob part B does not appear to be matched with the main input", ex.getMessage());
         }
     }
     
@@ -308,11 +308,11 @@ public class HollowBlobOptionalPartTest {
 
         GenericHollowObject obj = new GenericHollowObject(consumer.getStateEngine(), "TypeA", 1);
 
-        Assert.assertEquals("2", obj.getObject("a1").getString("value"));
-        Assert.assertEquals(2, obj.getInt("a2"));
-        Assert.assertEquals(2L, obj.getObject("b").getLong("b2"));
+        Assertions.assertEquals("2", obj.getObject("a1").getString("value"));
+        Assertions.assertEquals(2, obj.getInt("a2"));
+        Assertions.assertEquals(2L, obj.getObject("b").getLong("b2"));
 
-        Assert.assertNull(consumer.getStateEngine().getTypeState("TypeC"));
+        Assertions.assertNull(consumer.getStateEngine().getTypeState("TypeC"));
     }
 
 

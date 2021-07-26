@@ -1,7 +1,7 @@
 package com.netflix.hollow.api.consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.netflix.hollow.api.client.HollowAPIFactory;
 import com.netflix.hollow.api.metrics.HollowConsumerMetrics;
@@ -12,9 +12,9 @@ import com.netflix.hollow.core.read.filter.TypeFilter;
 import com.netflix.hollow.core.util.HollowObjectHashCodeFinder;
 import java.util.List;
 import java.util.concurrent.Executor;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 // this test doesn't do much beyond making sure that a custom builder will
 // compile and ensure that HollowConsumer.Builder is parameterized correctly
@@ -24,7 +24,7 @@ public class CustomConsumerBuilderTest {
 
     private InMemoryBlobStore blobStore;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         blobStore = new InMemoryBlobStore();
     }
@@ -34,7 +34,7 @@ public class CustomConsumerBuilderTest {
         HollowConsumer consumer = new AugmentedBuilder()
                 .withBlobRetriever(blobStore)
                 .build();
-        Assert.assertNotNull(consumer);
+        Assertions.assertNotNull(consumer);
         assertThat(consumer).isNotInstanceOf(AugmentedConsumer.class);
     }
 

@@ -28,16 +28,16 @@ import com.netflix.hollow.core.write.HollowObjectTypeWriteState;
 import com.netflix.hollow.core.write.HollowObjectWriteRecord;
 import com.netflix.hollow.tools.history.keyindex.HollowHistoryKeyIndex;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowHistoryKeyIndexTest extends AbstractStateEngineTest {
 
     private HollowObjectSchema aSchema;
     private HollowObjectSchema bSchema;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         aSchema = new HollowObjectSchema("A", 3);
         aSchema.addField("id", FieldType.FLOAT);
@@ -91,19 +91,19 @@ public class HollowHistoryKeyIndexTest extends AbstractStateEngineTest {
 
         HollowObjectTypeReadState typeState = (HollowObjectTypeReadState) readStateEngine.getTypeState("A");
 
-        Assert.assertEquals(0, keyIdx.getRecordKeyOrdinal(typeState, 0));
-        Assert.assertEquals("1.1:one", keyIdx.getKeyDisplayString("A", 0));
+        Assertions.assertEquals(0, keyIdx.getRecordKeyOrdinal(typeState, 0));
+        Assertions.assertEquals("1.1:one", keyIdx.getKeyDisplayString("A", 0));
 
-        Assert.assertEquals(4, keyIdx.getRecordKeyOrdinal(typeState, 1));
-        Assert.assertEquals("5.5:five!", keyIdx.getKeyDisplayString("A", 4));
+        Assertions.assertEquals(4, keyIdx.getRecordKeyOrdinal(typeState, 1));
+        Assertions.assertEquals("5.5:five!", keyIdx.getKeyDisplayString("A", 4));
 
-        Assert.assertEquals(2, keyIdx.getRecordKeyOrdinal(typeState, 2));
-        Assert.assertEquals("3.3:one", keyIdx.getKeyDisplayString("A", 2));
+        Assertions.assertEquals(2, keyIdx.getRecordKeyOrdinal(typeState, 2));
+        Assertions.assertEquals("3.3:one", keyIdx.getKeyDisplayString("A", 2));
 
-        Assert.assertEquals(3, keyIdx.getRecordKeyOrdinal(typeState, 3));
-        Assert.assertEquals("4.4:four", keyIdx.getKeyDisplayString("A", 3));
+        Assertions.assertEquals(3, keyIdx.getRecordKeyOrdinal(typeState, 3));
+        Assertions.assertEquals("4.4:four", keyIdx.getKeyDisplayString("A", 3));
 
-        Assert.assertEquals("2.2:two", keyIdx.getKeyDisplayString("A", 1));
+        Assertions.assertEquals("2.2:two", keyIdx.getKeyDisplayString("A", 1));
 
 
         /// query returns all matching keys
@@ -129,12 +129,12 @@ public class HollowHistoryKeyIndexTest extends AbstractStateEngineTest {
     private void assertResults(HollowHistoryKeyIndex keyIdx, String type, String query, int... expectedResults) {
         IntList actualResults = keyIdx.getTypeKeyIndexes().get(type).queryIndexedFields(query);
 
-        Assert.assertEquals(expectedResults.length, actualResults.size());
+        Assertions.assertEquals(expectedResults.length, actualResults.size());
 
         actualResults.sort();
 
         for(int i=0;i<expectedResults.length;i++) {
-            Assert.assertEquals(expectedResults[i], actualResults.get(i));
+            Assertions.assertEquals(expectedResults[i], actualResults.get(i));
         }
     }
 

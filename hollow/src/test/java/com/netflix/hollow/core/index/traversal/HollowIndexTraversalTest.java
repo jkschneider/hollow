@@ -21,6 +21,8 @@ import com.netflix.hollow.core.write.objectmapper.HollowObjectMapper;
 import com.netflix.hollow.core.write.objectmapper.TypeA;
 import com.netflix.hollow.core.write.objectmapper.TypeB;
 import com.netflix.hollow.core.write.objectmapper.TypeC;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +31,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import org.junit.Test;
 
 public class HollowIndexTraversalTest extends AbstractStateEngineTest {
 

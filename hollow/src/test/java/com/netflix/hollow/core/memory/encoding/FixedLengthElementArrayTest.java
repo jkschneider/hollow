@@ -19,8 +19,8 @@ package com.netflix.hollow.core.memory.encoding;
 import com.netflix.hollow.core.memory.FixedLengthData;
 import com.netflix.hollow.core.memory.pool.WastefulRecycler;
 import java.util.Random;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class FixedLengthElementArrayTest {
 
@@ -39,7 +39,7 @@ public class FixedLengthElementArrayTest {
         for(int j=0;j<100;j++) {
             for(int i=0;i<1000000;i++) {
                 if(testValue != arr.getElementValue(i*numBitsPerElement, numBitsPerElement, bitMask))
-                    Assert.fail();
+                    Assertions.fail();
             }
         }
     }
@@ -63,25 +63,25 @@ public class FixedLengthElementArrayTest {
         // Validate address of ordinal 2 is unaligned by 6 bits
         long offset_ord2 = 2 * numBitsPerElement;
         if(offset_ord2 % 8 != 6) {
-            Assert.fail();
+            Assertions.fail();
         }
 
         // Validate address of ordinal 5 is unaligned by 7 bits
         long offset_ord5 = 5 * numBitsPerElement;
         if(offset_ord5 % 8 != 7) {
-            Assert.fail();
+            Assertions.fail();
         }
 
         // Show value is incorrect when reading ordinal 2
         long value_ord2 = arr.getElementValue(offset_ord2, numBitsPerElement);
         if(value_ord2 == testValue) {
-            Assert.fail();
+            Assertions.fail();
         }
 
         // Show value is incorrect when reading ordinal 5
         long value_ord5 = arr.getElementValue(offset_ord2, numBitsPerElement);
         if(value_ord5 == testValue) {
-            Assert.fail();
+            Assertions.fail();
         }
 
         // Show value is correct when reading other ordinals
@@ -89,7 +89,7 @@ public class FixedLengthElementArrayTest {
             if(i!=2 && i!=5) {
                 long value = arr.getElementValue(i * numBitsPerElement, numBitsPerElement);
                 if (value != testValue) {
-                    Assert.fail();
+                    Assertions.fail();
                 }
             }
         }
@@ -114,7 +114,7 @@ public class FixedLengthElementArrayTest {
         // Validate address of ordinal 3 is unaligned by 7 bits
         long bitOffset = 3 * numBitsPerElement;
         if(bitOffset % 8 != 7) {
-            Assert.fail();
+            Assertions.fail();
         }
 
         // Read 2 values at once (ordinals 3 and 4)
@@ -123,19 +123,19 @@ public class FixedLengthElementArrayTest {
         // Show second value is incorrect due to overflow when reading 2 values
         long secondValue = multiValue >> numBitsPerElement;
         if(secondValue == testValue) {
-            Assert.fail();
+            Assertions.fail();
         }
 
         // Show first value is correct when reading single value
         long firstValue = arr.getElementValue(bitOffset, numBitsPerElement);
         if(firstValue != testValue) {
-            Assert.fail();
+            Assertions.fail();
         }
 
         // Show second value is correct when reading single value
         secondValue = arr.getElementValue(bitOffset+numBitsPerElement, numBitsPerElement);
         if(secondValue != testValue) {
-            Assert.fail();
+            Assertions.fail();
         }
     }
 
@@ -158,7 +158,7 @@ public class FixedLengthElementArrayTest {
         // Validate address of ordinal 5 is unaligned by 7 bits
         long bitOffset = 5 * numBitsPerElement;
         if(bitOffset % 8 != 7) {
-            Assert.fail();
+            Assertions.fail();
         }
 
         // Read 2 values at once (ordinals 5 and 6)
@@ -167,7 +167,7 @@ public class FixedLengthElementArrayTest {
         // Validate second value is correct (no overflow)
         long secondValue = multiValue >> numBitsPerElement;
         if(secondValue != testValue) {
-            Assert.fail();
+            Assertions.fail();
         }
     }
 
@@ -175,7 +175,7 @@ public class FixedLengthElementArrayTest {
     public void testGetEmpty() {
         FixedLengthElementArray arr = new FixedLengthElementArray(
                 WastefulRecycler.SMALL_ARRAY_RECYCLER, 17000);
-        Assert.assertEquals(0, arr.getElementValue(0, 4));
+        Assertions.assertEquals(0, arr.getElementValue(0, 4));
     }
 
     @Test
@@ -192,7 +192,7 @@ public class FixedLengthElementArrayTest {
         for(int j=0;j<100;j++) {
             for(int i=0;i<10000;i++) {
                 if(testValue != arr.getLargeElementValue(i*numBitsPerElement, numBitsPerElement))
-                    Assert.fail();
+                    Assertions.fail();
             }
         }
     }
@@ -232,7 +232,7 @@ public class FixedLengthElementArrayTest {
                 long toLong = dest.getElementValue(compareBitStart + copyToRangeOffset, bitsToCompare);
 
                 if(fromLong != toLong)
-                    Assert.fail();
+                    Assertions.fail();
 
                 numBitsLeftToCompare -= bitsToCompare;
                 compareBitStart += bitsToCompare;
@@ -249,9 +249,9 @@ public class FixedLengthElementArrayTest {
 
         arrTo.copyBits(arrFrom, 10, 10, 10);
 
-        Assert.assertEquals(0, arrTo.getElementValue(0, 10));
-        Assert.assertEquals(1023, arrTo.getElementValue(10, 10));
-        Assert.assertEquals(0, arrTo.getLargeElementValue(20, 10));
+        Assertions.assertEquals(0, arrTo.getElementValue(0, 10));
+        Assertions.assertEquals(1023, arrTo.getElementValue(10, 10));
+        Assertions.assertEquals(0, arrTo.getLargeElementValue(20, 10));
 
     }
 
@@ -273,14 +273,14 @@ public class FixedLengthElementArrayTest {
 
         for(int i=0;i<1000000;i+=65) {
             long val = arr.getElementValue(i, 60);
-            Assert.assertEquals(startVal + i + 1000, val);
+            Assertions.assertEquals(startVal + i + 1000, val);
         }
 
         arr.incrementMany(0, -2000, 65, elementCount);
 
         for(int i=0;i<1000000;i+=65) {
             long val = arr.getElementValue(i, 60);
-            Assert.assertEquals(startVal + i - 1000, val);
+            Assertions.assertEquals(startVal + i - 1000, val);
         }
 
     }
@@ -305,14 +305,14 @@ public class FixedLengthElementArrayTest {
 
     @Test
     public void convenienceMethodForNumberOfBitsRequiredForValue() {
-        Assert.assertEquals(1, FixedLengthData.bitsRequiredToRepresentValue(0));
-        Assert.assertEquals(1, FixedLengthData.bitsRequiredToRepresentValue(1));
-        Assert.assertEquals(2, FixedLengthData.bitsRequiredToRepresentValue(2));
-        Assert.assertEquals(2, FixedLengthData.bitsRequiredToRepresentValue(3));
-        Assert.assertEquals(3, FixedLengthData.bitsRequiredToRepresentValue(4));
-        Assert.assertEquals(5, FixedLengthData.bitsRequiredToRepresentValue(16));
-        Assert.assertEquals(5, FixedLengthData.bitsRequiredToRepresentValue(31));
-        Assert.assertEquals(63, FixedLengthData.bitsRequiredToRepresentValue(Long.MAX_VALUE));
+        Assertions.assertEquals(1, FixedLengthData.bitsRequiredToRepresentValue(0));
+        Assertions.assertEquals(1, FixedLengthData.bitsRequiredToRepresentValue(1));
+        Assertions.assertEquals(2, FixedLengthData.bitsRequiredToRepresentValue(2));
+        Assertions.assertEquals(2, FixedLengthData.bitsRequiredToRepresentValue(3));
+        Assertions.assertEquals(3, FixedLengthData.bitsRequiredToRepresentValue(4));
+        Assertions.assertEquals(5, FixedLengthData.bitsRequiredToRepresentValue(16));
+        Assertions.assertEquals(5, FixedLengthData.bitsRequiredToRepresentValue(31));
+        Assertions.assertEquals(63, FixedLengthData.bitsRequiredToRepresentValue(Long.MAX_VALUE));
     }
 
 }

@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class LocalBlobStoreTest {
     @Test
@@ -27,7 +27,7 @@ public class LocalBlobStoreTest {
         HollowConsumer consumer = HollowConsumer.withBlobRetriever(bs)
                 .withLocalBlobStore(localDir).build();
         consumer.triggerRefreshTo(v1);
-        Assert.assertEquals(v1, consumer.getCurrentVersionId());
+        Assertions.assertEquals(v1, consumer.getCurrentVersionId());
         assertNSnapshots(1, localDir);
 
         long v2 = producer.runCycle(ws -> {
@@ -39,7 +39,7 @@ public class LocalBlobStoreTest {
         
         consumer.triggerRefreshTo(v2);
         
-        Assert.assertEquals(v2, consumer.getCurrentVersionId());
+        Assertions.assertEquals(v2, consumer.getCurrentVersionId());
         assertNSnapshots(2, localDir);
         assertNDeltas(0, localDir);
     }
@@ -61,7 +61,7 @@ public class LocalBlobStoreTest {
         HollowConsumer consumer = HollowConsumer.withBlobRetriever(bs)
                 .withLocalBlobStore(localDir, true).build();
         consumer.triggerRefreshTo(v1);
-        Assert.assertEquals(v1, consumer.getCurrentVersionId());
+        Assertions.assertEquals(v1, consumer.getCurrentVersionId());
         assertNSnapshots(1, localDir);
 
         long v2 = producer.runCycle(ws -> {
@@ -73,7 +73,7 @@ public class LocalBlobStoreTest {
                 .withLocalBlobStore(localDir, true).build();
         consumer.triggerRefreshTo(v2);
 
-        Assert.assertEquals(v2, consumer.getCurrentVersionId());
+        Assertions.assertEquals(v2, consumer.getCurrentVersionId());
         assertNSnapshots(1, localDir);
         assertNSnapshots(1, "LONG", localDir);
         assertNDeltas(1, localDir);
@@ -97,7 +97,7 @@ public class LocalBlobStoreTest {
         HollowConsumer consumer = HollowConsumer.withBlobRetriever(bs)
                 .withLocalBlobStore(localDir, true).build();
         consumer.triggerRefreshTo(v1);
-        Assert.assertEquals(v1, consumer.getCurrentVersionId());
+        Assertions.assertEquals(v1, consumer.getCurrentVersionId());
         assertNSnapshots(1, localDir);
 
         long v2 = producer.runCycle(ws -> {
@@ -109,7 +109,7 @@ public class LocalBlobStoreTest {
                 .withLocalBlobStore(localDir, true).build();
         consumer.triggerRefreshTo(v2);
 
-        Assert.assertEquals(v2, consumer.getCurrentVersionId());
+        Assertions.assertEquals(v2, consumer.getCurrentVersionId());
         assertNSnapshots(1, localDir);
         assertNSnapshots(0, "LONG", localDir);
         assertNDeltas(1, localDir);
@@ -131,24 +131,24 @@ public class LocalBlobStoreTest {
     static void assertNSnapshots(int n, File localDir) throws IOException {
         long nSnapshots = Files.list(localDir.toPath()).filter(p -> p.getFileName().toString().startsWith("snapshot-"))
                 .count();
-        Assert.assertEquals(n, nSnapshots);
+        Assertions.assertEquals(n, nSnapshots);
     }
 
     static void assertNDeltas(int n, File localDir) throws IOException {
         long nDeltas = Files.list(localDir.toPath()).filter(p -> p.getFileName().toString().startsWith("delta-"))
                 .count();
-        Assert.assertEquals(n, nDeltas);
+        Assertions.assertEquals(n, nDeltas);
     }
 
     static void assertNSnapshots(int n, String optionalPart, File localDir) throws IOException {
         long nSnapshots = Files.list(localDir.toPath()).filter(p -> p.getFileName().toString().startsWith("snapshot_" + optionalPart + "-"))
                 .count();
-        Assert.assertEquals(n, nSnapshots);
+        Assertions.assertEquals(n, nSnapshots);
     }
     
     static void assertNDeltas(int n, String optionalPart, File localDir) throws IOException {
         long nDeltas = Files.list(localDir.toPath()).filter(p -> p.getFileName().toString().startsWith("delta_" + optionalPart + "-"))
                 .count();
-        Assert.assertEquals(n, nDeltas);
+        Assertions.assertEquals(n, nDeltas);
     }    
 }

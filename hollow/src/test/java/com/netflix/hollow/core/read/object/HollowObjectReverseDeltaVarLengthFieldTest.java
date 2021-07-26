@@ -24,8 +24,8 @@ import com.netflix.hollow.core.write.HollowBlobWriter;
 import com.netflix.hollow.core.write.objectmapper.HollowObjectMapper;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HollowObjectReverseDeltaVarLengthFieldTest extends AbstractStateEngineTest {
 
@@ -63,7 +63,7 @@ public class HollowObjectReverseDeltaVarLengthFieldTest extends AbstractStateEng
 		reader.applyDelta(HollowBlobInput.serial(reverseDelta2));
 		reader.applyDelta(HollowBlobInput.serial(reverseDelta1));
 		
-		Assert.assertEquals("four", ((HollowObjectTypeReadState)readStateEngine.getTypeState("String")).readString(3, 0));
+		Assertions.assertEquals("four", ((HollowObjectTypeReadState)readStateEngine.getTypeState("String")).readString(3, 0));
 	}
 
 	private byte[] getReverseDelta() throws IOException {

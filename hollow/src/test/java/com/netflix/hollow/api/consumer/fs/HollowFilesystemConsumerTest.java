@@ -8,8 +8,8 @@ import com.netflix.hollow.core.write.objectmapper.HollowPrimaryKey;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HollowFilesystemConsumerTest {
 
@@ -42,8 +42,8 @@ public class HollowFilesystemConsumerTest {
         GenericHollowObject obj1 = new GenericHollowObject(consumer.getStateEngine(), "Entity", 0);
         GenericHollowObject obj4 = new GenericHollowObject(consumer.getStateEngine(), "Entity", 3);
 
-        Assert.assertEquals(1, obj1.getInt("id"));
-        Assert.assertEquals(4, obj4.getInt("id"));
+        Assertions.assertEquals(1, obj1.getInt("id"));
+        Assertions.assertEquals(4, obj4.getInt("id"));
     }
 
     static File createLocalDir() throws IOException {

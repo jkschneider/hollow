@@ -11,9 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -31,11 +31,11 @@ public class AbstractRefreshMetricsListenerTest {
     class TestRefreshMetricsListener extends AbstractRefreshMetricsListener {
         @Override
         public void refreshEndMetricsReporting(ConsumerRefreshMetrics refreshMetrics) {
-            Assert.assertNotNull(refreshMetrics);
+            Assertions.assertNotNull(refreshMetrics);
         }
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         concreteRefreshMetricsListener = new TestRefreshMetricsListener();
 
@@ -47,16 +47,16 @@ public class AbstractRefreshMetricsListenerTest {
     public void testRefreshStartedWithInitialLoad() {
         concreteRefreshMetricsListener.refreshStarted(VERSION_NONE, TEST_VERSION_HIGH);
         ConsumerRefreshMetrics refreshMetrics = concreteRefreshMetricsListener.refreshMetricsBuilder.build();
-        Assert.assertEquals(true, refreshMetrics.getIsInitialLoad());
-        Assert.assertNotNull(refreshMetrics.getUpdatePlanDetails());
+        Assertions.assertEquals(true, refreshMetrics.getIsInitialLoad());
+        Assertions.assertNotNull(refreshMetrics.getUpdatePlanDetails());
     }
 
     @Test
     public void testRefreshStartedWithSubsequentLoad() {
         concreteRefreshMetricsListener.refreshStarted(TEST_VERSION_LOW, TEST_VERSION_HIGH);
         ConsumerRefreshMetrics refreshMetrics = concreteRefreshMetricsListener.refreshMetricsBuilder.build();
-        Assert.assertFalse(refreshMetrics.getIsInitialLoad());
-        Assert.assertNotNull(refreshMetrics.getUpdatePlanDetails());
+        Assertions.assertFalse(refreshMetrics.getIsInitialLoad());
+        Assertions.assertNotNull(refreshMetrics.getUpdatePlanDetails());
     }
 
     @Test
@@ -70,10 +70,10 @@ public class AbstractRefreshMetricsListenerTest {
         concreteRefreshMetricsListener.transitionsPlanned(TEST_VERSION_LOW, TEST_VERSION_HIGH, true, testTransitionSequence);
         ConsumerRefreshMetrics refreshMetrics = concreteRefreshMetricsListener.refreshMetricsBuilder.build();
 
-        Assert.assertEquals(HollowConsumer.Blob.BlobType.SNAPSHOT, refreshMetrics.getOverallRefreshType());
-        Assert.assertEquals(TEST_VERSION_HIGH, refreshMetrics.getUpdatePlanDetails().getDesiredVersion());
-        Assert.assertEquals(TEST_VERSION_LOW, refreshMetrics.getUpdatePlanDetails().getBeforeVersion());
-        Assert.assertEquals(testTransitionSequence, refreshMetrics.getUpdatePlanDetails().getTransitionSequence());
+        Assertions.assertEquals(HollowConsumer.Blob.BlobType.SNAPSHOT, refreshMetrics.getOverallRefreshType());
+        Assertions.assertEquals(TEST_VERSION_HIGH, refreshMetrics.getUpdatePlanDetails().getDesiredVersion());
+        Assertions.assertEquals(TEST_VERSION_LOW, refreshMetrics.getUpdatePlanDetails().getBeforeVersion());
+        Assertions.assertEquals(testTransitionSequence, refreshMetrics.getUpdatePlanDetails().getTransitionSequence());
     }
 
     @Test
@@ -87,10 +87,10 @@ public class AbstractRefreshMetricsListenerTest {
         concreteRefreshMetricsListener.transitionsPlanned(TEST_VERSION_LOW, TEST_VERSION_HIGH, false, testTransitionSequence);
         ConsumerRefreshMetrics refreshMetrics = concreteRefreshMetricsListener.refreshMetricsBuilder.build();
 
-        Assert.assertEquals(HollowConsumer.Blob.BlobType.DELTA, refreshMetrics.getOverallRefreshType());
-        Assert.assertEquals(TEST_VERSION_HIGH, refreshMetrics.getUpdatePlanDetails().getDesiredVersion());
-        Assert.assertEquals(TEST_VERSION_LOW, refreshMetrics.getUpdatePlanDetails().getBeforeVersion());
-        Assert.assertEquals(testTransitionSequence, refreshMetrics.getUpdatePlanDetails().getTransitionSequence());
+        Assertions.assertEquals(HollowConsumer.Blob.BlobType.DELTA, refreshMetrics.getOverallRefreshType());
+        Assertions.assertEquals(TEST_VERSION_HIGH, refreshMetrics.getUpdatePlanDetails().getDesiredVersion());
+        Assertions.assertEquals(TEST_VERSION_LOW, refreshMetrics.getUpdatePlanDetails().getBeforeVersion());
+        Assertions.assertEquals(testTransitionSequence, refreshMetrics.getUpdatePlanDetails().getTransitionSequence());
     }
 
     @Test
@@ -104,10 +104,10 @@ public class AbstractRefreshMetricsListenerTest {
         concreteRefreshMetricsListener.transitionsPlanned(TEST_VERSION_HIGH, TEST_VERSION_LOW, false, testTransitionSequence);
         ConsumerRefreshMetrics refreshMetrics = concreteRefreshMetricsListener.refreshMetricsBuilder.build();
 
-        Assert.assertEquals(HollowConsumer.Blob.BlobType.REVERSE_DELTA, refreshMetrics.getOverallRefreshType());
-        Assert.assertEquals(TEST_VERSION_LOW, refreshMetrics.getUpdatePlanDetails().getDesiredVersion());
-        Assert.assertEquals(TEST_VERSION_HIGH, refreshMetrics.getUpdatePlanDetails().getBeforeVersion());
-        Assert.assertEquals(testTransitionSequence, refreshMetrics.getUpdatePlanDetails().getTransitionSequence());
+        Assertions.assertEquals(HollowConsumer.Blob.BlobType.REVERSE_DELTA, refreshMetrics.getOverallRefreshType());
+        Assertions.assertEquals(TEST_VERSION_LOW, refreshMetrics.getUpdatePlanDetails().getDesiredVersion());
+        Assertions.assertEquals(TEST_VERSION_HIGH, refreshMetrics.getUpdatePlanDetails().getBeforeVersion());
+        Assertions.assertEquals(testTransitionSequence, refreshMetrics.getUpdatePlanDetails().getTransitionSequence());
     }
 
     @Test
@@ -115,11 +115,11 @@ public class AbstractRefreshMetricsListenerTest {
         class SuccessTestRefreshMetricsListener extends AbstractRefreshMetricsListener {
             @Override
             public void refreshEndMetricsReporting(ConsumerRefreshMetrics refreshMetrics) {
-                Assert.assertEquals(0l, refreshMetrics.getConsecutiveFailures());
-                Assert.assertEquals(true, refreshMetrics.getIsRefreshSuccess());
-                Assert.assertEquals(0l, refreshMetrics.getRefreshSuccessAgeMillisOptional().getAsLong());
-                Assert.assertNotEquals(0l, refreshMetrics.getRefreshEndTimeNano());
-                Assert.assertEquals(TEST_CYCLE_START_TIMESTAMP, refreshMetrics.getCycleStartTimestamp().getAsLong());
+                Assertions.assertEquals(0l, refreshMetrics.getConsecutiveFailures());
+                Assertions.assertEquals(true, refreshMetrics.getIsRefreshSuccess());
+                Assertions.assertEquals(0l, refreshMetrics.getRefreshSuccessAgeMillisOptional().getAsLong());
+                Assertions.assertNotEquals(0l, refreshMetrics.getRefreshEndTimeNano());
+                Assertions.assertEquals(TEST_CYCLE_START_TIMESTAMP, refreshMetrics.getCycleStartTimestamp().getAsLong());
             }
         }
         SuccessTestRefreshMetricsListener successTestRefreshMetricsListener = new SuccessTestRefreshMetricsListener();
@@ -136,11 +136,11 @@ public class AbstractRefreshMetricsListenerTest {
         class FailureTestRefreshMetricsListener extends AbstractRefreshMetricsListener {
             @Override
             public void refreshEndMetricsReporting(ConsumerRefreshMetrics refreshMetrics) {
-                Assert.assertNotEquals(0l, refreshMetrics.getConsecutiveFailures());
-                Assert.assertFalse(refreshMetrics.getIsRefreshSuccess());
-                Assert.assertNotEquals(Optional.empty(), refreshMetrics.getRefreshSuccessAgeMillisOptional());
-                Assert.assertNotEquals(0l, refreshMetrics.getRefreshEndTimeNano());
-                Assert.assertFalse(refreshMetrics.getCycleStartTimestamp().isPresent());
+                Assertions.assertNotEquals(0l, refreshMetrics.getConsecutiveFailures());
+                Assertions.assertFalse(refreshMetrics.getIsRefreshSuccess());
+                Assertions.assertNotEquals(Optional.empty(), refreshMetrics.getRefreshSuccessAgeMillisOptional());
+                Assertions.assertNotEquals(0l, refreshMetrics.getRefreshEndTimeNano());
+                Assertions.assertFalse(refreshMetrics.getCycleStartTimestamp().isPresent());
             }
         }
         FailureTestRefreshMetricsListener failTestRefreshMetricsListener = new FailureTestRefreshMetricsListener();
@@ -154,8 +154,8 @@ public class AbstractRefreshMetricsListenerTest {
         class SuccessTestRefreshMetricsListener extends AbstractRefreshMetricsListener {
             @Override
             public void refreshEndMetricsReporting(ConsumerRefreshMetrics refreshMetrics) {
-                Assert.assertEquals(3, refreshMetrics.getUpdatePlanDetails().getNumSuccessfulTransitions());
-                Assert.assertEquals(TEST_CYCLE_START_TIMESTAMP, refreshMetrics.getCycleStartTimestamp().getAsLong());
+                Assertions.assertEquals(3, refreshMetrics.getUpdatePlanDetails().getNumSuccessfulTransitions());
+                Assertions.assertEquals(TEST_CYCLE_START_TIMESTAMP, refreshMetrics.getCycleStartTimestamp().getAsLong());
             }
         }
         List<HollowConsumer.Blob.BlobType> testTransitionSequence = new ArrayList<HollowConsumer.Blob.BlobType>() {{
@@ -188,8 +188,8 @@ public class AbstractRefreshMetricsListenerTest {
         class FailureTestRefreshMetricsListener extends AbstractRefreshMetricsListener {
             @Override
             public void refreshEndMetricsReporting(ConsumerRefreshMetrics refreshMetrics) {
-                Assert.assertEquals(1, refreshMetrics.getUpdatePlanDetails().getNumSuccessfulTransitions());
-                Assert.assertEquals(TEST_CYCLE_START_TIMESTAMP, refreshMetrics.getCycleStartTimestamp().getAsLong());
+                Assertions.assertEquals(1, refreshMetrics.getUpdatePlanDetails().getNumSuccessfulTransitions());
+                Assertions.assertEquals(TEST_CYCLE_START_TIMESTAMP, refreshMetrics.getCycleStartTimestamp().getAsLong());
             }
         }
         List<HollowConsumer.Blob.BlobType> testTransitionSequence = new ArrayList<HollowConsumer.Blob.BlobType>() {{

@@ -17,8 +17,8 @@
 package com.netflix.hollow.core.schema;
 
 import com.netflix.hollow.core.index.key.PrimaryKey;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HollowSetSchemaTest {
 
@@ -28,21 +28,21 @@ public class HollowSetSchemaTest {
             HollowSetSchema s1 = new HollowSetSchema("Test", "TypeA");
             HollowSetSchema s2 = new HollowSetSchema("Test", "TypeA");
 
-            Assert.assertEquals(s1, s2);
+            Assertions.assertEquals(s1, s2);
         }
 
         {
             HollowSetSchema s1 = new HollowSetSchema("Test", "TypeA");
             HollowSetSchema s2 = new HollowSetSchema("Test2", "TypeA");
 
-            Assert.assertNotEquals(s1, s2);
+            Assertions.assertNotEquals(s1, s2);
         }
 
         {
             HollowSetSchema s1 = new HollowSetSchema("Test", "TypeA");
             HollowSetSchema s2 = new HollowSetSchema("Test", "TypeB");
 
-            Assert.assertNotEquals(s1, s2);
+            Assertions.assertNotEquals(s1, s2);
         }
     }
 
@@ -52,34 +52,34 @@ public class HollowSetSchemaTest {
             HollowSetSchema s1 = new HollowSetSchema("Test", "TypeA", "f1");
             HollowSetSchema s2 = new HollowSetSchema("Test", "TypeA", "f1");
 
-            Assert.assertEquals(s1, s2);
-            Assert.assertEquals(s1.getHashKey(), s2.getHashKey());
-            Assert.assertEquals(new PrimaryKey("TypeA", "f1"), s2.getHashKey());
+            Assertions.assertEquals(s1, s2);
+            Assertions.assertEquals(s1.getHashKey(), s2.getHashKey());
+            Assertions.assertEquals(new PrimaryKey("TypeA", "f1"), s2.getHashKey());
         }
 
         {
             HollowSetSchema s1 = new HollowSetSchema("Test", "TypeA", "f1", "f2");
             HollowSetSchema s2 = new HollowSetSchema("Test", "TypeA", "f1", "f2");
 
-            Assert.assertEquals(s1, s2);
-            Assert.assertEquals(s1.getHashKey(), s2.getHashKey());
-            Assert.assertEquals(new PrimaryKey("TypeA", "f1", "f2"), s2.getHashKey());
+            Assertions.assertEquals(s1, s2);
+            Assertions.assertEquals(s1.getHashKey(), s2.getHashKey());
+            Assertions.assertEquals(new PrimaryKey("TypeA", "f1", "f2"), s2.getHashKey());
         }
 
         {
             HollowSetSchema s1 = new HollowSetSchema("Test", "TypeA");
             HollowSetSchema s2 = new HollowSetSchema("Test", "TypeA", "f1");
 
-            Assert.assertNotEquals(s1, s2);
-            Assert.assertNotEquals(s1.getHashKey(), s2.getHashKey());
+            Assertions.assertNotEquals(s1, s2);
+            Assertions.assertNotEquals(s1.getHashKey(), s2.getHashKey());
         }
 
         {
             HollowSetSchema s1 = new HollowSetSchema("Test", "TypeA", "f1");
             HollowSetSchema s2 = new HollowSetSchema("Test", "TypeA", "f1", "f2");
 
-            Assert.assertNotEquals(s1, s2);
-            Assert.assertNotEquals(s1.getHashKey(), s2.getHashKey());
+            Assertions.assertNotEquals(s1, s2);
+            Assertions.assertNotEquals(s1.getHashKey(), s2.getHashKey());
         }
     }
 }

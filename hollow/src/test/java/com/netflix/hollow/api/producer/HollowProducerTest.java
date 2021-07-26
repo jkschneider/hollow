@@ -47,10 +47,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowProducerTest {
     private static final String NAMESPACE = "hollowProducerTest";
@@ -64,7 +64,7 @@ public class HollowProducerTest {
     private ProducerStatus lastProducerStatus;
     private RestoreStatus lastRestoreStatus;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         schema = new HollowObjectSchema("TestPojo", 2, "id");
         schema.addField("id", FieldType.INT);
@@ -84,7 +84,7 @@ public class HollowProducerTest {
         return producer;
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         for (File file : blobFileMap.values()) {
             System.out.println("\t deleting: " + file);
@@ -108,8 +108,8 @@ public class HollowProducerTest {
             ws.add(2);
         });
 
-        Assert.assertEquals(v1, v2);
-        Assert.assertTrue(v3 > v2);
+        Assertions.assertEquals(v1, v2);
+        Assertions.assertTrue(v3 > v2);
     }
 
     @Test
@@ -137,8 +137,8 @@ public class HollowProducerTest {
             ws.add(2);
         });
 
-        Assert.assertEquals(v1, v2);
-        Assert.assertTrue(v3 > v2);
+        Assertions.assertEquals(v1, v2);
+        Assertions.assertTrue(v3 > v2);
     }
 
     @Test
@@ -160,10 +160,10 @@ public class HollowProducerTest {
                 ws.add(2);
             });
         } catch (IllegalStateException e) {
-            Assert.assertEquals("Publish failed primary (aka leader) check", e.getMessage());
+            Assertions.assertEquals("Publish failed primary (aka leader) check", e.getMessage());
             return;
         }
-        Assert.fail();
+        Assertions.fail();
     }
 
     @Test
@@ -180,10 +180,10 @@ public class HollowProducerTest {
                 ws.add(1);
             });
         } catch (IllegalStateException e) {
-            Assert.assertEquals("Announcement failed primary (aka leader) check", e.getMessage());
+            Assertions.assertEquals("Announcement failed primary (aka leader) check", e.getMessage());
             return;
         }
-        Assert.fail();
+        Assertions.fail();
     }
 
     @Test
@@ -193,11 +193,11 @@ public class HollowProducerTest {
 
         try {
             producer.restore(fakeVersion, blobRetriever);
-            Assert.fail();
+            Assertions.fail();
         } catch(Exception expected) { }
 
-        Assert.assertNotNull(lastRestoreStatus);
-        Assert.assertEquals(Status.FAIL, lastRestoreStatus.getStatus());
+        Assertions.assertNotNull(lastRestoreStatus);
+        Assertions.assertEquals(Status.FAIL, lastRestoreStatus.getStatus());
     }
 
     @Test
@@ -206,9 +206,9 @@ public class HollowProducerTest {
         long version = testPublishV1(producer, 2, 10);
 
         producer.restore(version, blobRetriever);
-        Assert.assertNotNull(lastRestoreStatus);
-        Assert.assertEquals(Status.SUCCESS, lastRestoreStatus.getStatus());
-        Assert.assertEquals("Version should be the same", version, lastRestoreStatus.getDesiredVersion());
+        Assertions.assertNotNull(lastRestoreStatus);
+        Assertions.assertEquals(Status.SUCCESS, lastRestoreStatus.getStatus());
+        Assertions.assertEquals(version, lastRestoreStatus.getDesiredVersion(), "Version should be the same");
     }
 
     @Test
@@ -307,27 +307,31 @@ public class HollowProducerTest {
 
         producer = createProducer(tmpFolder, schema);
         producer.restore(version + 1, blobRetriever);
-        Assert.assertNotNull(lastRestoreStatus);
-        Assert.assertEquals(Status.SUCCESS, lastRestoreStatus.getStatus());
-        Assert.assertEquals("Should have reached correct version", version,
-                lastRestoreStatus.getVersionReached());
-        Assert.assertEquals("Should have correct desired version", version + 1,
-                lastRestoreStatus.getDesiredVersion());
+        Assertions.assertNotNull(lastRestoreStatus);
+        Assertions.assertEquals(Status.SUCCESS, lastRestoreStatus.getStatus());
+        Assertions.assertEquals(version,
+                lastRestoreStatus.getVersionReached(),
+                "Should have reached correct version");
+        Assertions.assertEquals(version + 1,
+                lastRestoreStatus.getDesiredVersion(),
+                "Should have correct desired version");
     }
 
     @Test
     public void testRollsBackStateEngineOnPublishFailure() throws Exception {
         HollowProducer producer = spy(createProducer(tmpFolder, schema));
-        Assert.assertEquals("Should have no populated ordinals", 0,
-                producer.getWriteEngine().getTypeState("TestPojo").getPopulatedBitSet().cardinality());
+        Assertions.assertEquals(0,
+                producer.getWriteEngine().getTypeState("TestPojo").getPopulatedBitSet().cardinality(),
+                "Should have no populated ordinals");
         doThrow(new RuntimeException("Publish failed")).when(producer).publish(
                 any(ProducerListenerSupport.ProducerListeners.class), any(Long.class), any(AbstractHollowProducer.Artifacts.class));
         try {
             producer.runCycle(newState -> newState.add(new TestPojoV1(1, 1)));
         } catch (RuntimeException e) { // expected
         }
-        Assert.assertEquals("Should still have no populated ordinals", 0,
-                producer.getWriteEngine().getTypeState("TestPojo").getPopulatedBitSet().cardinality());
+        Assertions.assertEquals(0,
+                producer.getWriteEngine().getTypeState("TestPojo").getPopulatedBitSet().cardinality(),
+                "Should still have no populated ordinals");
     }
 
     private long testPublishV1(HollowProducer producer, final int size, final int valueMultiplier) {
@@ -336,8 +340,8 @@ public class HollowProducerTest {
                 newState.add(new TestPojoV1(i, i * valueMultiplier));
             }
         });
-        Assert.assertNotNull(lastProducerStatus);
-        Assert.assertEquals(Status.SUCCESS, lastProducerStatus.getStatus());
+        Assertions.assertNotNull(lastProducerStatus);
+        Assertions.assertEquals(Status.SUCCESS, lastProducerStatus.getStatus());
         return lastProducerStatus.getVersion();
     }
 
@@ -347,8 +351,8 @@ public class HollowProducerTest {
                 newState.add(new TestPojoV2(i, i * valueMultiplier, i * valueMultiplier));
             }
         });
-        Assert.assertNotNull(lastProducerStatus);
-        Assert.assertEquals(Status.SUCCESS, lastProducerStatus.getStatus());
+        Assertions.assertNotNull(lastProducerStatus);
+        Assertions.assertEquals(Status.SUCCESS, lastProducerStatus.getStatus());
         return lastProducerStatus.getVersion();
     }
 
@@ -358,13 +362,13 @@ public class HollowProducerTest {
 
     private void restoreAndAssert(HollowProducer producer, long version, int size, int valueMultiplier, int valueFieldCount) {
         ReadState readState = producer.restore(version, blobRetriever);
-        Assert.assertNotNull(lastRestoreStatus);
-        Assert.assertEquals(Status.SUCCESS, lastRestoreStatus.getStatus());
-        Assert.assertEquals("Version should be the same", version, lastRestoreStatus.getDesiredVersion());
+        Assertions.assertNotNull(lastRestoreStatus);
+        Assertions.assertEquals(Status.SUCCESS, lastRestoreStatus.getStatus());
+        Assertions.assertEquals(version, lastRestoreStatus.getDesiredVersion(), "Version should be the same");
 
         HollowObjectTypeReadState typeState = (HollowObjectTypeReadState) readState.getStateEngine().getTypeState("TestPojo");
         BitSet populatedOrdinals = typeState.getPopulatedOrdinals();
-        Assert.assertEquals(size, populatedOrdinals.cardinality());
+        Assertions.assertEquals(size, populatedOrdinals.cardinality());
 
         int ordinal = populatedOrdinals.nextSetBit(0);
         while (ordinal != -1) {
@@ -375,7 +379,7 @@ public class HollowProducerTest {
             for (int i = 0; i < valueFieldCount; i++) {
                 String valueFN = "v" + (i + 1);
                 int value = id * valueMultiplier;
-                Assert.assertEquals(valueFN, value, obj.getInt(valueFN));
+                Assertions.assertEquals(value, obj.getInt(valueFN), valueFN);
             }
 
             ordinal = populatedOrdinals.nextSetBit(ordinal + 1);

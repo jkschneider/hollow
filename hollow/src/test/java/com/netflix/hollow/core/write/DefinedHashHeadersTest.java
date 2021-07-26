@@ -25,8 +25,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class DefinedHashHeadersTest {
 
@@ -56,10 +56,10 @@ public class DefinedHashHeadersTest {
             definedHashTypes.add(type);
         }
         
-        Assert.assertEquals(3, definedHashTypes.size());
-        Assert.assertTrue(definedHashTypes.contains("DefinedHash1"));
-        Assert.assertTrue(definedHashTypes.contains("DefinedHash2"));
-        Assert.assertTrue(definedHashTypes.contains("DefinedHash3"));
+        Assertions.assertEquals(3, definedHashTypes.size());
+        Assertions.assertTrue(definedHashTypes.contains("DefinedHash1"));
+        Assertions.assertTrue(definedHashTypes.contains("DefinedHash2"));
+        Assertions.assertTrue(definedHashTypes.contains("DefinedHash3"));
     }
     
 }

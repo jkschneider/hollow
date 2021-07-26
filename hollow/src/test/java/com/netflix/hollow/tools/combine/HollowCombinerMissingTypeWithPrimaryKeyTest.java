@@ -16,15 +16,16 @@
  */
 package com.netflix.hollow.tools.combine;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.netflix.hollow.core.read.engine.HollowReadStateEngine;
 import com.netflix.hollow.core.util.StateEngineRoundTripper;
 import com.netflix.hollow.core.write.HollowWriteStateEngine;
 import com.netflix.hollow.core.write.objectmapper.HollowObjectMapper;
 import com.netflix.hollow.core.write.objectmapper.HollowPrimaryKey;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
-import org.junit.Test;
 
 public class HollowCombinerMissingTypeWithPrimaryKeyTest {
 

@@ -15,10 +15,11 @@
  */
 package com.netflix.hollow.api.codegen;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.junit.Test;
 
 public class HollowMapAPIGeneratorTest extends AbstractHollowAPIGeneratorTest {
     private static class Weapon {

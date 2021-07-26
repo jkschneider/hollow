@@ -8,8 +8,8 @@ import com.netflix.hollow.core.HollowStateEngine;
 import com.netflix.hollow.core.read.engine.HollowBlobHeaderReader;
 import java.io.IOException;
 import java.util.function.Function;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class SchemaChangeTest {
 
@@ -77,12 +77,12 @@ public class SchemaChangeTest {
     }
 
     void testChangeHeader(HollowBlobHeader header, boolean present) {
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 present,
                 header.getHeaderTags().containsKey(HollowStateEngine.HEADER_TAG_SCHEMA_CHANGE));
         if (present) {
             String v = header.getHeaderTags().get(HollowStateEngine.HEADER_TAG_SCHEMA_CHANGE);
-            Assert.assertTrue(Boolean.parseBoolean(v));
+            Assertions.assertTrue(Boolean.parseBoolean(v));
         }
     }
 

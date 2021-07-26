@@ -27,8 +27,8 @@ import com.netflix.hollow.core.schema.HollowObjectSchema;
 import com.netflix.hollow.core.schema.HollowSchema;
 import java.io.IOException;
 import java.util.Iterator;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class MissingListTest extends AbstractStateEngineTest {
 
@@ -40,21 +40,21 @@ public class MissingListTest extends AbstractStateEngineTest {
 
         GenericHollowList list = (GenericHollowList) GenericHollowRecordHelper.instantiate(readStateEngine, "MissingList", 0);
 
-        Assert.assertEquals(2, list.size());
-        Assert.assertTrue(list.contains(new FakeMissingHollowRecord(new HollowObjectMissingDataAccess(readStateEngine, "MissingObject"), 2)));
-        Assert.assertFalse(list.contains(new FakeMissingHollowRecord(new HollowObjectMissingDataAccess(readStateEngine, "MissingObject"), 0)));
+        Assertions.assertEquals(2, list.size());
+        Assertions.assertTrue(list.contains(new FakeMissingHollowRecord(new HollowObjectMissingDataAccess(readStateEngine, "MissingObject"), 2)));
+        Assertions.assertFalse(list.contains(new FakeMissingHollowRecord(new HollowObjectMissingDataAccess(readStateEngine, "MissingObject"), 0)));
 
         Iterator<HollowRecord> rec = list.iterator();
 
-        Assert.assertTrue(rec.hasNext());
+        Assertions.assertTrue(rec.hasNext());
         HollowRecord next = rec.next();
-        Assert.assertEquals(2, next.getOrdinal());
-        Assert.assertEquals("MissingObject", next.getSchema().getName());
-        Assert.assertTrue(rec.hasNext());
+        Assertions.assertEquals(2, next.getOrdinal());
+        Assertions.assertEquals("MissingObject", next.getSchema().getName());
+        Assertions.assertTrue(rec.hasNext());
         next = rec.next();
-        Assert.assertEquals(3, next.getOrdinal());
-        Assert.assertEquals("MissingObject", next.getSchema().getName());
-        Assert.assertFalse(rec.hasNext());
+        Assertions.assertEquals(3, next.getOrdinal());
+        Assertions.assertEquals("MissingObject", next.getSchema().getName());
+        Assertions.assertFalse(rec.hasNext());
     }
 
     private class FakeMissingDataHandler extends DefaultMissingDataHandler {

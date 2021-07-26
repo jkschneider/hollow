@@ -16,8 +16,8 @@
  */
 package com.netflix.hollow.zenoadapter.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ObjectIdentityOrdinalMapTest {
 
@@ -36,7 +36,7 @@ public class ObjectIdentityOrdinalMapTest {
         }
 
         for(int i=0;i<obj.length;i++) {
-            Assert.assertEquals(ordinalMap.getEntry(obj[i]).getOrdinal(), i);
+            Assertions.assertEquals(ordinalMap.getEntry(obj[i]).getOrdinal(), i);
         }
     }
 

@@ -17,6 +17,7 @@
 package com.netflix.hollow.api.consumer.index;
 
 import static java.util.stream.Collectors.toList;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.netflix.hollow.api.consumer.HollowConsumer;
 import com.netflix.hollow.api.consumer.InMemoryBlobStore;
@@ -32,11 +33,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class UniqueKeyIndexTest {
     // Map of primitive class to box class
@@ -57,7 +57,7 @@ public class UniqueKeyIndexTest {
 
     static DataModel.Consumer.Api api;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         InMemoryBlobStore blobStore = new InMemoryBlobStore();
 
@@ -83,28 +83,40 @@ public class UniqueKeyIndexTest {
     }
 
     public static abstract class MatchTestParameterized<T extends HollowObject, Q> extends UniqueKeyIndexTest {
-        final String path;
-        final Class<Q> type;
-        final Q value;
-        final Class<T> uniqueType;
+         String path;
+         Class<Q> type;
+         Q value;
+         Class<T> uniqueType;
 
-        public MatchTestParameterized(String path, Class<Q> type, Q value, Class<T> uniqueType) {
+        public void initMatchOnValuesTest(String path, Class<Q> type, Q value, Class<T> uniqueType) {
             this.path = path;
             this.type = type;
             this.value = value;
             this.uniqueType = uniqueType;
         }
 
-        @Test
-        public void test() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void test(String path, Class<Q> type, Supplier<Q> value) {
+            initMatchOnMappedReferencesNoAutoExpansionTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             UniqueKeyIndex<T, Q> pki = UniqueKeyIndex
                     .from(consumer, uniqueType)
                     .usingPath(path, type);
 
             T r = pki.findMatch(value);
 
-            Assert.assertNotNull(r);
-            Assert.assertEquals(0, r.getOrdinal());
+            Assertions.assertNotNull(r);
+            Assertions.assertEquals(0, r.getOrdinal());
         }
     }
 
@@ -134,42 +146,52 @@ public class UniqueKeyIndexTest {
                 .collect(toList());
     }
 
-    @RunWith(Parameterized.class)
     public static class MatchOnValuesTest<Q> extends MatchTestParameterized<DataModel.Consumer.Values, Q> {
         // path[type] = value
-        @Parameterized.Parameters(name = "{index}: {0}[{1}] = {2}")
         public static Collection<Object[]> data() {
             return valuesDataProvider();
         }
 
-        public MatchOnValuesTest(String path, Class<Q> type, Q value) {
+        public void initMatchOnValuesTest(String path, Class<Q> type, Q value) {
             super(path, type, value, DataModel.Consumer.Values.class);
         }
     }
 
-    @RunWith(Parameterized.class)
     public static class MatchOnValuesIllegalTypeTest extends UniqueKeyIndexTest {
         // path[type] = value
-        @Parameterized.Parameters(name = "{index}: {0}[{1}] = {2}")
         public static Collection<Object[]> data() {
             return valuesDataProvider();
         }
 
-        final String path;
-        final Class<?> type;
-        final Object value;
+         String path;
+         Class<?> type;
+         Object value;
 
-        public MatchOnValuesIllegalTypeTest(String path, Class<?> type, Object value) {
+        public void initMatchOnValuesTest(String path, Class<?> type, Object value) {
             this.path = path;
             this.type = type;
             this.value = value;
         }
 
-        @Test(expected = IllegalArgumentException.class)
-        public void test() {
-            UniqueKeyIndex
-                    .from(consumer, DataModel.Consumer.Values.class)
-                    .usingPath(path, Object.class);
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void test(String path, Class<Q> type, Supplier<Q> value) {
+            initMatchOnMappedReferencesNoAutoExpansionTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
+            assertThrows(IllegalArgumentException.class, () -> {
+                UniqueKeyIndex
+                        .from(consumer, DataModel.Consumer.Values.class)
+                        .usingPath(path, Object.class);
+            });
         }
     }
 
@@ -196,7 +218,7 @@ public class UniqueKeyIndexTest {
             @FieldPath
             char[] _chars;
 
-            ValueFieldsQuery(DataModel.Producer.Values v) {
+            void initMatchOnValuesTest(DataModel.Producer.Values v) {
                 this._boolean = v._boolean;
                 this._byte = v._byte;
                 this._short = v._short;
@@ -214,16 +236,28 @@ public class UniqueKeyIndexTest {
             }
         }
 
-        @Test
-        public void testFields() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testFields(String path, Class<Q> type, Supplier<Q> value) {
+            initMatchOnMappedReferencesNoAutoExpansionTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             UniqueKeyIndex<DataModel.Consumer.Values, ValueFieldsQuery> hi = UniqueKeyIndex
                     .from(consumer, DataModel.Consumer.Values.class)
                     .usingBean(MatchOnValuesBeanTest.ValueFieldsQuery.class);
 
             DataModel.Consumer.Values r = hi.findMatch(MatchOnValuesBeanTest.ValueFieldsQuery.create());
 
-            Assert.assertNotNull(r);
-            Assert.assertEquals(0, r.getOrdinal());
+            Assertions.assertNotNull(r);
+            Assertions.assertEquals(0, r.getOrdinal());
         }
 
         static class ValueMethodsQuery {
@@ -288,7 +322,7 @@ public class UniqueKeyIndexTest {
                 return _chars;
             }
 
-            ValueMethodsQuery(DataModel.Producer.Values v) {
+            void initMatchOnValuesTest(DataModel.Producer.Values v) {
                 this._boolean = v._boolean;
                 this._byte = v._byte;
                 this._short = v._short;
@@ -306,16 +340,28 @@ public class UniqueKeyIndexTest {
             }
         }
 
-        @Test
-        public void testMethods() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testMethods(String path, Class<Q> type, Supplier<Q> value) {
+            initMatchOnMappedReferencesNoAutoExpansionTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             UniqueKeyIndex<DataModel.Consumer.Values, ValueMethodsQuery> hi = UniqueKeyIndex
                     .from(consumer, DataModel.Consumer.Values.class)
                     .usingBean(MatchOnValuesBeanTest.ValueMethodsQuery.class);
 
             DataModel.Consumer.Values r = hi.findMatch(MatchOnValuesBeanTest.ValueMethodsQuery.create());
 
-            Assert.assertNotNull(r);
-            Assert.assertEquals(0, r.getOrdinal());
+            Assertions.assertNotNull(r);
+            Assertions.assertEquals(0, r.getOrdinal());
         }
     }
 
@@ -340,15 +386,13 @@ public class UniqueKeyIndexTest {
                 .collect(toList());
     }
 
-    @RunWith(Parameterized.class)
     public static class MatchOnBoxesValuesTest<Q> extends MatchTestParameterized<DataModel.Consumer.Boxes, Q> {
         // path[type] = value
-        @Parameterized.Parameters(name = "{index}: {0}[{1}] = {2}")
         public static Collection<Object[]> data() {
             return boxesDataProvider();
         }
 
-        public MatchOnBoxesValuesTest(String path, Class<Q> type, Q value) {
+        public void initMatchOnValuesTest(String path, Class<Q> type, Q value) {
             super(path, type, value, DataModel.Consumer.Boxes.class);
         }
     }
@@ -372,25 +416,21 @@ public class UniqueKeyIndexTest {
                 .collect(toList());
     }
 
-    @RunWith(Parameterized.class)
     public static class MatchOnInlineBoxesTest<Q> extends
             MatchTestParameterized<DataModel.Consumer.InlineBoxes, Q> {
         // path[type] = value
-        @Parameterized.Parameters(name = "{index}: {0}[{1}] = {2}")
         public static Collection<Object[]> data() {
             return inlineBoxesDataProvider();
         }
 
-        public MatchOnInlineBoxesTest(String path, Class<Q> type, Q value) {
+        public void initMatchOnValuesTest(String path, Class<Q> type, Q value) {
             super(path, type, value, DataModel.Consumer.InlineBoxes.class);
         }
     }
 
-    @RunWith(Parameterized.class)
     public static class MatchOnMappedReferencesTest<Q>
             extends MatchTestParameterized<DataModel.Consumer.MappedReferencesToValues, Q> {
         // path[type] = value
-        @Parameterized.Parameters(name = "{index}: {0}[{1}] = {2}")
         public static Collection<Object[]> data() {
             return Arrays.<Object[]>asList(
                     new Object[] {"date.value", long.class, 0L},
@@ -398,14 +438,12 @@ public class UniqueKeyIndexTest {
             );
         }
 
-        public MatchOnMappedReferencesTest(String path, Class<Q> type, Q value) {
+        public void initMatchOnValuesTest(String path, Class<Q> type, Q value) {
             super(path, type, value, DataModel.Consumer.MappedReferencesToValues.class);
         }
     }
 
-    @RunWith(Parameterized.class)
     public static class MatchOnMappedReferencesNoAutoExpansionTest<Q extends HollowRecord> extends UniqueKeyIndexTest {
-        @Parameterized.Parameters(name = "{index}: {0}[{1} = {2}]")
         public static Collection<Object[]> data() {
             return Arrays.asList(
                     args("values!", DataModel.Consumer.Values.class,
@@ -425,57 +463,112 @@ public class UniqueKeyIndexTest {
             return new Object[] {path, type, s};
         }
 
-        final String path;
-        final Class<Q> type;
-        final Q value;
+         String path;
+         Class<Q> type;
+         Q value;
 
-        public MatchOnMappedReferencesNoAutoExpansionTest(String path, Class<Q> type, Supplier<Q> value) {
+        public void initMatchOnValuesTest(String path, Class<Q> type, Supplier<Q> value) {
             this.path = path;
             this.type = type;
             this.value = value.get();
         }
 
-        @Test
-        public void test() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void test(String path, Class<Q> type, Supplier<Q> value) {
+            initMatchOnMappedReferencesNoAutoExpansionTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             UniqueKeyIndex<DataModel.Consumer.References, Q> uki = UniqueKeyIndex
                     .from(consumer, DataModel.Consumer.References.class)
                     .usingPath(path, type);
 
             DataModel.Consumer.References r = uki.findMatch(value);
 
-            Assert.assertNotNull(r);
-            Assert.assertEquals(0, r.getOrdinal());
+            Assertions.assertNotNull(r);
+            Assertions.assertEquals(0, r.getOrdinal());
         }
     }
 
 
     public static class ErrorsTest extends UniqueKeyIndexTest {
         static class Unknown extends HollowObject {
-            Unknown(HollowObjectDelegate delegate, int ordinal) {
+
+            void initMatchOnValuesTest(HollowObjectDelegate delegate, int ordinal) {
                 super(delegate, ordinal);
             }
         }
 
-        @Test(expected = IllegalArgumentException.class)
-        public void testUnknownRootSelectType() {
-            UniqueKeyIndex
-                    .from(consumer, ErrorsTest.Unknown.class)
-                    .usingPath("values", DataModel.Consumer.Values.class);
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testUnknownRootSelectType(String path, Class<Q> type, Supplier<Q> value) {
+            initMatchOnMappedReferencesNoAutoExpansionTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
+            assertThrows(IllegalArgumentException.class, () -> {
+                UniqueKeyIndex
+                        .from(consumer, ErrorsTest.Unknown.class)
+                        .usingPath("values", DataModel.Consumer.Values.class);
+            });
         }
 
-        @Test(expected = IllegalArgumentException.class)
-        public void testEmptyMatchPath() {
-            UniqueKeyIndex
-                    .from(consumer, DataModel.Consumer.References.class)
-                    .usingPath("", DataModel.Consumer.References.class);
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testEmptyMatchPath(String path, Class<Q> type, Supplier<Q> value) {
+            initMatchOnMappedReferencesNoAutoExpansionTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
+            assertThrows(IllegalArgumentException.class, () -> {
+                UniqueKeyIndex
+                        .from(consumer, DataModel.Consumer.References.class)
+                        .usingPath("", DataModel.Consumer.References.class);
+            });
         }
 
-        @Test(expected = IllegalArgumentException.class)
-        public void testNoPrimaryKey() {
-            UniqueKeyIndex
-                    .from(consumer, DataModel.Consumer.References.class)
-                    .bindToPrimaryKey()
-                    .usingPath("values._int", int.class);
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testNoPrimaryKey(String path, Class<Q> type, Supplier<Q> value) {
+            initMatchOnMappedReferencesNoAutoExpansionTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
+            assertThrows(IllegalArgumentException.class, () -> {
+                UniqueKeyIndex
+                        .from(consumer, DataModel.Consumer.References.class)
+                        .bindToPrimaryKey()
+                        .usingPath("values._int", int.class);
+            });
         }
     }
 
@@ -491,7 +584,7 @@ public class UniqueKeyIndexTest {
             @FieldPath("sub2.i")
             int sub2_i;
 
-            KeyTypeSameOrder(int i, String sub1_s, int sub2_i) {
+            void initMatchOnValuesTest(int i, String sub1_s, int sub2_i) {
                 this.i = i;
                 this.sub1_s = sub1_s;
                 this.sub2_i = sub2_i;
@@ -508,7 +601,7 @@ public class UniqueKeyIndexTest {
             @FieldPath("i")
             int i;
 
-            KeyTypeReverseOrder(int i, String sub1_s, int sub2_i) {
+            void initMatchOnValuesTest(int i, String sub1_s, int sub2_i) {
                 this.i = i;
                 this.sub1_s = sub1_s;
                 this.sub2_i = sub2_i;
@@ -522,7 +615,7 @@ public class UniqueKeyIndexTest {
             String sub1_s;
             int sub2_i;
 
-            KeyWithMissingPath(int i, String sub1_s, int sub2_i) {
+            void initMatchOnValuesTest(int i, String sub1_s, int sub2_i) {
                 this.i = i;
                 this.sub1_s = sub1_s;
                 this.sub2_i = sub2_i;
@@ -537,7 +630,7 @@ public class UniqueKeyIndexTest {
             @FieldPath("sub2.s")
             String sub2_s;
 
-            KeyWithWrongPath(int i, String sub1_s, String sub2_s) {
+            void initMatchOnValuesTest(int i, String sub1_s, String sub2_s) {
                 this.i = i;
                 this.sub1_s = sub1_s;
                 this.sub2_s = sub2_s;
@@ -548,7 +641,7 @@ public class UniqueKeyIndexTest {
             @FieldPath("i")
             int i;
 
-            KeyWithSinglePath(int i) {
+            void initMatchOnValuesTest(int i) {
                 this.i = i;
             }
         }
@@ -560,48 +653,112 @@ public class UniqueKeyIndexTest {
                     .usingBean(keyType);
 
             DataModel.Consumer.TypeWithPrimaryKey match = pki.findMatch(key);
-            Assert.assertNotNull(match);
-            Assert.assertEquals(0, match.getOrdinal());
+            Assertions.assertNotNull(match);
+            Assertions.assertEquals(0, match.getOrdinal());
         }
 
-        @Test
-        public void testSameOrder() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testSameOrder(String path, Class<Q> type, Supplier<Q> value) {
+            initMatchOnMappedReferencesNoAutoExpansionTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             test(KeyTypeSameOrder.class, new KeyTypeSameOrder(1, "1", 2));
         }
 
-        @Test
-        public void testWithHollowTypeName() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testWithHollowTypeName(String path, Class<Q> type, Supplier<Q> value) {
+            initMatchOnMappedReferencesNoAutoExpansionTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             UniqueKeyIndex<DataModel.Consumer.TypeWithPrimaryKeySuffixed, Integer> pki =
                     UniqueKeyIndex.from(consumer, DataModel.Consumer.TypeWithPrimaryKeySuffixed.class)
                             .bindToPrimaryKey()
                             .usingPath("i", Integer.class);
 
             DataModel.Consumer.TypeWithPrimaryKeySuffixed match = pki.findMatch(1);
-            Assert.assertNotNull(match);
-            Assert.assertEquals(0, match.getOrdinal());
+            Assertions.assertNotNull(match);
+            Assertions.assertEquals(0, match.getOrdinal());
 
             UniqueKeyIndex<DataModel.Consumer.TypeWithPrimaryKeySuffixed, KeyWithSinglePath> pki2 =
                     UniqueKeyIndex.from(consumer, DataModel.Consumer.TypeWithPrimaryKeySuffixed.class)
                             .bindToPrimaryKey()
                             .usingBean(KeyWithSinglePath.class);
             match = pki2.findMatch(new KeyWithSinglePath(1));
-            Assert.assertNotNull(match);
-            Assert.assertEquals(0, match.getOrdinal());
+            Assertions.assertNotNull(match);
+            Assertions.assertEquals(0, match.getOrdinal());
         }
 
-        @Test
-        public void testReverseOrder() {
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testReverseOrder(String path, Class<Q> type, Supplier<Q> value) {
+            initMatchOnMappedReferencesNoAutoExpansionTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
             test(KeyTypeReverseOrder.class, new KeyTypeReverseOrder(1, "1", 2));
         }
 
-        @Test(expected = IllegalArgumentException.class)
-        public void testMissingPath() {
-            test(KeyWithMissingPath.class, new KeyWithMissingPath(1, "1", 2));
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testMissingPath(String path, Class<Q> type, Supplier<Q> value) {
+            initMatchOnMappedReferencesNoAutoExpansionTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
+            assertThrows(IllegalArgumentException.class, () -> {
+                test(KeyWithMissingPath.class, new KeyWithMissingPath(1, "1", 2));
+            });
         }
 
-        @Test(expected = IllegalArgumentException.class)
-        public void testWrongPath() {
-            test(KeyWithWrongPath.class, new KeyWithWrongPath(1, "1", "2"));
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @MethodSource("data")
+        @ParameterizedTest(name = "{index}: {0}[{1}] = {2}")
+        public void testWrongPath(String path, Class<Q> type, Supplier<Q> value) {
+            initMatchOnMappedReferencesNoAutoExpansionTest(path, type, value);
+            initMatchOnMappedReferencesTest(path, type, value);
+            initMatchOnInlineBoxesTest(path, type, value);
+            initMatchOnBoxesValuesTest(path, type, value);
+            initMatchOnValuesIllegalTypeTest(path, type, value);
+            initMatchOnValuesTest(path, type, value);
+            assertThrows(IllegalArgumentException.class, () -> {
+                test(KeyWithWrongPath.class, new KeyWithWrongPath(1, "1", "2"));
+            });
         }
     }
 }

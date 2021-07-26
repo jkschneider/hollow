@@ -10,15 +10,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HashCodeFinderTest {
 
     private InMemoryBlobStore blobStore;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         blobStore = new InMemoryBlobStore();
     }
@@ -34,8 +34,8 @@ public class HashCodeFinderTest {
         long v1 = producer.runCycle(ws -> ws.add(new Top(100)));
         HollowMapSchema s = (HollowMapSchema) producer.getWriteEngine().getSchema(
                 "MapOfStringUsingHashCodeFinderToStringUsingHashCodeFinder");
-        Assert.assertNull(s.getHashKey());
-        Assert.assertEquals(100, hcf.i.get());
+        Assertions.assertNull(s.getHashKey());
+        Assertions.assertEquals(100, hcf.i.get());
 
         HollowProducer restoredProducer = HollowProducer.withPublisher(blobStore)
                 .withBlobStager(new HollowInMemoryBlobStager())
@@ -48,8 +48,8 @@ public class HashCodeFinderTest {
         long v2 = restoredProducer.runCycle(ws -> ws.add(new Top(101)));
         s = (HollowMapSchema) restoredProducer.getWriteEngine().getSchema(
                 "MapOfStringUsingHashCodeFinderToStringUsingHashCodeFinder");
-        Assert.assertNull(s.getHashKey());
-        Assert.assertEquals(201, hcf.i.get());
+        Assertions.assertNull(s.getHashKey());
+        Assertions.assertEquals(201, hcf.i.get());
     }
 
     static class Top {

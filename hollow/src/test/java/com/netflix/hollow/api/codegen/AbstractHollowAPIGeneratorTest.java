@@ -15,19 +15,17 @@
  */
 package com.netflix.hollow.api.codegen;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.netflix.hollow.core.write.objectmapper.HollowTypeName;
+import org.junit.jupiter.api.AfterEach;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.function.UnaryOperator;
-import org.junit.After;
 
 public class AbstractHollowAPIGeneratorTest {
     private String tmpFolder = System.getProperty("java.io.tmpdir");
@@ -58,7 +56,7 @@ public class AbstractHollowAPIGeneratorTest {
             throw new IllegalArgumentException("Relative paths should not start with /");
         }
         File f = new File(sourceFolder + "/" + relativePath);
-        assertTrue("File at " + relativePath + " should exist", f.exists() && f.length() > 0L);
+        assertTrue(f.exists() && f.length() > 0L, "File at " + relativePath + " should exist");
     }
 
     void assertClassHasHollowTypeName(String clazz, String typeName) throws IOException, ClassNotFoundException {
@@ -73,11 +71,11 @@ public class AbstractHollowAPIGeneratorTest {
         if (relativePath.startsWith("/")) {
             throw new IllegalArgumentException("Relative paths should not start with /");
         }
-        assertFalse("File should not exist at " + relativePath,
-                new File(sourceFolder + "/" + relativePath).exists());
+        assertFalse(new File(sourceFolder + "/" + relativePath).exists(),
+                "File should not exist at " + relativePath);
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         HollowCodeGenerationCompileUtil.cleanupFolder(new File(sourceFolder), null);
         HollowCodeGenerationCompileUtil.cleanupFolder(new File(clazzFolder), null);

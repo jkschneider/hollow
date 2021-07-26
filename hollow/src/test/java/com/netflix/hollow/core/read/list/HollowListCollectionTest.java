@@ -36,8 +36,8 @@ import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.IntStream;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class HollowListCollectionTest {
 
@@ -67,14 +67,14 @@ public class HollowListCollectionTest {
                 .map(r -> (GenericHollowObject) r)
                 .map(o -> o.getInt("value"))
                 .collect(toList());
-        Assert.assertEquals(Arrays.asList(1, 2, 3), keys);
+        Assertions.assertEquals(Arrays.asList(1, 2, 3), keys);
 
         Iterator<HollowRecord> iterator = l.iterator();
         iterator.forEachRemaining(e -> {});
-        Assert.assertFalse(iterator.hasNext());
+        Assertions.assertFalse(iterator.hasNext());
         try {
             iterator.next();
-            Assert.fail();
+            Assertions.fail();
         } catch (NoSuchElementException e) {
         }
     }
@@ -105,23 +105,23 @@ public class HollowListCollectionTest {
         assertListEquals(l1, l4, false);
         assertListEquals(l1, l5, false);
 
-        Assert.assertNotEquals(l1, new HashSet<>(l1));
+        Assertions.assertNotEquals(l1, new HashSet<>(l1));
     }
 
     static void assertListEquals(List<?> a, List<?> b, boolean equal) {
         if (equal) {
-            Assert.assertEquals(a.hashCode(), b.hashCode());
-            Assert.assertEquals(a, b);
-            Assert.assertTrue(equalsUsingIterator(a, b));
+            Assertions.assertEquals(a.hashCode(), b.hashCode());
+            Assertions.assertEquals(a, b);
+            Assertions.assertTrue(equalsUsingIterator(a, b));
 
-            Assert.assertEquals(b, a);
-            Assert.assertTrue(equalsUsingIterator(b, a));
+            Assertions.assertEquals(b, a);
+            Assertions.assertTrue(equalsUsingIterator(b, a));
         } else {
-            Assert.assertNotEquals(a, b);
-            Assert.assertFalse(equalsUsingIterator(a, b));
+            Assertions.assertNotEquals(a, b);
+            Assertions.assertFalse(equalsUsingIterator(a, b));
 
-            Assert.assertNotEquals(b, a);
-            Assert.assertFalse(equalsUsingIterator(b, a));
+            Assertions.assertNotEquals(b, a);
+            Assertions.assertFalse(equalsUsingIterator(b, a));
         }
     }
 

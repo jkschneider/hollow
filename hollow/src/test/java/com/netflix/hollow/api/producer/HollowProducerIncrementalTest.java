@@ -17,7 +17,7 @@
  */
 package com.netflix.hollow.api.producer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.netflix.hollow.api.consumer.HollowConsumer;
 import com.netflix.hollow.api.consumer.InMemoryBlobStore;
@@ -38,23 +38,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowProducerIncrementalTest {
 
     private InMemoryBlobStore blobStore;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         blobStore = new InMemoryBlobStore();
     }
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void publishAndLoadASnapshot() {
@@ -86,7 +81,7 @@ public class HollowProducerIncrementalTest {
         consumer.triggerRefreshTo(nextVersion);
 
         HollowPrimaryKeyIndex idx = new HollowPrimaryKeyIndex(consumer.getStateEngine(), "TypeA", "id1", "id2");
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
 
         assertTypeA(idx, 1, "one", 100L);
         assertTypeA(idx, 2, "two", 2L);
@@ -96,7 +91,7 @@ public class HollowProducerIncrementalTest {
         assertTypeA(idx, 5, "five", null);
 
         idx = new HollowPrimaryKeyIndex(consumer.getStateEngine(), "TypeB", "id");
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
 
         assertTypeB(idx, 1, "1");
         assertTypeB(idx, 2, null);
@@ -107,7 +102,7 @@ public class HollowProducerIncrementalTest {
         consumer.triggerRefreshTo(finalVersion);
 
         idx = new HollowPrimaryKeyIndex(consumer.getStateEngine(), "TypeA", "id1", "id2");
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
 
         assertTypeA(idx, 1, "one", 1000L);
         assertTypeA(idx, 2, "two", 2L);
@@ -139,7 +134,7 @@ public class HollowProducerIncrementalTest {
         consumer.triggerRefreshTo(version);
 
         HollowPrimaryKeyIndex idx = new HollowPrimaryKeyIndex(consumer.getStateEngine(), "TypeA", "id1", "id2");
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
 
         assertTypeA(idx, 100, "one hundred", 9999L);
         assertTypeA(idx, 101, "one hundred and one", 9998L);
@@ -174,7 +169,7 @@ public class HollowProducerIncrementalTest {
         consumer.triggerRefreshTo(nextVersion);
 
         HollowPrimaryKeyIndex idx = new HollowPrimaryKeyIndex(consumer.getStateEngine(), "TypeA", "id1", "id2");
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
 
         assertTypeA(idx, 1, "one", 100L);
         assertTypeA(idx, 2, "two", 2L);
@@ -183,7 +178,7 @@ public class HollowProducerIncrementalTest {
         assertTypeA(idx, 5, "five", null);
 
         idx = new HollowPrimaryKeyIndex(consumer.getStateEngine(), "TypeB", "id");
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
 
         // backing producer was never initialized, so only records added to the incremental producer are here
         assertTypeB(idx, 1, null);
@@ -217,7 +212,7 @@ public class HollowProducerIncrementalTest {
         consumer.triggerRefreshTo(finalVersion);
 
         idx = new HollowPrimaryKeyIndex(consumer.getStateEngine(), "TypeA", "id1", "id2");
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
 
         assertTypeA(idx, 1, "one", null);
         assertTypeA(idx, 2, "two", 2L);
@@ -226,7 +221,7 @@ public class HollowProducerIncrementalTest {
         assertTypeA(idx, 5, "five", 5L);
 
         idx = new HollowPrimaryKeyIndex(consumer.getStateEngine(), "TypeB", "id");
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
 
         // backing producer was never initialized, so only records added to the incremental producer are here
         assertTypeB(idx, 1, "1");
@@ -265,7 +260,7 @@ public class HollowProducerIncrementalTest {
         consumer.triggerRefreshTo(version);
 
         HollowPrimaryKeyIndex idx = new HollowPrimaryKeyIndex(consumer.getStateEngine(), "TypeA", "id1", "id2");
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
 
         assertTypeA(idx, 1, "one", 2L);
         assertTypeA(idx, 2, "two", 2L);
@@ -275,7 +270,7 @@ public class HollowProducerIncrementalTest {
         consumer.triggerRefreshTo(version);
 
         idx = new HollowPrimaryKeyIndex(consumer.getStateEngine(), "TypeB", "id");
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
 
         assertTypeB(idx, 3, "three");
     }
@@ -317,7 +312,7 @@ public class HollowProducerIncrementalTest {
         consumer.triggerRefreshTo(version2);
 
         HollowPrimaryKeyIndex idx = new HollowPrimaryKeyIndex(consumer.getStateEngine(), "TypeA", "id1", "id2");
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
 
         assertTypeA(idx, 1, "one", 2L);
         assertTypeA(idx, 2, "two", 2L);
@@ -327,7 +322,7 @@ public class HollowProducerIncrementalTest {
         consumer.triggerRefreshTo(version2);
 
         idx = new HollowPrimaryKeyIndex(consumer.getStateEngine(), "TypeB", "id");
-        Assert.assertFalse(idx.containsDuplicates());
+        Assertions.assertFalse(idx.containsDuplicates());
         
         assertEquals(-1, idx.getMatchingOrdinal(3));
         assertTypeB(idx, 4, "four!");
@@ -357,7 +352,7 @@ public class HollowProducerIncrementalTest {
             typeDNames.add(((GenericHollowObject) hollowObject).getObject("value").toString());
         }
 
-        Assert.assertTrue(typeDNames.contains("two"));
+        Assertions.assertTrue(typeDNames.contains("two"));
 
         long finalVersion = producer.runIncrementalCycle(iws -> {
             TypeD typeD3 = new TypeD(3, "three");
@@ -375,7 +370,7 @@ public class HollowProducerIncrementalTest {
             finalTypeDNames.add(((GenericHollowObject) hollowObject).getObject("value").toString());
         }
 
-        Assert.assertFalse(finalTypeDNames.contains("two"));
+        Assertions.assertFalse(finalTypeDNames.contains("two"));
     }
 
     @Test
@@ -410,7 +405,7 @@ public class HollowProducerIncrementalTest {
             finalTypeDNames.add(((GenericHollowObject) hollowObject).getObject("value").toString());
         }
 
-        Assert.assertFalse(finalTypeDNames.contains("two"));
+        Assertions.assertFalse(finalTypeDNames.contains("two"));
     }
 
     @Test
@@ -429,19 +424,19 @@ public class HollowProducerIncrementalTest {
 
         try {
             ar.get().addOrModify(new TypeA(1, "one", 100));
-            Assert.fail();
+            Assertions.fail();
         } catch (IllegalStateException e) {
         }
 
         try {
             ar.get().delete(new TypeA(1, "one", 100));
-            Assert.fail();
+            Assertions.fail();
         } catch (IllegalStateException e) {
         }
 
         try {
             ar.get().addIfAbsent(new TypeA(1, "one", 100));
-            Assert.fail();
+            Assertions.fail();
         } catch (IllegalStateException e) {
         }
     }
@@ -466,9 +461,9 @@ public class HollowProducerIncrementalTest {
             public void onIncrementalPopulateComplete(
                     Status status, long removed, long addedOrModified,
                     long version, Duration elapsed) {
-                Assert.assertEquals(Status.StatusType.SUCCESS, status.getType());
-                Assert.assertNull(status.getCause());
-                Assert.assertEquals(this.version, version);
+                Assertions.assertEquals(Status.StatusType.SUCCESS, status.getType());
+                Assertions.assertNull(status.getCause());
+                Assertions.assertEquals(this.version, version);
 
                 this.removed = removed;
                 this.addedOrModified = addedOrModified;
@@ -484,17 +479,17 @@ public class HollowProducerIncrementalTest {
             iws.addOrModify(new TypeA(3, "three", 300));
             iws.delete(new TypeA(5, "five", 5));
         });
-        Assert.assertEquals(version, l.version);
-        Assert.assertEquals(1, l.removed);
-        Assert.assertEquals(3, l.addedOrModified);
+        Assertions.assertEquals(version, l.version);
+        Assertions.assertEquals(1, l.removed);
+        Assertions.assertEquals(3, l.addedOrModified);
 
 
         version = producer.runIncrementalCycle(iws -> {
             iws.addOrModify(new TypeA(1, "one", 1000));
         });
-        Assert.assertEquals(version, l.version);
-        Assert.assertEquals(0, l.removed);
-        Assert.assertEquals(1, l.addedOrModified);
+        Assertions.assertEquals(version, l.version);
+        Assertions.assertEquals(0, l.removed);
+        Assertions.assertEquals(1, l.addedOrModified);
     }
 
     @Test
@@ -511,8 +506,8 @@ public class HollowProducerIncrementalTest {
             public void onIncrementalPopulateComplete(
                     Status status, long removed, long addedOrModified,
                     long version, Duration elapsed) {
-                Assert.assertEquals(Status.StatusType.FAIL, status.getType());
-                Assert.assertNotNull(status.getCause());
+                Assertions.assertEquals(Status.StatusType.FAIL, status.getType());
+                Assertions.assertNotNull(status.getCause());
             }
         }
 
@@ -527,9 +522,9 @@ public class HollowProducerIncrementalTest {
                 iws.delete(new TypeA(5, "five", 5));
                 throw new RuntimeException("runIncrementalCycle failed");
             });
-            Assert.fail();
+            Assertions.fail();
         } catch (RuntimeException e) {
-            Assert.assertEquals("runIncrementalCycle failed", e.getMessage());
+            Assertions.assertEquals("runIncrementalCycle failed", e.getMessage());
         }
 
     }
@@ -577,12 +572,12 @@ public class HollowProducerIncrementalTest {
         int ordinal = typeAIdx.getMatchingOrdinal(id1, id2);
 
         if (expectedValue == null) {
-            Assert.assertEquals(-1, ordinal);
+            Assertions.assertEquals(-1, ordinal);
         } else {
-            Assert.assertNotEquals(-1, ordinal);
+            Assertions.assertNotEquals(-1, ordinal);
             GenericHollowObject obj = new GenericHollowObject(
                     typeAIdx.getTypeState(), ordinal);
-            Assert.assertEquals(expectedValue.longValue(), obj.getLong("value"));
+            Assertions.assertEquals(expectedValue.longValue(), obj.getLong("value"));
         }
     }
 
@@ -592,12 +587,12 @@ public class HollowProducerIncrementalTest {
         int ordinal = typeBIdx.getMatchingOrdinal(id1);
 
         if (expectedValue == null) {
-            Assert.assertEquals(-1, ordinal);
+            Assertions.assertEquals(-1, ordinal);
         } else {
-            Assert.assertNotEquals(-1, ordinal);
+            Assertions.assertNotEquals(-1, ordinal);
             GenericHollowObject obj = new GenericHollowObject(
                     typeBIdx.getTypeState(), ordinal);
-            Assert.assertEquals(expectedValue, obj.getObject("value")
+            Assertions.assertEquals(expectedValue, obj.getObject("value")
                     .getString("value"));
         }
     }

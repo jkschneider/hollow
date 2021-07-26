@@ -4,15 +4,15 @@ import com.netflix.hollow.api.consumer.HollowConsumer;
 import com.netflix.hollow.api.consumer.InMemoryBlobStore;
 import com.netflix.hollow.api.producer.HollowProducer;
 import com.netflix.hollow.api.producer.fs.HollowInMemoryBlobStager;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowMetricsCollectorTests {
 
     private InMemoryBlobStore blobStore;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         blobStore = new InMemoryBlobStore();
     }
@@ -50,11 +50,11 @@ public class HollowMetricsCollectorTests {
         });
 
         HollowProducerMetrics hollowProducerMetrics = metricsCollector.getMetrics();
-        Assert.assertEquals(metricsCollector.getMetricsCollected(), true);
-        Assert.assertEquals(hollowProducerMetrics.getCyclesSucceeded(), 1);
-        Assert.assertEquals(hollowProducerMetrics.getCyclesCompleted(), 1);
-        Assert.assertEquals(hollowProducerMetrics.getTotalPopulatedOrdinals(), 1);
-        Assert.assertEquals(hollowProducerMetrics.getSnapshotsCompleted(), 1);
+        Assertions.assertEquals(metricsCollector.getMetricsCollected(), true);
+        Assertions.assertEquals(hollowProducerMetrics.getCyclesSucceeded(), 1);
+        Assertions.assertEquals(hollowProducerMetrics.getCyclesCompleted(), 1);
+        Assertions.assertEquals(hollowProducerMetrics.getTotalPopulatedOrdinals(), 1);
+        Assertions.assertEquals(hollowProducerMetrics.getSnapshotsCompleted(), 1);
     }
 
     @Test
@@ -76,11 +76,11 @@ public class HollowMetricsCollectorTests {
         consumer.triggerRefreshTo(version);
 
         HollowConsumerMetrics hollowConsumerMetrics = metricsCollector.getMetrics();
-        Assert.assertEquals(metricsCollector.getMetricsCollected(), true);
-        Assert.assertEquals(version, consumer.getCurrentVersionId());
-        Assert.assertEquals(hollowConsumerMetrics.getCurrentVersion(), consumer.getCurrentVersionId());
-        Assert.assertEquals(hollowConsumerMetrics.getRefreshSucceded(), 1);
-        Assert.assertEquals(hollowConsumerMetrics.getTotalPopulatedOrdinals(), 1);
+        Assertions.assertEquals(metricsCollector.getMetricsCollected(), true);
+        Assertions.assertEquals(version, consumer.getCurrentVersionId());
+        Assertions.assertEquals(hollowConsumerMetrics.getCurrentVersion(), consumer.getCurrentVersionId());
+        Assertions.assertEquals(hollowConsumerMetrics.getRefreshSucceded(), 1);
+        Assertions.assertEquals(hollowConsumerMetrics.getTotalPopulatedOrdinals(), 1);
     }
 
     private static class FakePublisherHollowMetricsCollector extends HollowMetricsCollector<HollowProducerMetrics> {

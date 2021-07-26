@@ -20,7 +20,7 @@ import com.netflix.hollow.core.read.engine.object.HollowObjectTypeReadState;
 import com.netflix.hollow.core.write.objectmapper.HollowObjectMapper;
 import java.util.Collection;
 import java.util.List;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 public abstract class AbstractPrimitiveTypeDataAccessorTest<T> extends AbstractStateEngineTest {
     HollowObjectMapper objectMapper;
@@ -42,14 +42,14 @@ public abstract class AbstractPrimitiveTypeDataAccessorTest<T> extends AbstractS
     protected void assertObject(HollowObjectTypeReadState readState, int ordinal, T expectedValue) {
         Object obj = getData(readState, ordinal);
 
-        Assert.assertEquals(expectedValue, obj);
+        Assertions.assertEquals(expectedValue, obj);
     }
 
     protected void assertList(Collection<T> listOfObj, List<T> expectedObjs) {
         int i = 0;
         for (T obj : listOfObj) {
             Object expectedObj = expectedObjs.get(i++);
-            Assert.assertEquals(expectedObj, obj);
+            Assertions.assertEquals(expectedObj, obj);
         }
     }
 

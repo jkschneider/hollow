@@ -17,9 +17,10 @@ import com.netflix.hollow.core.write.HollowWriteStateEngine;
 import com.netflix.hollow.history.ui.jetty.HollowHistoryUIServer;
 import com.netflix.hollow.tools.history.HollowHistory;
 import com.netflix.hollow.tools.history.keyindex.HollowHistoryKeyIndex;
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Test;
 
 public class HistoryUITest {
 

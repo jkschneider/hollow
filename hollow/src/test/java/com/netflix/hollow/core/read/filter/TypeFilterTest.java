@@ -12,6 +12,9 @@ import com.netflix.hollow.core.schema.HollowSchema;
 import com.netflix.hollow.core.write.HollowWriteStateEngine;
 import com.netflix.hollow.core.write.objectmapper.HollowInline;
 import com.netflix.hollow.core.write.objectmapper.HollowObjectMapper;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -20,9 +23,6 @@ import java.util.Set;
 import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 public class TypeFilterTest {
     private static final Collection<Object[]> typeCases = asList(
@@ -164,18 +164,16 @@ public class TypeFilterTest {
                     l("Beta", "Beta.charlie", "Charlie", "Charlie.i", "Charlie.l", "Charlie.s"))
     );
 
-    @RunWith(Parameterized.class)
     public static class TypeOnly extends AbstractTypeFilterTest {
-        private final List<Class<?>> models;
-        private final UnaryOperator<TypeFilter.Builder> filteredBy;
-        private final List<String> expected;
+        private List<Class<?>> models;
+        private UnaryOperator<TypeFilter.Builder> filteredBy;
+        private List<String> expected;
 
-        @Parameterized.Parameters(name = "{index}: {0}{1} ➡︎ {4}")
         public static Collection<Object[]> cases() {
             return typeCases;
         }
 
-        public TypeOnly(String skip, String msg, List<Class<?>> models,
+        public void initTypeOnly(String skip, String msg, List<Class<?>> models,
                         UnaryOperator<TypeFilter.Builder> filteredBy,
                         List<String> expected) {
             super(skip);
@@ -184,8 +182,12 @@ public class TypeFilterTest {
             this.expected = expected;
         }
 
-        @Test
-        public void verify() {
+        @MethodSource("cases")
+        @MethodSource("cases")
+        @ParameterizedTest(name = "{index}: {0}{1} ➡︎ {4}")
+        public void verify(String skip, String msg, List<Class<?>> models, UnaryOperator<TypeFilter.Builder> filteredBy, List<String> expected) {
+            initTypeAndField(skip, msg, models, filteredBy, expected);
+            initTypeOnly(skip, msg, models, filteredBy, expected);
             if (skip) return;
 
             List<HollowSchema> schemas = generateSchema(models);
@@ -206,18 +208,16 @@ public class TypeFilterTest {
         }
     }
 
-    @RunWith(Parameterized.class)
     public static class TypeAndField extends AbstractTypeFilterTest {
-        private final List<Class<?>> models;
-        private final UnaryOperator<TypeFilter.Builder> filteredBy;
-        private final List<String> expected;
+        private List<Class<?>> models;
+        private UnaryOperator<TypeFilter.Builder> filteredBy;
+        private List<String> expected;
 
-        @Parameterized.Parameters(name = "{index}: {0}{1} ➡︎ {4}")
         public static Collection<Object[]> cases() {
             return typeAndFieldCases;
         }
 
-        public TypeAndField(String skip, String msg, List<Class<?>> models,
+        public void initTypeOnly(String skip, String msg, List<Class<?>> models,
                             UnaryOperator<TypeFilter.Builder> filteredBy,
                             List<String> expected) {
             super(skip);
@@ -226,8 +226,12 @@ public class TypeFilterTest {
             this.expected = expected;
         }
 
-        @Test
-        public void verify() {
+        @MethodSource("cases")
+        @MethodSource("cases")
+        @ParameterizedTest(name = "{index}: {0}{1} ➡︎ {4}")
+        public void verify(String skip, String msg, List<Class<?>> models, UnaryOperator<TypeFilter.Builder> filteredBy, List<String> expected) {
+            initTypeAndField(skip, msg, models, filteredBy, expected);
+            initTypeOnly(skip, msg, models, filteredBy, expected);
             if (skip) return;
             List<HollowSchema> schemas = generateSchema(models);
 
@@ -243,10 +247,10 @@ public class TypeFilterTest {
                         if (schema.getSchemaType() == OBJECT) {
                             HollowObjectSchema os = (HollowObjectSchema) schema;
                             Set<String> fields = IntStream.range(0, os.numFields())
-                                                          .mapToObj(os::getFieldName)
-                                                          .filter(f -> subject.includes(typeName, f))
-                                                          .map(f -> typeName + "." + f)
-                                                          .collect(toSet());
+                                    .mapToObj(os::getFieldName)
+                                    .filter(f -> subject.includes(typeName, f))
+                                    .map(f -> typeName + "." + f)
+                                    .collect(toSet());
                             return fields.isEmpty() ? Stream.empty() : Stream.concat(typeStream, fields.stream());
                         } else {
                             return typeStream;
@@ -264,9 +268,9 @@ public class TypeFilterTest {
 
     private static abstract class AbstractTypeFilterTest extends TypeFilterTest {
         static final String SKIP = "SKIP:";
-        protected final boolean skip;
+        protected boolean skip;
 
-        protected AbstractTypeFilterTest(String skip) {
+        protected void initTypeOnly(String skip) {
             this.skip = skip == SKIP;
         }
     }

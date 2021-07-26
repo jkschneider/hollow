@@ -19,14 +19,14 @@ package com.netflix.hollow.api.producer.validation;
 import com.netflix.hollow.api.consumer.InMemoryBlobStore;
 import com.netflix.hollow.api.producer.HollowProducer;
 import com.netflix.hollow.api.producer.fs.HollowInMemoryBlobStager;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DuplicateDataDetectionValidatorTests {
     private InMemoryBlobStore blobStore;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         blobStore = new InMemoryBlobStore();
     }
@@ -39,8 +39,8 @@ public class DuplicateDataDetectionValidatorTests {
                     .withListener(new DuplicateDataDetectionValidator("FakeType")).build();
             producer.runCycle(writeState -> writeState.add("hello"));
         } catch (ValidationStatusException expected) {
-            Assert.assertEquals(1, expected.getValidationStatus().getResults().size());
-            Assert.assertTrue(expected.getValidationStatus().getResults().get(0).getMessage()
+            Assertions.assertEquals(1, expected.getValidationStatus().getResults().size());
+            Assertions.assertTrue(expected.getValidationStatus().getResults().get(0).getMessage()
                     .endsWith("(see initializeDataModel)"));
         }
     }

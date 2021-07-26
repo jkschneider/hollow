@@ -29,9 +29,9 @@ import com.netflix.hollow.core.write.HollowObjectWriteRecord;
 import com.netflix.hollow.core.write.HollowWriteStateEngine;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowObjectReverseDeltaTest {
 
@@ -39,7 +39,7 @@ public class HollowObjectReverseDeltaTest {
     HollowWriteStateEngine writeEngine;
     HollowReadStateEngine readEngine;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         schema = new HollowObjectSchema("test", 1);
         schema.addField("field", FieldType.INT);
@@ -97,18 +97,18 @@ public class HollowObjectReverseDeltaTest {
     private void assertState(int... expectedValuesInOrdinalPosition) {
         HollowObjectTypeReadState typeState = (HollowObjectTypeReadState) readEngine.getTypeState("test");
         PopulatedOrdinalListener listener = typeState.getListener(PopulatedOrdinalListener.class);
-        Assert.assertEquals(expectedValuesInOrdinalPosition.length, listener.getPopulatedOrdinals().length());
+        Assertions.assertEquals(expectedValuesInOrdinalPosition.length, listener.getPopulatedOrdinals().length());
 
         for(int i=0;i<expectedValuesInOrdinalPosition.length;i++) {
             if(expectedValuesInOrdinalPosition[i] != -1) {
                 if(expectedValuesInOrdinalPosition[i] < 0)
-                    Assert.assertFalse(listener.getPopulatedOrdinals().get(i));
+                    Assertions.assertFalse(listener.getPopulatedOrdinals().get(i));
                 else
-                    Assert.assertTrue(listener.getPopulatedOrdinals().get(i));
+                    Assertions.assertTrue(listener.getPopulatedOrdinals().get(i));
 
                 int expectedValue = Math.abs(expectedValuesInOrdinalPosition[i]);
 
-                Assert.assertEquals(expectedValue, typeState.readInt(i, 0));
+                Assertions.assertEquals(expectedValue, typeState.readInt(i, 0));
             }
         }
     }

@@ -22,15 +22,15 @@ import com.netflix.hollow.core.schema.HollowObjectSchema;
 import com.netflix.hollow.core.schema.HollowObjectSchema.FieldType;
 import com.netflix.hollow.core.write.HollowObjectTypeWriteState;
 import com.netflix.hollow.core.write.HollowObjectWriteRecord;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowObjectStringEqualityTest extends AbstractStateEngineTest {
 
     HollowObjectSchema schema;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         schema = new HollowObjectSchema("TestObject", 1);
         schema.addField("str", FieldType.STRING);
@@ -45,9 +45,9 @@ public class HollowObjectStringEqualityTest extends AbstractStateEngineTest {
         
         HollowObjectTypeReadState typeState = (HollowObjectTypeReadState)readStateEngine.getTypeState("TestObject");
         
-        Assert.assertFalse(typeState.isStringFieldEqual(0, 0, "tes"));
-        Assert.assertTrue(typeState.isStringFieldEqual(0, 0, "test"));
-        Assert.assertFalse(typeState.isStringFieldEqual(0, 0, "testt"));
+        Assertions.assertFalse(typeState.isStringFieldEqual(0, 0, "tes"));
+        Assertions.assertTrue(typeState.isStringFieldEqual(0, 0, "test"));
+        Assertions.assertFalse(typeState.isStringFieldEqual(0, 0, "testt"));
         
     }
     

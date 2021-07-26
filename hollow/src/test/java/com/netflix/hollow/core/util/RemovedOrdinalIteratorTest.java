@@ -17,8 +17,8 @@
 package com.netflix.hollow.core.util;
 
 import java.util.BitSet;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class RemovedOrdinalIteratorTest {
 
@@ -29,10 +29,10 @@ public class RemovedOrdinalIteratorTest {
 
         RemovedOrdinalIterator iter = new RemovedOrdinalIterator(previousOrdinals, currentOrdinals);
 
-        Assert.assertEquals(2, iter.next());
-        Assert.assertEquals(6, iter.next());
-        Assert.assertEquals(10, iter.next());
-        Assert.assertEquals(-1, iter.next());
+        Assertions.assertEquals(2, iter.next());
+        Assertions.assertEquals(6, iter.next());
+        Assertions.assertEquals(10, iter.next());
+        Assertions.assertEquals(-1, iter.next());
     }
 
     private BitSet bitSet(int... setBits) {

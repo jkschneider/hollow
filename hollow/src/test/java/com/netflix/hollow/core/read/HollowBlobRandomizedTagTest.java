@@ -22,9 +22,9 @@ import com.netflix.hollow.core.write.HollowBlobWriter;
 import com.netflix.hollow.core.write.HollowWriteStateEngine;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class HollowBlobRandomizedTagTest {
 
@@ -36,7 +36,7 @@ public class HollowBlobRandomizedTagTest {
     byte snapshot2[];
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
 
         HollowWriteStateEngine stateEngine = new HollowWriteStateEngine();
@@ -89,7 +89,7 @@ public class HollowBlobRandomizedTagTest {
 
         try {
             reader.applyDelta(HollowBlobInput.serial(delta1));
-            Assert.fail("Should have refused to apply delta to incorrect state");
+            Assertions.fail("Should have refused to apply delta to incorrect state");
         } catch(IOException expected) { }
 
         reader.applyDelta(HollowBlobInput.serial(delta2));
@@ -104,7 +104,7 @@ public class HollowBlobRandomizedTagTest {
 
         try {
             reader.applyDelta(HollowBlobInput.serial(reversedelta1));
-            Assert.fail("Should have refused to apply reverse delta to incorrect state");
+            Assertions.fail("Should have refused to apply reverse delta to incorrect state");
         } catch(IOException expected) { }
 
         reader.applyDelta(HollowBlobInput.serial(reversedelta2));
@@ -112,7 +112,7 @@ public class HollowBlobRandomizedTagTest {
 
         try {
             reader.applyDelta(HollowBlobInput.serial(delta2));
-            Assert.fail("Should have refused to apply delta to incorrect state");
+            Assertions.fail("Should have refused to apply delta to incorrect state");
         } catch(IOException expected) { }
 
         reader.applyDelta(HollowBlobInput.serial(delta1));

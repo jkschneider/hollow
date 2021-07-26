@@ -16,18 +16,18 @@
  */
 package com.netflix.hollow.core.util;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.concurrent.Callable;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 // TODO(timt): tag as MEDIUM test
 public class SimultaneousExecutorTest {
 
     private SimultaneousExecutor subject;
 
-    @Before
+    @BeforeEach
     public void before() {
         subject = new SimultaneousExecutor(getClass(), "test");
     }

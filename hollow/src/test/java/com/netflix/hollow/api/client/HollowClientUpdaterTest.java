@@ -19,10 +19,7 @@ package com.netflix.hollow.api.client;
 import static com.netflix.hollow.core.HollowConstants.VERSION_LATEST;
 import static com.netflix.hollow.core.HollowConstants.VERSION_NONE;
 import static java.util.Collections.emptyList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,9 +34,8 @@ import com.netflix.hollow.test.HollowWriteStateEngineBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.CompletableFuture;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
 public class HollowClientUpdaterTest {
@@ -52,7 +48,7 @@ public class HollowClientUpdaterTest {
     private HollowConsumer.ObjectLongevityDetector objectLongevityDetector;
     private HollowAPIFactory apiFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         retriever = mock(HollowConsumer.BlobRetriever.class);
         apiFactory = mock(HollowAPIFactory.class);
@@ -72,21 +68,19 @@ public class HollowClientUpdaterTest {
 
         assertTrue(subject.updateTo(VERSION_NONE));
         HollowReadStateEngine readStateEngine = subject.getStateEngine();
-        assertTrue("Should have no types", readStateEngine.getAllTypes().isEmpty());
-        assertTrue("Should create snapshot plan next, even if double snapshot config disallows it",
-                subject.shouldCreateSnapshotPlan());
+        assertTrue(readStateEngine.getAllTypes().isEmpty(), "Should have no types");
+        assertTrue(subject.shouldCreateSnapshotPlan(),
+                "Should create snapshot plan next, even if double snapshot config disallows it");
         assertTrue(subject.updateTo(VERSION_NONE));
-        assertTrue("Should still have no types", readStateEngine.getAllTypes().isEmpty());
+        assertTrue(readStateEngine.getAllTypes().isEmpty(), "Should still have no types");
     }
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void testUpdateTo_updateToLatestButNoVersionsRetrieved_throwsException() throws Throwable {
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("Could not create an update plan, because no existing versions could be retrieved.");
-        subject.updateTo(VERSION_LATEST);
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> {
+            subject.updateTo(VERSION_LATEST);
+        });
+        assertTrue(exception.getMessage().contains("Could not create an update plan, because no existing versions could be retrieved."));
     }
 
     @Test

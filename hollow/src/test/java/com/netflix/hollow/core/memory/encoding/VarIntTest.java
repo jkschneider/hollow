@@ -5,8 +5,11 @@ import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import org.junit.Assert;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class VarIntTest {
     private final static byte[] BYTES_EMPTY = new byte[]{};
@@ -17,83 +20,99 @@ public class VarIntTest {
     public void testReadVLongInputStream() throws IOException {
         InputStream is = new ByteArrayInputStream(BYTES_VALUE_129);
 
-        Assert.assertEquals(129, VarInt.readVLong(is));
+        Assertions.assertEquals(129, VarInt.readVLong(is));
     }
 
-    @Test(expected = EOFException.class)
+    @Test
     public void testReadVLongEmptyInputStream() throws IOException {
-        InputStream is = new ByteArrayInputStream(BYTES_EMPTY);
+        assertThrows(EOFException.class, () -> {
+            InputStream is = new ByteArrayInputStream(BYTES_EMPTY);
 
-        VarInt.readVLong(is);
+            VarInt.readVLong(is);
+        });
     }
 
-    @Test(expected = EOFException.class)
+    @Test
     public void testReadVLongTruncatedInputStream() throws IOException {
-        InputStream is = new ByteArrayInputStream(BYTES_TRUNCATED);
+        assertThrows(EOFException.class, () -> {
+            InputStream is = new ByteArrayInputStream(BYTES_TRUNCATED);
 
-        VarInt.readVLong(is);
+            VarInt.readVLong(is);
+        });
     }
 
     @Test
     public void testReadVIntInputStream() throws IOException {
         InputStream is = new ByteArrayInputStream(BYTES_VALUE_129);
 
-        Assert.assertEquals(129, VarInt.readVInt(is));
+        Assertions.assertEquals(129, VarInt.readVInt(is));
     }
 
-    @Test(expected = EOFException.class)
+    @Test
     public void testReadVIntEmptyInputStream() throws IOException {
-        InputStream is = new ByteArrayInputStream(BYTES_EMPTY);
+        assertThrows(EOFException.class, () -> {
+            InputStream is = new ByteArrayInputStream(BYTES_EMPTY);
 
-        VarInt.readVInt(is);
+            VarInt.readVInt(is);
+        });
     }
 
-    @Test(expected = EOFException.class)
+    @Test
     public void testReadVIntTruncatedInputStream() throws IOException {
-        InputStream is = new ByteArrayInputStream(BYTES_TRUNCATED);
+        assertThrows(EOFException.class, () -> {
+            InputStream is = new ByteArrayInputStream(BYTES_TRUNCATED);
 
-        VarInt.readVInt(is);
+            VarInt.readVInt(is);
+        });
     }
 
     @Test
     public void testReadVLongHollowBlobInput() throws IOException {
         HollowBlobInput hbi = HollowBlobInput.serial(BYTES_VALUE_129);
 
-        Assert.assertEquals(129l, VarInt.readVLong(hbi));
+        Assertions.assertEquals(129l, VarInt.readVLong(hbi));
     }
 
-    @Test(expected = EOFException.class)
+    @Test
     public void testReadVLongEmptyHollowBlobInput() throws IOException {
-        HollowBlobInput hbi = HollowBlobInput.serial(BYTES_EMPTY);
+        assertThrows(EOFException.class, () -> {
+            HollowBlobInput hbi = HollowBlobInput.serial(BYTES_EMPTY);
 
-        VarInt.readVLong(hbi);
+            VarInt.readVLong(hbi);
+        });
     }
 
-    @Test(expected = EOFException.class)
+    @Test
     public void testReadVLongTruncatedHollowBlobInput() throws IOException {
-        HollowBlobInput hbi = HollowBlobInput.serial(BYTES_TRUNCATED);
+        assertThrows(EOFException.class, () -> {
+            HollowBlobInput hbi = HollowBlobInput.serial(BYTES_TRUNCATED);
 
-        VarInt.readVLong(hbi);
+            VarInt.readVLong(hbi);
+        });
     }
 
     @Test
     public void testReadVIntHollowBlobInput() throws IOException {
         HollowBlobInput hbi = HollowBlobInput.serial(BYTES_VALUE_129);
 
-        Assert.assertEquals(129l, VarInt.readVInt(hbi));
+        Assertions.assertEquals(129l, VarInt.readVInt(hbi));
     }
 
-    @Test(expected = EOFException.class)
+    @Test
     public void testReadVIntEmptyHollowBlobInput() throws IOException {
-        HollowBlobInput hbi = HollowBlobInput.serial(BYTES_EMPTY);
+        assertThrows(EOFException.class, () -> {
+            HollowBlobInput hbi = HollowBlobInput.serial(BYTES_EMPTY);
 
-        VarInt.readVInt(hbi);
+            VarInt.readVInt(hbi);
+        });
     }
 
-    @Test(expected = EOFException.class)
+    @Test
     public void testReadVIntTruncatedHollowBlobInput() throws IOException {
-        HollowBlobInput hbi = HollowBlobInput.serial(BYTES_TRUNCATED);
+        assertThrows(EOFException.class, () -> {
+            HollowBlobInput hbi = HollowBlobInput.serial(BYTES_TRUNCATED);
 
-        VarInt.readVInt(hbi);
+            VarInt.readVInt(hbi);
+        });
     }
 }
