@@ -82,7 +82,7 @@ abstract class AbstractHollowProducer {
     HollowProducerMetrics metrics;
     HollowMetricsCollector<HollowProducerMetrics> metricsCollector;
     final SingleProducerEnforcer singleProducerEnforcer;
-    long lastSuccessfulCycle = 0;
+    long lastSuccessfulCycle;
     final HollowObjectHashCodeFinder hashCodeFinder;
     final boolean doIntegrityCheck;
 
@@ -321,7 +321,7 @@ abstract class AbstractHollowProducer {
         } else {
             singleProducerEnforcer.disable();
         }
-        return (singleProducerEnforcer.isPrimary() == doEnable);
+        return singleProducerEnforcer.isPrimary() == doEnable;
     }
 
     long runCycle(HollowProducer.Incremental.IncrementalPopulator incrementalPopulator, HollowProducer.Populator populator) {
@@ -557,8 +557,9 @@ abstract class AbstractHollowProducer {
         try {
             // We want a header to be created for all states.
             artifacts.header = blobStager.openHeader(toVersion);
-            if(!readStates.hasCurrent() || doIntegrityCheck || numStatesUntilNextSnapshot <= 0)
+            if(!readStates.hasCurrent() || doIntegrityCheck || numStatesUntilNextSnapshot <= 0) {
                 artifacts.snapshot = stageBlob(listeners, blobStager.openSnapshot(toVersion));
+            }
 
             publishHeaderBlob(artifacts.header);
             if (readStates.hasCurrent()) {
@@ -880,10 +881,10 @@ abstract class AbstractHollowProducer {
     }
 
     static final class Artifacts {
-        HollowProducer.Blob snapshot = null;
-        HollowProducer.Blob delta = null;
-        HollowProducer.Blob reverseDelta = null;
-        HollowProducer.HeaderBlob header = null;
+        HollowProducer.Blob snapshot;
+        HollowProducer.Blob delta;
+        HollowProducer.Blob reverseDelta;
+        HollowProducer.HeaderBlob header;
 
         boolean cleanupCalled;
         boolean snapshotPublishComplete;

@@ -78,7 +78,9 @@ public class BitSetIteratorTest {
         } else {
             int max = Math.min(limit, bs.cardinality());
             int expected =  (start == null || start==0) ? max : Math.min((bs.cardinality() - start)+1, max);
-            if (expected<0) expected=0;
+            if(expected < 0) {
+                expected = 0;
+            }
             Assert.assertEquals(expected, count);
         }
     }

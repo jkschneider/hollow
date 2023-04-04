@@ -107,8 +107,9 @@ public class HollowHashIndex implements HollowTypeStateListener {
         int hashCode = 0;
 
         for(int i=0;i<query.length;i++) {
-            if(query[i] == null)
+            if(query[i] == null) {
                 throw new IllegalArgumentException("querying by null unsupported; i=" + i);
+            }
             hashCode ^= HashCodes.hashInt(keyHashCode(query[i], i));
         }
 
@@ -172,8 +173,9 @@ public class HollowHashIndex implements HollowTypeStateListener {
             FieldPathSegment[] fieldPath = field.getSchemaFieldPositionPath();
 
             if(fieldPath.length == 0) {
-                if (!query[i].equals(hashOrdinal))
+                if(!query[i].equals(hashOrdinal)) {
                     return false;
+                }
             } else {
                 for(int j=0;j<fieldPath.length - 1;j++) {
                     hashOrdinal = fieldPath[j].getOrdinalForField(hashOrdinal);
@@ -202,8 +204,9 @@ public class HollowHashIndex implements HollowTypeStateListener {
      * discarding the index.
      */
     public void listenForDeltaUpdates() {
-        if (!(typeState instanceof HollowObjectTypeReadState))
+        if(!(typeState instanceof HollowObjectTypeReadState)) {
             throw new IllegalStateException("Cannot listen for delta updates when objectTypeDataAccess is a " + typeState.getClass().getSimpleName() + ". Is this index participating in object longevity?");
+        }
 
         ((HollowObjectTypeReadState) typeState).addListener(this);
     }
@@ -214,8 +217,9 @@ public class HollowHashIndex implements HollowTypeStateListener {
      * Call this method before discarding indexes which are currently listening for delta updates.
      */
     public void detachFromDeltaUpdates() {
-        if ((typeState instanceof HollowObjectTypeReadState))
-            ((HollowObjectTypeReadState) typeState).removeListener(this);
+        if((typeState instanceof HollowObjectTypeReadState)) {
+            ((HollowObjectTypeReadState)typeState).removeListener(this);
+        }
     }
 
     @Override

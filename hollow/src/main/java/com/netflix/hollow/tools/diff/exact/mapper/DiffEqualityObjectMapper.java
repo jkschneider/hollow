@@ -43,8 +43,9 @@ public class DiffEqualityObjectMapper extends DiffEqualityTypeMapper{
         this.commonReferenceFieldEqualOrdinalMaps = new DiffEqualOrdinalMap[commonSchema.numFields()];
 
         for(int i=0;i<commonReferenceFieldEqualOrdinalMaps.length;i++) {
-            if(commonSchema.getFieldType(i) == FieldType.REFERENCE)
+            if(commonSchema.getFieldType(i) == FieldType.REFERENCE) {
                 this.commonReferenceFieldEqualOrdinalMaps[i] = mapping.getEqualOrdinalMap(commonSchema.getReferencedType(i));
+            }
         }
 
         this.fromSchemaCommonFieldMapping = buildCommonSchemaFieldMapping(fromState);
@@ -97,8 +98,9 @@ public class DiffEqualityObjectMapper extends DiffEqualityTypeMapper{
                         commonReferenceFieldEqualOrdinalMaps[i].getIdentityFromOrdinal(referencedOrdinal)
                         : commonReferenceFieldEqualOrdinalMaps[i].getIdentityToOrdinal(referencedOrdinal);
 
-                if(ordinalIdentity == -1 && referencedOrdinal != -1)
+                if(ordinalIdentity == -1 && referencedOrdinal != -1) {
                     return -1;
+                }
 
                 hashCode = hashCode * 31 ^ HashCodes.hashInt(ordinalIdentity);
             } else {
@@ -109,25 +111,24 @@ public class DiffEqualityObjectMapper extends DiffEqualityTypeMapper{
     }
 
     public EqualityDeterminer getEqualityDeterminer() {
-        return new EqualityDeterminer() {
-            public boolean recordsAreEqual(int fromOrdinal, int toOrdinal) {
-                for(int i=0;i<fromSchemaCommonFieldMapping.length;i++) {
-                    if(commonSchema.getFieldType(i) == FieldType.REFERENCE) {
-                        int fromReferenceOrdinal = fromState().readOrdinal(fromOrdinal, fromSchemaCommonFieldMapping[i]);
-                        int toReferenceOrdinal = toState().readOrdinal(toOrdinal, toSchemaCommonFieldMapping[i]);
-                        int fromIdentityOrdinal = commonReferenceFieldEqualOrdinalMaps[i].getIdentityFromOrdinal(fromReferenceOrdinal);
-                        int toIdentityOrdinal = commonReferenceFieldEqualOrdinalMaps[i].getIdentityToOrdinal(toReferenceOrdinal);
+        return (fromOrdinal, toOrdinal) -> {
+            for(int i = 0;i < fromSchemaCommonFieldMapping.length;i++) {
+                if(commonSchema.getFieldType(i) == FieldType.REFERENCE) {
+                    int fromReferenceOrdinal = fromState().readOrdinal(fromOrdinal, fromSchemaCommonFieldMapping[i]);
+                    int toReferenceOrdinal = toState().readOrdinal(toOrdinal, toSchemaCommonFieldMapping[i]);
+                    int fromIdentityOrdinal = commonReferenceFieldEqualOrdinalMaps[i].getIdentityFromOrdinal(fromReferenceOrdinal);
+                    int toIdentityOrdinal = commonReferenceFieldEqualOrdinalMaps[i].getIdentityToOrdinal(toReferenceOrdinal);
 
-                        if((fromIdentityOrdinal == -1 && fromReferenceOrdinal != -1)
-                                || (toIdentityOrdinal == -1 && toReferenceOrdinal != -1)
-                                || (fromIdentityOrdinal != toIdentityOrdinal))
-                            return false;
-                    } else if(!HollowReadFieldUtils.fieldsAreEqual(fromState(), fromOrdinal, fromSchemaCommonFieldMapping[i], toState(), toOrdinal, toSchemaCommonFieldMapping[i])) {
+                    if((fromIdentityOrdinal == -1 && fromReferenceOrdinal != -1)
+                        || (toIdentityOrdinal == -1 && toReferenceOrdinal != -1)
+                        || (fromIdentityOrdinal != toIdentityOrdinal)) {
                         return false;
                     }
+                } else if(!HollowReadFieldUtils.fieldsAreEqual(fromState(), fromOrdinal, fromSchemaCommonFieldMapping[i], toState(), toOrdinal, toSchemaCommonFieldMapping[i])) {
+                    return false;
                 }
-                return true;
             }
+            return true;
         };
     }
 

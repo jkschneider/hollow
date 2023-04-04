@@ -126,8 +126,9 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
      * discarding the index.
      */
     public void listenForDeltaUpdates() {
-        if(specificOrdinalsToIndex != null)
+        if(specificOrdinalsToIndex != null) {
             throw new IllegalStateException("Cannot listen for delta updates when indexing only specified ordinals!");
+        }
 
         typeState.addListener(this);
     }
@@ -163,8 +164,9 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
      */
     public int getMatchingOrdinal(Object key) {
         PrimaryKeyIndexHashTable hashTable = hashTableVolatile;
-        if(fieldPathIndexes.length != 1 || hashTable.bitsPerElement == 0)
+        if(fieldPathIndexes.length != 1 || hashTable.bitsPerElement == 0) {
             return -1;
+        }
 
         int hashCode = keyHashCode(key, 0);
 
@@ -175,8 +177,9 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
             int bucket = hashCode & hashTable.hashMask;
             ordinal = readOrdinal(hashTable, bucket);
             while(ordinal != -1) {
-                if(keyDeriver.keyMatches(key, ordinal, 0))
+                if(keyDeriver.keyMatches(key, ordinal, 0)) {
                     break;
+                }
 
                 bucket++;
                 bucket &= hashTable.hashMask;
@@ -198,8 +201,9 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
      */
     public int getMatchingOrdinal(Object key1, Object key2) {
         PrimaryKeyIndexHashTable hashTable = hashTableVolatile;
-        if(fieldPathIndexes.length != 2 || hashTable.bitsPerElement == 0)
+        if(fieldPathIndexes.length != 2 || hashTable.bitsPerElement == 0) {
             return -1;
+        }
 
         int hashCode = keyHashCode(key1, 0);
         hashCode ^= keyHashCode(key2, 1);
@@ -211,8 +215,9 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
             int bucket = hashCode & hashTable.hashMask;
             ordinal = readOrdinal(hashTable, bucket);
             while(ordinal != -1) {
-                if(keyDeriver.keyMatches(key1, ordinal, 0) && keyDeriver.keyMatches(key2, ordinal, 1))
+                if(keyDeriver.keyMatches(key1, ordinal, 0) && keyDeriver.keyMatches(key2, ordinal, 1)) {
                     break;
+                }
 
                 bucket++;
                 bucket &= hashTable.hashMask;
@@ -235,8 +240,9 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
      */
     public int getMatchingOrdinal(Object key1, Object key2, Object key3) {
         PrimaryKeyIndexHashTable hashTable = hashTableVolatile;
-        if(fieldPathIndexes.length != 3 || hashTable.bitsPerElement == 0)
+        if(fieldPathIndexes.length != 3 || hashTable.bitsPerElement == 0) {
             return -1;
+        }
 
         int hashCode = keyHashCode(key1, 0);
         hashCode ^= keyHashCode(key2, 1);
@@ -249,8 +255,9 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
             int bucket = hashCode & hashTable.hashMask;
             ordinal = readOrdinal(hashTable, bucket);
             while(ordinal != -1) {
-                if(keyDeriver.keyMatches(key1, ordinal, 0) && keyDeriver.keyMatches(key2, ordinal, 1) && keyDeriver.keyMatches(key3, ordinal, 2))
+                if(keyDeriver.keyMatches(key1, ordinal, 0) && keyDeriver.keyMatches(key2, ordinal, 1) && keyDeriver.keyMatches(key3, ordinal, 2)) {
                     break;
+                }
 
                 bucket++;
                 bucket &= hashTable.hashMask;
@@ -271,12 +278,14 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
      */
     public int getMatchingOrdinal(Object... keys) {
         PrimaryKeyIndexHashTable hashTable = hashTableVolatile;
-        if(fieldPathIndexes.length != keys.length || hashTable.bitsPerElement == 0)
+        if(fieldPathIndexes.length != keys.length || hashTable.bitsPerElement == 0) {
             return -1;
+        }
 
         int hashCode = 0;
-        for(int i=0;i<keys.length;i++)
+        for(int i = 0;i < keys.length;i++) {
             hashCode ^= keyHashCode(keys[i], i);
+        }
 
         int ordinal = -1;
 
@@ -285,8 +294,9 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
             int bucket = hashCode & hashTable.hashMask;
             ordinal = readOrdinal(hashTable, bucket);
             while(ordinal != -1) {
-                if(keyDeriver.keyMatches(ordinal, keys))
+                if(keyDeriver.keyMatches(ordinal, keys)) {
                     break;
+                }
 
                 bucket++;
                 bucket &= hashTable.hashMask;
@@ -340,10 +350,11 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
      */
     public synchronized Collection<Object[]> getDuplicateKeys() {
         PrimaryKeyIndexHashTable hashTable = hashTableVolatile;
-        if(hashTable.bitsPerElement == 0)
+        if(hashTable.bitsPerElement == 0) {
             return Collections.emptyList();
+        }
 
-        List<Object[]> duplicateKeys = new ArrayList<Object[]>();
+        List<Object[]> duplicateKeys = new ArrayList<>();
 
         for(int i=0;i<hashTable.hashTableSize;i++) {
             int ordinal = (int)hashTable.hashTable.getElementValue((long)i * (long)hashTable.bitsPerElement, hashTable.bitsPerElement) - 1;
@@ -352,8 +363,9 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
                 int compareBucket = (i+1) & hashTable.hashMask;
                 int compareOrdinal = (int)hashTable.hashTable.getElementValue((long)compareBucket * (long)hashTable.bitsPerElement, hashTable.bitsPerElement) - 1;
                 while(compareOrdinal != -1) {
-                    if(recordsHaveEqualKeys(ordinal, compareOrdinal))
+                    if(recordsHaveEqualKeys(ordinal, compareOrdinal)) {
                         duplicateKeys.add(keyDeriver.getRecordKey(ordinal));
+                    }
 
                     compareBucket = (compareBucket + 1) & hashTable.hashMask;
                     compareOrdinal = (int)hashTable.hashTable.getElementValue((long)compareBucket * (long)hashTable.bitsPerElement, hashTable.bitsPerElement) - 1;
@@ -381,7 +393,7 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
         BitSet ordinals = typeState.getListener(PopulatedOrdinalListener.class).getPopulatedOrdinals();
 
         int hashTableSize = HashCodes.hashTableSize(ordinals.cardinality());
-        int bitsPerElement = (32 - Integer.numberOfLeadingZeros(typeState.maxOrdinal() + 1));
+        int bitsPerElement = 32 - Integer.numberOfLeadingZeros(typeState.maxOrdinal() + 1);
 
         PrimaryKeyIndexHashTable hashTable = hashTableVolatile;
         if(ALLOW_DELTA_UPDATE
@@ -422,8 +434,9 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
 
     public void destroy() {
         PrimaryKeyIndexHashTable hashTable = hashTableVolatile;
-        if(hashTable != null)
+        if(hashTable != null) {
             hashTable.hashTable.destroy(memoryRecycler);
+        }
     }
 
     private synchronized void reindex() {
@@ -441,7 +454,7 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
         }
 
         int hashTableSize = HashCodes.hashTableSize(ordinals.cardinality());
-        int bitsPerElement = (32 - Integer.numberOfLeadingZeros(typeState.maxOrdinal() + 1));
+        int bitsPerElement = 32 - Integer.numberOfLeadingZeros(typeState.maxOrdinal() + 1);
 
         FixedLengthElementArray hashedArray = new FixedLengthElementArray(memoryRecycler, (long)hashTableSize * (long)bitsPerElement);
 
@@ -452,8 +465,9 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
             int hashCode = recordHash(ordinal);
             int bucket = hashCode & hashMask;
 
-            while(hashedArray.getElementValue((long)bucket * (long)bitsPerElement, bitsPerElement) != 0)
+            while(hashedArray.getElementValue((long)bucket * (long)bitsPerElement, bitsPerElement) != 0) {
                 bucket = (bucket + 1) & hashMask;
+            }
 
             hashedArray.setElementValue((long)bucket * (long)bitsPerElement, bitsPerElement, ordinal + 1);
 
@@ -602,8 +616,9 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
 
     private boolean recordsHaveEqualKeys(int ordinal1, int ordinal2) {
         for(int i=0;i<fieldPathIndexes.length;i++) {
-            if(!fieldsAreEqual(ordinal1, ordinal2, i))
+            if(!fieldsAreEqual(ordinal1, ordinal2, i)) {
                 return false;
+            }
         }
         return true;
     }
@@ -621,8 +636,9 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
             schema = typeState.getSchema();
         }
 
-        if(fieldTypes[fieldIdx] == FieldType.REFERENCE)
+        if(fieldTypes[fieldIdx] == FieldType.REFERENCE) {
             return typeState.readOrdinal(ordinal1, fieldPathIndexes[fieldIdx][lastFieldPath]) == typeState.readOrdinal(ordinal2, fieldPathIndexes[fieldIdx][lastFieldPath]);
+        }
 
         return HollowReadFieldUtils.fieldsAreEqual(typeState, ordinal1, fieldPathIndexes[fieldIdx][lastFieldPath], typeState, ordinal2, fieldPathIndexes[fieldIdx][lastFieldPath]);
     }
@@ -637,15 +653,14 @@ public class HollowPrimaryKeyIndex implements HollowTypeStateListener, TestableU
         int prevOrdinal = previousOrdinals.nextSetBit(0);
         while(prevOrdinal != ORDINAL_NONE) {
             prevCardinality++;
-            if(!ordinals.get(prevOrdinal))
+            if(!ordinals.get(prevOrdinal)) {
                 removedRecords++;
+            }
 
             prevOrdinal = previousOrdinals.nextSetBit(prevOrdinal + 1);
         }
 
-        if(removedRecords > prevCardinality * 0.1d)
-            return false;
-        return true;
+        return removedRecords <= prevCardinality * 0.1d;
     }
 
     static class PrimaryKeyIndexHashTable {

@@ -22,7 +22,6 @@ import com.netflix.hollow.api.consumer.HollowConsumer.ObjectLongevityConfig;
 import com.netflix.hollow.api.custom.HollowAPI;
 import com.netflix.hollow.api.objects.generic.GenericHollowObject;
 import com.netflix.hollow.api.producer.HollowProducer;
-import com.netflix.hollow.api.producer.HollowProducer.Populator;
 import com.netflix.hollow.api.producer.HollowProducer.WriteState;
 import com.netflix.hollow.api.producer.fs.HollowInMemoryBlobStager;
 import com.netflix.hollow.core.read.engine.HollowReadStateEngine;
@@ -205,9 +204,9 @@ public class HollowRefreshListenerTests {
         runCycle(producer, 4);
         long v5 = runCycle(producer, 5);
         
-        final List<GenericHollowObject> snapshotOrdinal0Objects = new ArrayList<GenericHollowObject>();
-        final List<GenericHollowObject> deltaOrdinal0Objects = new ArrayList<GenericHollowObject>();
-        final List<GenericHollowObject> deltaOrdinal1Objects = new ArrayList<GenericHollowObject>();
+        final List<GenericHollowObject> snapshotOrdinal0Objects = new ArrayList<>();
+        final List<GenericHollowObject> deltaOrdinal0Objects = new ArrayList<>();
+        final List<GenericHollowObject> deltaOrdinal1Objects = new ArrayList<>();
 
         HollowConsumer.RefreshListener longevityListener = new AbstractRefreshListener() {
             public void snapshotApplied(HollowAPI api, HollowReadStateEngine stateEngine, long version) throws Exception {
@@ -246,7 +245,7 @@ public class HollowRefreshListenerTests {
             @Override public void refreshSuccessful(long beforeVersion, long afterVersion, long requestedVersion) {
                 refreshSuccessful++;
             }
-        };
+        }
 
         class FirstRefreshListener extends SecondRefreshListener {
             SecondRefreshListener srl = new SecondRefreshListener();
@@ -256,7 +255,7 @@ public class HollowRefreshListenerTests {
                 // Add the second listener concurrently during a refresh
                 consumer.addRefreshListener(srl);
             }
-        };
+        }
 
         FirstRefreshListener frl = new FirstRefreshListener();
         consumer.addRefreshListener(frl);
@@ -293,7 +292,7 @@ public class HollowRefreshListenerTests {
             @Override public void refreshSuccessful(long beforeVersion, long afterVersion, long requestedVersion) {
                 refreshSuccessful++;
             }
-        };
+        }
 
         class FirstRefreshListener extends SecondRefreshListener {
             SecondRefreshListener srl;
@@ -307,7 +306,7 @@ public class HollowRefreshListenerTests {
                 // Remove the second listener concurrently during a refresh
                 consumer.removeRefreshListener(srl);
             }
-        };
+        }
 
         SecondRefreshListener srl = new SecondRefreshListener();
         FirstRefreshListener frl = new FirstRefreshListener(srl);
@@ -332,10 +331,8 @@ public class HollowRefreshListenerTests {
     }
 
     private long runCycle(HollowProducer producer, final int cycleNumber) {
-        return producer.runCycle(new Populator() {
-            public void populate(WriteState state) throws Exception {
-                state.add(Integer.valueOf(cycleNumber));
-            }
+        return producer.runCycle(state -> {
+            state.add(Integer.valueOf(cycleNumber));
         });
     }
     
@@ -349,13 +346,13 @@ public class HollowRefreshListenerTests {
         long refreshSuccessAfterVersion;
         long refreshSuccessRequestedVersion; 
         
-        List<Long> snapshotUpdateOccurredVersions = new ArrayList<Long>();
-        List<Long> deltaUpdateOccurredVersions = new ArrayList<Long>();
+        List<Long> snapshotUpdateOccurredVersions = new ArrayList<>();
+        List<Long> deltaUpdateOccurredVersions = new ArrayList<>();
 
-        List<Long> blobsLoadedVersions = new ArrayList<Long>();
+        List<Long> blobsLoadedVersions = new ArrayList<>();
         
-        List<Long> snapshotAppliedVersions = new ArrayList<Long>();
-        List<Long> deltaAppliedVersions = new ArrayList<Long>();
+        List<Long> snapshotAppliedVersions = new ArrayList<>();
+        List<Long> deltaAppliedVersions = new ArrayList<>();
         
         @Override
         public void refreshStarted(long currentVersion, long requestedVersion) {

@@ -35,9 +35,7 @@ public class HollowHistoryViewProvider implements HollowObjectViewProvider {
         long version = Long.parseLong(req.getParameter("version"));
         String type = req.getParameter("type");
         int keyOrdinal = Integer.parseInt(req.getParameter("keyOrdinal"));
-
-        HollowHistoryView objectView = getObjectView(session, version, type, keyOrdinal);
-        return objectView;
+        return getObjectView(session, version, type, keyOrdinal);
     }
 
     private HollowHistoryView getObjectView(HollowUISession session, long version, String type, int keyOrdinal) {

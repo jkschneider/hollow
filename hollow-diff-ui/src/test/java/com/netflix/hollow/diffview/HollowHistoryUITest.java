@@ -12,10 +12,10 @@ import org.junit.Test;
 
 public class HollowHistoryUITest {
 
-    private final int PORT_EXPECTED = 7777;
-    private final int PORT_ACTUAL = 7778;
+    private final int portExpected = 7777;
+    private final int portActual = 7778;
 
-    private TestBlobRetriever testBlobRetriever;
+    private final TestBlobRetriever testBlobRetriever;
     private TestHollowConsumer consumerExpected;    // builds history using only deltas
     private TestHollowConsumer consumerFwd;
     private TestHollowConsumer consumerRev;
@@ -34,7 +34,7 @@ public class HollowHistoryUITest {
                 .withBlobRetriever(testBlobRetriever)
                 .build();
         consumerExpected.triggerRefreshTo(1);
-        historyUIServerExpected = new HollowHistoryUIServer(consumerExpected, PORT_EXPECTED);
+        historyUIServerExpected = new HollowHistoryUIServer(consumerExpected, portExpected);
         consumerExpected.triggerRefreshTo(2);
         consumerExpected.triggerRefreshTo(3);
         consumerExpected.triggerRefreshTo(4);
@@ -53,7 +53,7 @@ public class HollowHistoryUITest {
     public void historyUsingOnlyFwdConsumer() throws Exception  {
         consumerFwd.triggerRefreshTo(1);    // snapshot
 
-        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, PORT_ACTUAL);
+        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, portActual);
 
         consumerFwd.triggerRefreshTo(2);    // delta
         consumerFwd.triggerRefreshTo(3);    // delta
@@ -68,7 +68,7 @@ public class HollowHistoryUITest {
         consumerFwd.triggerRefreshTo(5);
         consumerRev.triggerRefreshTo(5);
 
-        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, PORT_ACTUAL);
+        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, portActual);
 
         consumerRev.triggerRefreshTo(4);
         consumerRev.triggerRefreshTo(3);
@@ -83,7 +83,7 @@ public class HollowHistoryUITest {
         consumerFwd.triggerRefreshTo(3);
         consumerRev.triggerRefreshTo(3);
 
-        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, PORT_ACTUAL);
+        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, portActual);
 
         consumerFwd.triggerRefreshTo(4);
             consumerRev.triggerRefreshTo(2);
@@ -98,7 +98,7 @@ public class HollowHistoryUITest {
         consumerFwd.triggerRefreshTo(3);
         consumerRev.triggerRefreshTo(3);
 
-        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, PORT_ACTUAL);
+        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, portActual);
 
         consumerFwd.triggerRefreshTo(4);
             consumerRev.triggerRefreshTo(2);
@@ -122,7 +122,7 @@ public class HollowHistoryUITest {
         consumerFwd.triggerRefreshTo(3);
         consumerRev.triggerRefreshTo(3);
 
-        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, PORT_ACTUAL);
+        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, portActual);
 
         consumerRev.triggerRefreshTo(2);
             consumerFwd.triggerRefreshTo(4);
@@ -137,7 +137,7 @@ public class HollowHistoryUITest {
         consumerFwd.triggerRefreshTo(3);
         consumerRev.triggerRefreshTo(3);
 
-        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, PORT_ACTUAL);
+        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, portActual);
 
         consumerRev.triggerRefreshTo(2);
         consumerFwd.triggerRefreshTo(4);
@@ -155,7 +155,7 @@ public class HollowHistoryUITest {
         consumerFwd.triggerRefreshTo(3);
         consumerRev.triggerRefreshTo(3);
 
-        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, PORT_ACTUAL);
+        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, portActual);
 
         consumerRev.triggerRefreshTo(2);
         consumerFwd.triggerRefreshTo(4);
@@ -170,7 +170,7 @@ public class HollowHistoryUITest {
         consumerFwd.triggerRefreshTo(7);    // version in whcih actor type was introduced
         consumerRev.triggerRefreshTo(7);
 
-        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, PORT_ACTUAL);
+        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, portActual);
 
         consumerRev.triggerRefreshTo(6);
 
@@ -183,7 +183,7 @@ public class HollowHistoryUITest {
         consumerFwd.triggerRefreshTo(3);
         consumerRev.triggerRefreshTo(3);
 
-        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, PORT_ACTUAL);
+        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, portActual);
 
         consumerRev.triggerRefreshTo(2);
         consumerFwd.triggerRefreshTo(4);
@@ -198,7 +198,7 @@ public class HollowHistoryUITest {
                 .withBlobRetriever(testBlobRetriever)
                 .build();
         consumerExpected.triggerRefreshTo(2);
-        historyUIServerExpected = new HollowHistoryUIServer(consumerExpected, PORT_EXPECTED);
+        historyUIServerExpected = new HollowHistoryUIServer(consumerExpected, portExpected);
         consumerExpected.triggerRefreshTo(3);
         consumerExpected.triggerRefreshTo(4);
         consumerExpected.triggerRefreshTo(5);
@@ -210,13 +210,13 @@ public class HollowHistoryUITest {
     @Test(expected=NullPointerException.class)
     public void historyUsingFwdAndRevConsumer_noPastVersionsAvailableAtInit()  {
         // consumerFwd and consumerRev haven't incurred snapshot load yet
-        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, PORT_ACTUAL);
+        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, portActual);
     }
 
     @Test(expected=NullPointerException.class)
     public void historyUsingFwdOnly_noPastVersionsAvailableAtInit()  {
         // consumerFwd hasn't incurred snapshot load yet
-        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, PORT_ACTUAL);
+        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, portActual);
     }
 
     @Test(expected=UnsupportedOperationException.class)
@@ -230,7 +230,7 @@ public class HollowHistoryUITest {
                 .build();
 
         consumerFwd.triggerRefreshTo(5);
-        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, PORT_ACTUAL);
+        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, portActual);
 
         // snapshots are only supported in the fwd direction, rev consumer should have been initialized
         consumerRev.triggerRefreshTo(5);
@@ -248,7 +248,7 @@ public class HollowHistoryUITest {
 
         consumerFwd.triggerRefreshTo(5);
         consumerRev.triggerRefreshTo(3);
-        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, PORT_ACTUAL);
+        historyUIServerActual = new HollowHistoryUIServer(consumerFwd, consumerRev, portActual);
     }
 
     private void hostUisIfPairtyCheckFails() throws Exception {
@@ -259,7 +259,7 @@ public class HollowHistoryUITest {
                             "Expected and actual history UIs are hosted at ports %s and %s respectively. " +
                             "Be sure to open in different browsers for isolated sessions state stored in cookie which " +
                             "could affect the links generated in the output html",
-                    PORT_EXPECTED, PORT_ACTUAL));
+                    portExpected, portActual));
             e.printStackTrace();
             historyUIServerExpected.start();
             historyUIServerActual.start();

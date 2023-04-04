@@ -87,8 +87,9 @@ public class GapEncodedVariableLengthIntegerReader {
     }
 
     public void destroy() {
-        if(data != null)
+        if(data != null) {
             data.destroy();
+        }
     }
     
     public void writeTo(OutputStream os) throws IOException {

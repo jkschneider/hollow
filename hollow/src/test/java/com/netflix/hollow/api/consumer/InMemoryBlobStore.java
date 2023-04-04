@@ -52,14 +52,16 @@ public class InMemoryBlobStore implements BlobRetriever, Publisher {
 
     private HollowConsumer.VersionedBlob getDesiredVersion(long desiredVersion, Map<Long, ? extends HollowConsumer.VersionedBlob> map) {
         HollowConsumer.VersionedBlob snapshot = map.get(desiredVersion);
-        if(snapshot != null)
+        if(snapshot != null) {
             return snapshot;
+        }
 
         long greatestPriorSnapshotVersion = Long.MIN_VALUE;
 
         for(Map.Entry<Long, ? extends HollowConsumer.VersionedBlob> entry : map.entrySet()) {
-            if(entry.getKey() > greatestPriorSnapshotVersion && entry.getKey() < desiredVersion)
+            if(entry.getKey() > greatestPriorSnapshotVersion && entry.getKey() < desiredVersion) {
                 greatestPriorSnapshotVersion = entry.getKey();
+            }
         }
 
         return map.get(greatestPriorSnapshotVersion);
@@ -119,17 +121,20 @@ public class InMemoryBlobStore implements BlobRetriever, Publisher {
 
             @Override
             public OptionalBlobPartInput getOptionalBlobPartInputs() throws IOException {
-                if(blob.getOptionalPartConfig() == null || optionalPartsToRetrieve == null)
+                if(blob.getOptionalPartConfig() == null || optionalPartsToRetrieve == null) {
                     return null;
+                }
 
                 OptionalBlobPartInput parts = new OptionalBlobPartInput();
                 for(String part : blob.getOptionalPartConfig().getParts()) {
-                    if(optionalPartsToRetrieve.contains(part))
+                    if(optionalPartsToRetrieve.contains(part)) {
                         parts.addInput(part, blob.newOptionalPartInputStream(part));
+                    }
                 }
 
-                if(parts.getPartNames().isEmpty())
+                if(parts.getPartNames().isEmpty()) {
                     return null;
+                }
 
                 return parts;
             }

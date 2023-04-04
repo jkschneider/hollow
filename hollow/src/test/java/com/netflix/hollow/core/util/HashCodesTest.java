@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class HashCodesTest {
 
-    private Random rand = new Random();
+    private final Random rand = new Random();
     
     @Test
     public void testStringHashCode() {
@@ -48,7 +48,7 @@ public class HashCodesTest {
     @Test
     public void testHashTableSize() {
         // Current load factor is 10 / 7. If load factor calculation is changed, this test should be updated
-        int N;
+        int n;
 
         try {
             HashCodes.hashTableSize(-1);
@@ -62,15 +62,15 @@ public class HashCodesTest {
         Assert.assertEquals(4, HashCodes.hashTableSize(2));
 
         // first integer overflow boundary condition (214_748_364)
-        N = Integer.MAX_VALUE / 10;
-        Assert.assertEquals(1 << 29, HashCodes.hashTableSize(N));
-        Assert.assertEquals(536870912, HashCodes.hashTableSize(N + 1));
+        n = Integer.MAX_VALUE / 10;
+        Assert.assertEquals(1 << 29, HashCodes.hashTableSize(n));
+        Assert.assertEquals(536870912, HashCodes.hashTableSize(n + 1));
 
         // exceeding maximum hash table size (before load factor)
-        N = HASH_TABLE_MAX_SIZE;
-        Assert.assertEquals(1073741824, HashCodes.hashTableSize(N));
+        n = HASH_TABLE_MAX_SIZE;
+        Assert.assertEquals(1073741824, HashCodes.hashTableSize(n));
         try {
-            HashCodes.hashTableSize(N + 1);
+            HashCodes.hashTableSize(n + 1);
             Assert.fail("exception expected");
         } catch (IllegalArgumentException ex) {
             Assert.assertEquals("exceeds maximum number of buckets; numElements=751619277", ex.getMessage());
@@ -78,13 +78,13 @@ public class HashCodesTest {
 
         // Note: technically these overflow conditions aren't reachable because max buckets is a lower
         //       threshold. Keeping the assertions to avoid regressions.
-        N = (int)((1L<<31) * 7L / 10L);
+        n = (int)((1L<<31) * 7L / 10L);
         try {
-            HashCodes.hashTableSize(N);
+            HashCodes.hashTableSize(n);
             Assert.fail("exception expected");
         } catch (IllegalArgumentException ex) {}
         try {
-            HashCodes.hashTableSize(N + 1);
+            HashCodes.hashTableSize(n + 1);
             Assert.fail("exception expected");
         } catch (IllegalArgumentException ex) {}
 

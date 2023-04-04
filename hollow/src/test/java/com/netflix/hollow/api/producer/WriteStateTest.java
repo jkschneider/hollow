@@ -56,22 +56,22 @@ public class WriteStateTest {
 
     @Test
     public void getObjectMapper_whenClosed() {
-        assertThrowsAfterClose(() -> subject.getObjectMapper());
+        assertThrowsAfterClose(subject::getObjectMapper);
     }
 
     @Test
     public void getStateEngine_whenClosed() {
-        assertThrowsAfterClose(() -> subject.getStateEngine());
+        assertThrowsAfterClose(subject::getStateEngine);
     }
 
     @Test
     public void getPriorState_whenClosed() {
-        assertThrowsAfterClose(() -> subject.getPriorState());
+        assertThrowsAfterClose(subject::getPriorState);
     }
 
     @Test
     public void getVersion_whenClosed() {
-        assertThrowsAfterClose(() -> subject.getVersion());
+        assertThrowsAfterClose(subject::getVersion);
     }
 
     private void assertThrowsAfterClose(Runnable code) {

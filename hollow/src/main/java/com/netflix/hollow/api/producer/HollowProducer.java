@@ -624,7 +624,7 @@ public class HollowProducer extends AbstractHollowProducer {
         }
     }
 
-    public static abstract class HeaderBlob implements PublishArtifact{
+    public abstract static class HeaderBlob implements PublishArtifact{
         protected final long version;
 
         protected HeaderBlob(long version) {
@@ -636,7 +636,7 @@ public class HollowProducer extends AbstractHollowProducer {
         }
     }
 
-    public static abstract class Blob implements PublishArtifact {
+    public abstract static class Blob implements PublishArtifact {
 
         protected final long fromVersion;
         protected final long toVersion;
@@ -717,16 +717,16 @@ public class HollowProducer extends AbstractHollowProducer {
         Announcer announcer;
         List<HollowProducerEventListener> eventListeners = new ArrayList<>();
         VersionMinter versionMinter = new VersionMinterWithCounter();
-        Executor snapshotPublishExecutor = null;
-        int numStatesBetweenSnapshots = 0;
-        boolean focusHoleFillInFewestShards = false;
+        Executor snapshotPublishExecutor;
+        int numStatesBetweenSnapshots;
+        boolean focusHoleFillInFewestShards;
         long targetMaxTypeShardSize = DEFAULT_TARGET_MAX_TYPE_SHARD_SIZE;
         HollowMetricsCollector<HollowProducerMetrics> metricsCollector;
         BlobStorageCleaner blobStorageCleaner = new DummyBlobStorageCleaner();
         SingleProducerEnforcer singleProducerEnforcer = new BasicSingleProducerEnforcer();
-        HollowObjectHashCodeFinder hashCodeFinder = null;
+        HollowObjectHashCodeFinder hashCodeFinder;
         boolean doIntegrityCheck = true;
-        ProducerOptionalBlobPartConfig optionalPartConfig = null;
+        ProducerOptionalBlobPartConfig optionalPartConfig;
 
         public B withBlobStager(HollowProducer.BlobStager stager) {
             this.stager = stager;
@@ -933,7 +933,7 @@ public class HollowProducer extends AbstractHollowProducer {
      * Provides the opportunity to clean the blob storage.
      * It allows users to implement logic base on Blob Type.
      */
-    public static abstract class BlobStorageCleaner {
+    public abstract static class BlobStorageCleaner {
         public void clean(Blob.Type blobType) {
             switch (blobType) {
                 case SNAPSHOT:

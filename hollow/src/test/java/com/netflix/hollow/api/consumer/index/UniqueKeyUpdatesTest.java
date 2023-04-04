@@ -40,10 +40,10 @@ public class UniqueKeyUpdatesTest {
         @FieldPath("sub2.i")
         int sub2_i;
 
-        Key(int i, String sub1_s, int sub2_i) {
+        Key(int i, String sub1S, int sub2I) {
             this.i = i;
-            this.sub1_s = sub1_s;
-            this.sub2_i = sub2_i;
+            this.sub1_s = sub1S;
+            this.sub2_i = sub2I;
         }
     }
 

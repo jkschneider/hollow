@@ -21,7 +21,7 @@ public interface HashKeyExtractor {
 
     public Object extract(Object extractFrom);
     
-    public default Object[] extractArray(Object extractFrom) {
+    default public Object[] extractArray(Object extractFrom) {
         Object obj = extract(extractFrom);
         if(obj.getClass().isArray()) {
             return (Object[])obj;

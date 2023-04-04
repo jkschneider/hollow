@@ -92,8 +92,9 @@ public class HollowMapTypeDataElements {
     }
 
     static void discardFromInput(HollowBlobInput in, int numShards, boolean isDelta) throws IOException {
-        if(numShards > 1)
-            VarInt.readVInt(in); /// max ordinal
+        if(numShards > 1) {
+            VarInt.readVInt(in);
+        } /// max ordinal
 
         for(int i=0; i<numShards; i++) {
             VarInt.readVInt(in); /// max ordinal

@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class HollowDiffUIRouter extends HollowUIRouter {
 
+    private static final long serialVersionUID = 1;
+
     private final Map<String, HollowDiffUI> diffUIs;
 
     public HollowDiffUIRouter() {
@@ -42,8 +44,9 @@ public class HollowDiffUIRouter extends HollowUIRouter {
         String diffUIKey = getTargetRootPath(target);
 
         if ("resource".equals(diffUIKey)) {
-            if (serveResource(req, resp, getResourceName(target, diffUIKey)))
+            if(serveResource(req, resp, getResourceName(target, diffUIKey))) {
                 return true;
+            }
         } else {
             HollowDiffUI ui = diffUIs.get(diffUIKey);
             if (ui == null) {
@@ -54,8 +57,9 @@ public class HollowDiffUIRouter extends HollowUIRouter {
             }
 
             if (ui != null) {
-                if (ui.serveRequest(getResourceName(target, diffUIKey), req, resp))
+                if(ui.serveRequest(getResourceName(target, diffUIKey), req, resp)) {
                     return true;
+                }
             }
         }
         return false;

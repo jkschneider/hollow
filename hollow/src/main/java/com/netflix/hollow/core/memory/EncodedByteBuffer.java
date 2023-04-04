@@ -37,9 +37,7 @@ public class EncodedByteBuffer implements VariableLengthData {
         if (index >= this.size) {
             throw new IllegalStateException();
         }
-
-        byte retVal = this.bufferView.getByte(this.bufferView.position() + index);
-        return retVal;
+        return this.bufferView.getByte(this.bufferView.position() + index);
     }
 
     /**

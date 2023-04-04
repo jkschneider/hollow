@@ -49,7 +49,7 @@ public class HollowListTypeReadState extends HollowCollectionTypeReadState imple
     
     private final int shardNumberMask;
     private final int shardOrdinalShift;
-    private final HollowListTypeReadStateShard shards[];
+    private final HollowListTypeReadStateShard[] shards;
     
     private int maxOrdinal;
 
@@ -62,46 +62,52 @@ public class HollowListTypeReadState extends HollowCollectionTypeReadState imple
         this.sampler = new HollowListSampler(schema.getName(), DisabledSamplingDirector.INSTANCE);
         this.shardNumberMask = numShards - 1;
         this.shardOrdinalShift = 31 - Integer.numberOfLeadingZeros(numShards);
-        
-        if(numShards < 1 || 1 << shardOrdinalShift != numShards)
+
+        if(numShards < 1 || 1 << shardOrdinalShift != numShards) {
             throw new IllegalArgumentException("Number of shards must be a power of 2!");
+        }
         
-        HollowListTypeReadStateShard shards[] = new HollowListTypeReadStateShard[numShards];
-        for(int i=0;i<shards.length;i++)
+        HollowListTypeReadStateShard[] shards = new HollowListTypeReadStateShard[numShards];
+        for(int i = 0;i < shards.length;i++) {
             shards[i] = new HollowListTypeReadStateShard();
+        }
         
         this.shards = shards;
     }
 
     @Override
     public void readSnapshot(HollowBlobInput in, ArraySegmentRecycler memoryRecycler) throws IOException {
-        if(shards.length > 1)
+        if(shards.length > 1) {
             maxOrdinal = VarInt.readVInt(in);
+        }
         
         for(int i=0;i<shards.length;i++) {
             HollowListTypeDataElements snapshotData = new HollowListTypeDataElements(memoryMode, memoryRecycler);
             snapshotData.readSnapshot(in);
             shards[i].setCurrentData(snapshotData);
         }
-        
-        if(shards.length == 1)
+
+        if(shards.length == 1) {
             maxOrdinal = shards[0].currentDataElements().maxOrdinal;
+        }
         
         SnapshotPopulatedOrdinalsReader.readOrdinals(in, stateListeners);
     }
 
     @Override
     public void applyDelta(HollowBlobInput in, HollowSchema schema, ArraySegmentRecycler memoryRecycler) throws IOException {
-        if(shards.length > 1)
+        if(shards.length > 1) {
             maxOrdinal = VarInt.readVInt(in);
+        }
 
         for(int i=0; i<shards.length; i++) {
             HollowListTypeDataElements deltaData = new HollowListTypeDataElements(memoryMode, memoryRecycler);
             deltaData.readDelta(in);
             if(stateEngine.isSkipTypeShardUpdateWithNoAdditions() && deltaData.encodedAdditions.isEmpty()) {
 
-                if(!deltaData.encodedRemovals.isEmpty())
+                if(!deltaData.encodedRemovals.isEmpty()) {
                     notifyListenerAboutDeltaChanges(deltaData.encodedRemovals, deltaData.encodedAdditions, i, shards.length);
+                }
 
                 HollowListTypeDataElements currentData = shards[i].currentDataElements();
                 GapEncodedVariableLengthIntegerReader oldRemovals = currentData.encodedRemovals == null ? GapEncodedVariableLengthIntegerReader.EMPTY_READER : currentData.encodedRemovals;
@@ -129,8 +135,9 @@ public class HollowListTypeReadState extends HollowCollectionTypeReadState imple
             stateEngine.getMemoryRecycler().swap();
         }
 
-        if(shards.length == 1)
+        if(shards.length == 1) {
             maxOrdinal = shards[0].currentDataElements().maxOrdinal;
+        }
     }
 
     public static void discardSnapshot(HollowBlobInput in, int numShards) throws IOException {
@@ -143,8 +150,9 @@ public class HollowListTypeReadState extends HollowCollectionTypeReadState imple
 
     public static void discardType(HollowBlobInput in, int numShards, boolean delta) throws IOException {
         HollowListTypeDataElements.discardFromStream(in, numShards, delta);
-        if(!delta)
+        if(!delta) {
             SnapshotPopulatedOrdinalsReader.discardOrdinals(in);
+        }
     }
 
     @Override
@@ -199,43 +207,49 @@ public class HollowListTypeReadState extends HollowCollectionTypeReadState imple
     @Override
     protected void invalidate() {
         stateListeners = EMPTY_LISTENERS;
-        for(int i=0;i<shards.length;i++)
+        for(int i = 0;i < shards.length;i++) {
             shards[i].invalidate();
+        }
     }
 
     HollowListTypeDataElements[] currentDataElements() {
-        HollowListTypeDataElements currentDataElements[] = new HollowListTypeDataElements[shards.length];
-        
-        for(int i=0; i<shards.length; i++)
+        HollowListTypeDataElements[] currentDataElements = new HollowListTypeDataElements[shards.length];
+
+        for(int i = 0;i < shards.length;i++) {
             currentDataElements[i] = shards[i].currentDataElements();
+        }
         
         return currentDataElements;
     }
 
     void setCurrentData(HollowListTypeDataElements data) {
-        if(shards.length > 1)
+        if(shards.length > 1) {
             throw new UnsupportedOperationException("Cannot directly set data on sharded type state");
+        }
         shards[0].setCurrentData(data);
         maxOrdinal = data.maxOrdinal;
     }
 
     @Override
     protected void applyToChecksum(HollowChecksum checksum, HollowSchema withSchema) {
-        if(!getSchema().equals(withSchema))
+        if(!getSchema().equals(withSchema)) {
             throw new IllegalArgumentException("HollowListTypeReadState cannot calculate checksum with unequal schemas: " + getSchema().getName());
+        }
         
         BitSet populatedOrdinals = getListener(PopulatedOrdinalListener.class).getPopulatedOrdinals();
 
-        for(int i=0; i<shards.length; i++)
+        for(int i = 0;i < shards.length;i++) {
             shards[i].applyToChecksum(checksum, populatedOrdinals, i, shards.length);
+        }
     }
 
 	@Override
 	public long getApproximateHeapFootprintInBytes() {
         long totalApproximateHeapFootprintInBytes = 0;
-        
-        for(int i=0; i<shards.length; i++)
+
+        for(int i = 0;i < shards.length;i++) {
             totalApproximateHeapFootprintInBytes += shards[i].getApproximateHeapFootprintInBytes();
+        }
         
         return totalApproximateHeapFootprintInBytes;
 	}
@@ -246,8 +260,9 @@ public class HollowListTypeReadState extends HollowCollectionTypeReadState imple
         
         BitSet populatedOrdinals = getPopulatedOrdinals();
 
-        for(int i=0; i<shards.length; i++)
+        for(int i = 0;i < shards.length;i++) {
             totalApproximateHoleCostInBytes += shards[i].getApproximateHoleCostInBytes(populatedOrdinals, i, shards.length);
+        }
         
         return totalApproximateHoleCostInBytes;
     }

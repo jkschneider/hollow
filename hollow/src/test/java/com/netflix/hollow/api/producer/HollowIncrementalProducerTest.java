@@ -327,10 +327,8 @@ public class HollowIncrementalProducerTest {
         HollowProducer genesisProducer = createInMemoryProducer();
 
         /// initialize the data -- classic producer creates the first state in the delta chain.
-        long originalVersion = genesisProducer.runCycle(new Populator() {
-            public void populate(WriteState state) throws Exception {
-                state.add(new TypeA(1, "one", 1));
-            }
+        long originalVersion = genesisProducer.runCycle(state -> {
+            state.add(new TypeA(1, "one", 1));
         });
 
         /// now at some point in the future, we will start up and create a new classic producer
@@ -377,10 +375,8 @@ public class HollowIncrementalProducerTest {
         HollowProducer genesisProducer = createInMemoryProducer();
 
         /// initialize the data -- classic producer creates the first state in the delta chain.
-        long originalVersion = genesisProducer.runCycle(new Populator() {
-            public void populate(WriteState state) throws Exception {
-                state.add(new TypeA(1, "one", 1));
-            }
+        long originalVersion = genesisProducer.runCycle(state -> {
+            state.add(new TypeA(1, "one", 1));
         });
 
         /// now at some point in the future, we will start up and create a new classic producer
@@ -435,10 +431,8 @@ public class HollowIncrementalProducerTest {
         HollowProducer genesisProducer = createInMemoryProducer();
 
         /// initialize the data -- classic producer creates the first state in the delta chain.
-        long originalVersion = genesisProducer.runCycle(new Populator() {
-            public void populate(WriteState state) throws Exception {
-                state.add(new TypeA(1, "one", 1));
-            }
+        long originalVersion = genesisProducer.runCycle(state -> {
+            state.add(new TypeA(1, "one", 1));
         });
 
         /// now at some point in the future, we will start up and create a new classic producer
@@ -1020,10 +1014,8 @@ public class HollowIncrementalProducerTest {
     @Test
     public void removeOrphanObjectsWithTypeInSnapshot() {
         HollowProducer producer = createInMemoryProducer();
-        producer.runCycle(new Populator() {
-            public void populate(WriteState state) throws Exception {
-                state.add(new TypeC(1, new TypeD(1, "one")));
-            }
+        producer.runCycle(state -> {
+            state.add(new TypeC(1, new TypeD(1, "one")));
         });
 
         HollowIncrementalProducer incrementalProducer = new HollowIncrementalProducer(producer);
@@ -1071,10 +1063,8 @@ public class HollowIncrementalProducerTest {
 
         producer.initializeDataModel(TypeC.class);
 
-        producer.runCycle(new Populator() {
-            public void populate(WriteState state) throws Exception {
-                state.add(new TypeA(1, "one", 1));
-            }
+        producer.runCycle(state -> {
+            state.add(new TypeA(1, "one", 1));
         });
 
         HollowIncrementalProducer incrementalProducer = new HollowIncrementalProducer(producer);
@@ -1350,7 +1340,7 @@ public class HollowIncrementalProducerTest {
     }
 
     private static final class TestVersionMinter implements HollowProducer.VersionMinter {
-        private static int versionCounter = 0;
+        private static int versionCounter;
 
         @Override
         public long mint() {
@@ -1365,11 +1355,8 @@ public class HollowIncrementalProducerTest {
         }
 
         public long runCycle() {
-            return runCycle(new Populator() {
-                @Override
-                public void populate(WriteState newState) throws Exception {
-                    throw new Exception("something went wrong");
-                }
+            return runCycle(newState -> {
+                throw new Exception("something went wrong");
             });
         }
     }
@@ -1386,19 +1373,17 @@ public class HollowIncrementalProducerTest {
     }
 
     private long initializeData(HollowProducer producer) {
-        return producer.runCycle(new Populator() {
-            public void populate(WriteState state) throws Exception {
-                state.add(new TypeA(1, "one", 1));
-                state.add(new TypeA(2, "two", 2));
-                state.add(new TypeA(3, "three", 3));
-                state.add(new TypeA(4, "four", 4));
-                state.add(new TypeA(5, "five", 5));
+        return producer.runCycle(state -> {
+            state.add(new TypeA(1, "one", 1));
+            state.add(new TypeA(2, "two", 2));
+            state.add(new TypeA(3, "three", 3));
+            state.add(new TypeA(4, "four", 4));
+            state.add(new TypeA(5, "five", 5));
 
-                state.add(new TypeB(1, "1"));
-                state.add(new TypeB(2, "2"));
-                state.add(new TypeB(3, "3"));
-                state.add(new TypeB(4, "4"));
-            }
+            state.add(new TypeB(1, "1"));
+            state.add(new TypeB(2, "2"));
+            state.add(new TypeB(3, "3"));
+            state.add(new TypeB(4, "4"));
         });
     }
 
@@ -1517,7 +1502,7 @@ public class HollowIncrementalProducerTest {
     }
 
     private static class FakeSingleProducerEnforcer implements SingleProducerEnforcer {
-        private boolean primary = false;
+        private boolean primary;
         @Override
         public void enable() {
             primary = true;

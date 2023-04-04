@@ -37,7 +37,7 @@ public class HollowSpecificDiff {
 
     private BitSet elementKeyPaths;
     private BitSet elementNonKeyPaths;
-    private String elementPaths[];
+    private String[] elementPaths;
 
     private final AtomicLong totalUnmatchedFromElements;
     private final AtomicLong totalUnmatchedToElements;
@@ -92,8 +92,9 @@ public class HollowSpecificDiff {
         elementKeyPaths = new BitSet(elementPaths.length);
         for(int i=0;i<paths.length;i++) {
             int elementPathIdx = getElementPathIdx(paths[i]);
-            if(elementPathIdx == -1)
+            if(elementPathIdx == -1) {
                 throw new IllegalArgumentException("Key path must have been specified as an element match path.  Offending path: " + paths[i]);
+            }
             elementKeyPaths.set(elementPathIdx);
         }
 
@@ -104,8 +105,9 @@ public class HollowSpecificDiff {
 
     public int getElementPathIdx(String path) {
         for(int i=0;i<elementPaths.length;i++) {
-            if(elementPaths[i].equals(path))
+            if(elementPaths[i].equals(path)) {
                 return i;
+            }
         }
         return -1;
     }
@@ -127,38 +129,37 @@ public class HollowSpecificDiff {
 
         for(int i=0;i<numThreads;i++) {
             final int threadNumber = i;
-            executor.execute(new Runnable() {
-                public void run() {
-                    HollowIndexerValueTraverser fromTraverser = new HollowIndexerValueTraverser(from, type, elementPaths);
-                    HollowIndexerValueTraverser toTraverser = new HollowIndexerValueTraverser(to, type, elementPaths);
+            executor.execute(() -> {
+                HollowIndexerValueTraverser fromTraverser = new HollowIndexerValueTraverser(from, type, elementPaths);
+                HollowIndexerValueTraverser toTraverser = new HollowIndexerValueTraverser(to, type, elementPaths);
 
-                    int hashedResults[] = new int[16];
+                int[] hashedResults = new int[16];
 
-                    for(int i=threadNumber;i<matcher.getMatchedOrdinals().size();i += numThreads) {
-                        long ordinalPair = matcher.getMatchedOrdinals().get(i);
-                        int fromOrdinal = (int)(ordinalPair >>> 32);
-                        int toOrdinal = (int)ordinalPair;
+                for(int i = threadNumber;i < matcher.getMatchedOrdinals().size();i += numThreads) {
+                    long ordinalPair = matcher.getMatchedOrdinals().get(i);
+                    int fromOrdinal = (int)(ordinalPair >>> 32);
+                    int toOrdinal = (int)ordinalPair;
 
-                        fromTraverser.traverse(fromOrdinal);
-                        toTraverser.traverse(toOrdinal);
+                    fromTraverser.traverse(fromOrdinal);
+                    toTraverser.traverse(toOrdinal);
 
-                        if(fromTraverser.getNumMatches() * 2 > hashedResults.length)
-                            hashedResults = new int[hashTableSize(fromTraverser.getNumMatches())];
-
-                        populateHashTable(fromTraverser, hashedResults);
-
-                        countMatches(fromTraverser, toTraverser, hashedResults);
+                    if(fromTraverser.getNumMatches() * 2 > hashedResults.length) {
+                        hashedResults = new int[hashTableSize(fromTraverser.getNumMatches())];
                     }
 
-                    for(int i=threadNumber;i<matcher.getExtraInFrom().size();i+=numThreads) {
-                        fromTraverser.traverse(matcher.getExtraInFrom().get(i));
-                        totalUnmatchedFromElements.addAndGet(fromTraverser.getNumMatches());
-                    }
+                    populateHashTable(fromTraverser, hashedResults);
 
-                    for(int i=threadNumber;i<matcher.getExtraInTo().size();i+=numThreads) {
-                        toTraverser.traverse(matcher.getExtraInTo().get(i));
-                        totalUnmatchedToElements.addAndGet(toTraverser.getNumMatches());
-                    }
+                    countMatches(fromTraverser, toTraverser, hashedResults);
+                }
+
+                for(int i = threadNumber;i < matcher.getExtraInFrom().size();i += numThreads) {
+                    fromTraverser.traverse(matcher.getExtraInFrom().get(i));
+                    totalUnmatchedFromElements.addAndGet(fromTraverser.getNumMatches());
+                }
+
+                for(int i = threadNumber;i < matcher.getExtraInTo().size();i += numThreads) {
+                    toTraverser.traverse(matcher.getExtraInTo().get(i));
+                    totalUnmatchedToElements.addAndGet(toTraverser.getNumMatches());
                 }
             });
         }
@@ -188,10 +189,11 @@ public class HollowSpecificDiff {
                     }
                 } else {
                     if(fromTraverser.isMatchEqual(hashedResults[bucket], toTraverser, j, elementKeyPaths)) {
-                        if(fromTraverser.isMatchEqual(hashedResults[bucket], toTraverser, j, elementNonKeyPaths))
+                        if(fromTraverser.isMatchEqual(hashedResults[bucket], toTraverser, j, elementNonKeyPaths)) {
                             numMatchedEqualElements++;
-                        else
+                        } else {
                             numModifiedElements++;
+                        }
                         break;
                     }
                 }

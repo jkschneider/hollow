@@ -73,8 +73,8 @@ public class HollowDiffUI implements HollowRecordDiffUI {
         this.objectPage = new DiffObjectPage(this);
         this.viewProvider = new HollowDiffViewProvider(this);
         this.diffViewOutputGenerator = new DiffViewOutputGenerator(viewProvider);
-        this.customHollowEffigyFactories = new HashMap<String, CustomHollowEffigyFactory>();
-        this.matchHints = new HashMap<String, PrimaryKey>();
+        this.customHollowEffigyFactories = new HashMap<>();
+        this.matchHints = new HashMap<>();
         this.exactRecordMatcher = new DiffExactRecordMatcher(diff.getEqualityMapping());
     }
     

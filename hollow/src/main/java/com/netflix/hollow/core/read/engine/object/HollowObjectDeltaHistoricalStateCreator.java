@@ -39,11 +39,11 @@ public class HollowObjectDeltaHistoricalStateCreator {
     private final int shardOrdinalShift;
 
     private HollowObjectTypeReadState typeState;
-    private HollowObjectTypeDataElements stateEngineDataElements[];
+    private HollowObjectTypeDataElements[] stateEngineDataElements;
     private RemovedOrdinalIterator iter;
     private IntMap ordinalMapping;
     private int nextOrdinal;
-    private final long currentWriteVarLengthDataPointers[];
+    private final long[] currentWriteVarLengthDataPointers;
 
     public HollowObjectDeltaHistoricalStateCreator(HollowObjectTypeReadState typeState, boolean reverse) {
         this.typeState = typeState;
@@ -100,7 +100,7 @@ public class HollowObjectDeltaHistoricalStateCreator {
     private void populateStats() {
         iter.reset();
         int removedEntryCount = 0;
-        long totalVarLengthSizes[] = new long[stateEngineDataElements[0].varLengthData.length];
+        long[] totalVarLengthSizes = new long[stateEngineDataElements[0].varLengthData.length];
 
         int ordinal = iter.next();
 
@@ -169,22 +169,21 @@ public class HollowObjectDeltaHistoricalStateCreator {
     }
 
     private long varLengthStartByte(int shard, int translatedOrdinal, int fieldIdx) {
-        if(translatedOrdinal == 0)
+        if(translatedOrdinal == 0) {
             return 0;
+        }
 
         int numBitsForField = stateEngineDataElements[shard].bitsPerField[fieldIdx];
         long currentBitOffset = ((long)stateEngineDataElements[shard].bitsPerRecord * translatedOrdinal) + stateEngineDataElements[shard].bitOffsetPerField[fieldIdx];
-        long startByte = stateEngineDataElements[shard].fixedLengthData.getElementValue(currentBitOffset - stateEngineDataElements[shard].bitsPerRecord, numBitsForField) & (1L << (numBitsForField - 1)) - 1;
 
-        return startByte;
+        return stateEngineDataElements[shard].fixedLengthData.getElementValue(currentBitOffset - stateEngineDataElements[shard].bitsPerRecord, numBitsForField) & (1L << (numBitsForField - 1)) - 1;
     }
 
     private long varLengthEndByte(int shard, int translatedOrdinal, int fieldIdx) {
         int numBitsForField = stateEngineDataElements[shard].bitsPerField[fieldIdx];
         long currentBitOffset = ((long)stateEngineDataElements[shard].bitsPerRecord * translatedOrdinal) + stateEngineDataElements[shard].bitOffsetPerField[fieldIdx];
-        long endByte = stateEngineDataElements[shard].fixedLengthData.getElementValue(currentBitOffset, numBitsForField) & (1L << (numBitsForField - 1)) - 1;
 
-        return endByte;
+        return stateEngineDataElements[shard].fixedLengthData.getElementValue(currentBitOffset, numBitsForField) & (1L << (numBitsForField - 1)) - 1;
     }
 
 }

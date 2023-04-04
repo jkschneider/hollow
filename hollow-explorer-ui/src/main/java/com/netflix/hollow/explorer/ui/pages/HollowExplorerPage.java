@@ -42,9 +42,10 @@ public abstract class HollowExplorerPage {
 
     public void render(HttpServletRequest req, HttpServletResponse resp, HollowUISession session) throws IOException {
         VelocityContext ctx = new VelocityContext();
-        
-        if (ui.getCurrentStateVersion() != Long.MIN_VALUE)
+
+        if(ui.getCurrentStateVersion() != Long.MIN_VALUE) {
             ctx.put("stateVersion", ui.getCurrentStateVersion());
+        }
 
         String headerDisplayString = ui.getHeaderDisplayString();
         if (headerDisplayString != null) {

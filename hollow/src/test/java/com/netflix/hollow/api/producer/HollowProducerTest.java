@@ -62,10 +62,10 @@ public class HollowProducerTest {
     private HollowObjectSchema schema;
     private HollowConsumer.BlobRetriever blobRetriever;
 
-    private Map<Long, Blob> blobMap = new HashMap<>();
-    private Map<Long, File> blobFileMap = new HashMap<>();
-    private Map<Long, HeaderBlob> headerBlobMap = new HashMap<>();
-    private Map<Long, File> headerFileMap = new HashMap<>();
+    private final Map<Long, Blob> blobMap = new HashMap<>();
+    private final Map<Long, File> blobFileMap = new HashMap<>();
+    private final Map<Long, HeaderBlob> headerBlobMap = new HashMap<>();
+    private final Map<Long, File> headerFileMap = new HashMap<>();
     private ProducerStatus lastProducerStatus;
     private RestoreStatus lastRestoreStatus;
 
@@ -442,7 +442,7 @@ public class HollowProducerTest {
     }
 
     private class ProducerYieldsPrimaryBeforePublish extends AbstractHollowProducerListener {
-        private SingleProducerEnforcer singleProducerEnforcer;
+        private final SingleProducerEnforcer singleProducerEnforcer;
 
         ProducerYieldsPrimaryBeforePublish(SingleProducerEnforcer singleProducerEnforcer) {
             this.singleProducerEnforcer = singleProducerEnforcer;
@@ -455,7 +455,7 @@ public class HollowProducerTest {
     }
 
     private class ProducerYieldsPrimaryBeforeAnnounce extends AbstractHollowProducerListener {
-        private SingleProducerEnforcer singleProducerEnforcer;
+        private final SingleProducerEnforcer singleProducerEnforcer;
 
         ProducerYieldsPrimaryBeforeAnnounce(SingleProducerEnforcer singleProducerEnforcer) {
             this.singleProducerEnforcer = singleProducerEnforcer;
@@ -482,7 +482,9 @@ public class HollowProducerTest {
         }
 
         private File copyFile(File blobFile) {
-            if (!blobFile.exists()) throw new RuntimeException("File does not exists: " + blobFile);
+            if(!blobFile.exists()) {
+                throw new RuntimeException("File does not exists: " + blobFile);
+            }
 
             // Copy file
             File copiedFile = new File(tmpFolder, "copied_" + blobFile.getName());

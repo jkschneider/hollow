@@ -29,7 +29,7 @@ import java.util.List;
 public class HollowSplitter {
 
     private final HollowReadStateEngine inputStateEngine;
-    private final HollowWriteStateEngine outputStateEngines[];
+    private final HollowWriteStateEngine[] outputStateEngines;
     private final HollowSplitterCopyDirector director;
 
     public HollowSplitter(HollowSplitterCopyDirector director, HollowReadStateEngine inputStateEngine) {
@@ -39,8 +39,9 @@ public class HollowSplitter {
 
         List<HollowSchema> schemas = inputStateEngine.getSchemas();
 
-        for(int i=0;i<director.getNumShards();i++)
+        for(int i = 0;i < director.getNumShards();i++) {
             outputStateEngines[i] = HollowWriteStateCreator.createWithSchemas(schemas);
+        }
     }
 
     public void split() {
@@ -51,11 +52,9 @@ public class HollowSplitter {
         for(int i=0;i<getNumberOfShards();i++) {
             final int shardNumber = i;
 
-            executor.execute(new Runnable() {
-                public void run() {
-                    HollowSplitterShardCopier copier = new HollowSplitterShardCopier(inputStateEngine, outputStateEngines[shardNumber], director, shardNumber);
-                    copier.copy();
-                }
+            executor.execute(() -> {
+                HollowSplitterShardCopier copier = new HollowSplitterShardCopier(inputStateEngine, outputStateEngines[shardNumber], director, shardNumber);
+                copier.copy();
             });
         }
 
@@ -79,8 +78,9 @@ public class HollowSplitter {
     }
 
     private void prepareForNextCycle() {
-        for(int i=0;i<outputStateEngines.length;i++)
+        for(int i = 0;i < outputStateEngines.length;i++) {
             outputStateEngines[i].prepareForNextCycle();
+        }
     }
 
 

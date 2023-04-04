@@ -18,7 +18,6 @@ package com.netflix.hollow.api.producer.fs;
 
 import com.netflix.hollow.api.producer.HollowProducer;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -80,11 +79,6 @@ public class HollowFilesystemBlobStorageCleaner extends HollowProducer.BlobStora
     }
 
     private File[] getFilesByType(final String blobType) {
-        return blobStoreDir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.contains(blobType);
-            }
-        });
+        return blobStoreDir.listFiles((dir, name) -> name.contains(blobType));
     }
 }

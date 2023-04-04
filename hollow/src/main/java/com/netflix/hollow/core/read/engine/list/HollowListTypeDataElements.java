@@ -43,7 +43,7 @@ public class HollowListTypeDataElements {
 
     int bitsPerListPointer;
     int bitsPerElement;
-    long totalNumberOfElements = 0;
+    long totalNumberOfElements;
 
     final ArraySegmentRecycler memoryRecycler;
     final MemoryMode memoryMode;
@@ -82,8 +82,9 @@ public class HollowListTypeDataElements {
     }
 
     static void discardFromStream(HollowBlobInput in, int numShards, boolean isDelta) throws IOException {
-        if(numShards > 1)
-            VarInt.readVInt(in); /// max ordinal
+        if(numShards > 1) {
+            VarInt.readVInt(in);
+        } /// max ordinal
         
         for(int i=0;i<numShards;i++) {
             VarInt.readVInt(in); /// max ordinal

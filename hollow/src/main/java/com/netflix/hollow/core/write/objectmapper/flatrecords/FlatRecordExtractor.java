@@ -114,8 +114,9 @@ public class FlatRecordExtractor {
         
         for(int i=0;i<size;i++) {
             int refOrdinal = typeState.getElementOrdinal(ordinal, i);
-            if(refOrdinal != HollowConstants.ORDINAL_NONE)
+            if(refOrdinal != HollowConstants.ORDINAL_NONE) {
                 extractHollowRecord(schema.getElementTypeState(), refOrdinal);
+            }
         }
     }
     
@@ -126,8 +127,9 @@ public class FlatRecordExtractor {
         
         int refOrdinal = iter.next();
         while(refOrdinal != HollowOrdinalIterator.NO_MORE_ORDINALS) {
-            if(refOrdinal != HollowConstants.ORDINAL_NONE)
+            if(refOrdinal != HollowConstants.ORDINAL_NONE) {
                 extractHollowRecord(schema.getElementTypeState(), refOrdinal);
+            }
             refOrdinal = iter.next();
         }
     }
@@ -138,10 +140,12 @@ public class FlatRecordExtractor {
         HollowMapEntryOrdinalIterator iter = typeState.ordinalIterator(ordinal);
         
         while(iter.next()) {
-            if(iter.getKey() != HollowConstants.ORDINAL_NONE)
+            if(iter.getKey() != HollowConstants.ORDINAL_NONE) {
                 extractHollowRecord(schema.getKeyTypeState(), iter.getKey());
-            if(iter.getValue() != HollowConstants.ORDINAL_NONE)
+            }
+            if(iter.getValue() != HollowConstants.ORDINAL_NONE) {
                 extractHollowRecord(schema.getValueTypeState(), iter.getValue());
+            }
         }
     }
     
@@ -198,20 +202,26 @@ public class FlatRecordExtractor {
 
             @Override
             public boolean equals(Object obj) {
-                if (this == obj)
+                if(this == obj) {
                     return true;
-                if (obj == null)
+                }
+                if(obj == null) {
                     return false;
-                if (getClass() != obj.getClass())
+                }
+                if(getClass() != obj.getClass()) {
                     return false;
+                }
                 TypedOrdinal other = (TypedOrdinal) obj;
-                if (ordinal != other.ordinal)
+                if(ordinal != other.ordinal) {
                     return false;
+                }
                 if (type == null) {
-                    if (other.type != null)
+                    if(other.type != null) {
                         return false;
-                } else if (!type.equals(other.type))
+                    }
+                } else if(!type.equals(other.type)) {
                     return false;
+                }
                 return true;
             }
         }

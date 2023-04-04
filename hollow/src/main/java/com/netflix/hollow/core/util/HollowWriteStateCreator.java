@@ -152,33 +152,32 @@ public class HollowWriteStateCreator {
         SimultaneousExecutor executor = new SimultaneousExecutor(HollowWriteStateCreator.class, "populate");
         
         for(HollowTypeWriteState writeState : writeEngine.getOrderedTypeStates()) {
-            if(writeState.getPopulatedBitSet().cardinality() != 0 || writeState.getPreviousCyclePopulatedBitSet().cardinality() != 0)
+            if(writeState.getPopulatedBitSet().cardinality() != 0 || writeState.getPreviousCyclePopulatedBitSet().cardinality() != 0) {
                 throw new IllegalStateException("The supplied HollowWriteStateEngine is already populated!");
+            }
         }
         
         for(final HollowTypeReadState readState : readEngine.getTypeStates()) {
-            executor.execute(new Runnable() {
-                public void run() {
-                    HollowTypeWriteState writeState = writeEngine.getTypeState(readState.getSchema().getName());
-                    
-                    if(writeState != null) {
-                        writeState.setNumShards(readState.numShards());
-                        
-                        HollowRecordCopier copier = HollowRecordCopier.createCopier(readState, writeState.getSchema(), IdentityOrdinalRemapper.INSTANCE, preserveHashPositions);
-                        
-                        BitSet populatedOrdinals = readState.getListener(PopulatedOrdinalListener.class).getPopulatedOrdinals();
+            executor.execute(() -> {
+                HollowTypeWriteState writeState = writeEngine.getTypeState(readState.getSchema().getName());
 
-                        writeState.resizeOrdinalMap(populatedOrdinals.cardinality());
-                        int ordinal = populatedOrdinals.nextSetBit(0);
-                        while(ordinal != -1) {
-                            HollowWriteRecord rec = copier.copy(ordinal);
-                            writeState.mapOrdinal(rec, ordinal, false, true);
-                            
-                            ordinal = populatedOrdinals.nextSetBit(ordinal + 1);
-                        }
-                        
-                        writeState.recalculateFreeOrdinals();
+                if(writeState != null) {
+                    writeState.setNumShards(readState.numShards());
+
+                    HollowRecordCopier copier = HollowRecordCopier.createCopier(readState, writeState.getSchema(), IdentityOrdinalRemapper.INSTANCE, preserveHashPositions);
+
+                    BitSet populatedOrdinals = readState.getListener(PopulatedOrdinalListener.class).getPopulatedOrdinals();
+
+                    writeState.resizeOrdinalMap(populatedOrdinals.cardinality());
+                    int ordinal = populatedOrdinals.nextSetBit(0);
+                    while(ordinal != -1) {
+                        HollowWriteRecord rec = copier.copy(ordinal);
+                        writeState.mapOrdinal(rec, ordinal, false, true);
+
+                        ordinal = populatedOrdinals.nextSetBit(ordinal + 1);
                     }
+
+                    writeState.recalculateFreeOrdinals();
                 }
             });
         }

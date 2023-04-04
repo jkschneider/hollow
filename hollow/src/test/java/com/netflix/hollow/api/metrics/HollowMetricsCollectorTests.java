@@ -23,10 +23,8 @@ public class HollowMetricsCollectorTests {
                                                 .withBlobStager(new HollowInMemoryBlobStager())
                                                 .build();
 
-        long version = producer.runCycle(new HollowProducer.Populator() {
-            public void populate(HollowProducer.WriteState state) throws Exception {
-                state.add(Integer.valueOf(1));
-            }
+        long version = producer.runCycle(state -> {
+            state.add(Integer.valueOf(1));
         });
 
         HollowConsumer consumer = HollowConsumer.withBlobRetriever(blobStore)
@@ -43,10 +41,8 @@ public class HollowMetricsCollectorTests {
                 .withBlobStager(new HollowInMemoryBlobStager())
                 .build();
 
-        producer.runCycle(new HollowProducer.Populator() {
-            public void populate(HollowProducer.WriteState state) throws Exception {
-                state.add(Integer.valueOf(1));
-            }
+        producer.runCycle(state -> {
+            state.add(Integer.valueOf(1));
         });
 
         HollowProducerMetrics hollowProducerMetrics = metricsCollector.getMetrics();
@@ -64,10 +60,8 @@ public class HollowMetricsCollectorTests {
                 .withBlobStager(new HollowInMemoryBlobStager())
                 .build();
 
-        long version = producer.runCycle(new HollowProducer.Populator() {
-            public void populate(HollowProducer.WriteState state) throws Exception {
-                state.add(Integer.valueOf(1));
-            }
+        long version = producer.runCycle(state -> {
+            state.add(Integer.valueOf(1));
         });
 
         HollowConsumer consumer = HollowConsumer.withBlobRetriever(blobStore)

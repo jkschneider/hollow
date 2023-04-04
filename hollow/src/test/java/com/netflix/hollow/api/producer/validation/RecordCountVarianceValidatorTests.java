@@ -19,7 +19,6 @@ package com.netflix.hollow.api.producer.validation;
 import com.netflix.hollow.api.consumer.HollowConsumer;
 import com.netflix.hollow.api.consumer.InMemoryBlobStore;
 import com.netflix.hollow.api.producer.HollowProducer;
-import com.netflix.hollow.api.producer.HollowProducer.Populator;
 import com.netflix.hollow.api.producer.HollowProducer.WriteState;
 import com.netflix.hollow.api.producer.fs.HollowInMemoryBlobStager;
 import com.netflix.hollow.core.write.objectmapper.HollowPrimaryKey;
@@ -42,23 +41,19 @@ public class RecordCountVarianceValidatorTests {
                     .withBlobStager(new HollowInMemoryBlobStager())
                     .withListener(new RecordCountVarianceValidator("TypeWithPrimaryKey", 1f)).build();
 
-            producer.runCycle(new Populator() {
-                public void populate(WriteState newState) throws Exception {
-                    newState.add(new TypeWithPrimaryKey(1, "Brad Pitt", "klsdjfla;sdjkf"));
-                    newState.add(new TypeWithPrimaryKey(1, "Angelina Jolie", "as;dlkfjasd;l"));
-                }
+            producer.runCycle(newState -> {
+                newState.add(new TypeWithPrimaryKey(1, "Brad Pitt", "klsdjfla;sdjkf"));
+                newState.add(new TypeWithPrimaryKey(1, "Angelina Jolie", "as;dlkfjasd;l"));
             });
 
-            producer.runCycle(new Populator() {
-                public void populate(WriteState newState) throws Exception {
-                    newState.add(new TypeWithPrimaryKey(1, "Brad Pitt", "klsdjfla;sdjkf"));
-                    newState.add(new TypeWithPrimaryKey(2, "Angelina Jolie", "as;dlkfjasd;l"));
-                    newState.add(new TypeWithPrimaryKey(3, "Angelina Jolie1", "as;dlkfjasd;l"));
-                    newState.add(new TypeWithPrimaryKey(4, "Angelina Jolie2", "as;dlkfjasd;l"));
-                    newState.add(new TypeWithPrimaryKey(5, "Angelina Jolie3", "as;dlkfjasd;l"));
-                    newState.add(new TypeWithPrimaryKey(6, "Angelina Jolie4", "as;dlkfjasd;l"));
-                    newState.add(new TypeWithPrimaryKey(7, "Angelina Jolie5", "as;dlkfjasd;l"));
-                }
+            producer.runCycle(newState -> {
+                newState.add(new TypeWithPrimaryKey(1, "Brad Pitt", "klsdjfla;sdjkf"));
+                newState.add(new TypeWithPrimaryKey(2, "Angelina Jolie", "as;dlkfjasd;l"));
+                newState.add(new TypeWithPrimaryKey(3, "Angelina Jolie1", "as;dlkfjasd;l"));
+                newState.add(new TypeWithPrimaryKey(4, "Angelina Jolie2", "as;dlkfjasd;l"));
+                newState.add(new TypeWithPrimaryKey(5, "Angelina Jolie3", "as;dlkfjasd;l"));
+                newState.add(new TypeWithPrimaryKey(6, "Angelina Jolie4", "as;dlkfjasd;l"));
+                newState.add(new TypeWithPrimaryKey(7, "Angelina Jolie5", "as;dlkfjasd;l"));
             });
             Assert.fail();
         } catch (ValidationStatusException expected) {
@@ -76,19 +71,15 @@ public class RecordCountVarianceValidatorTests {
                     .withBlobStager(new HollowInMemoryBlobStager())
                     .withListener(new RecordCountVarianceValidator("TypeWithPrimaryKey", 1f)).build();
 
-            producer.runCycle(new Populator() {
-                public void populate(WriteState newState) throws Exception {
-                    newState.add(new TypeWithPrimaryKey(1, "Brad Pitt", "klsdjfla;sdjkf"));
-                    newState.add(new TypeWithPrimaryKey(1, "Angelina Jolie", "as;dlkfjasd;l"));
-                }
+            producer.runCycle(newState -> {
+                newState.add(new TypeWithPrimaryKey(1, "Brad Pitt", "klsdjfla;sdjkf"));
+                newState.add(new TypeWithPrimaryKey(1, "Angelina Jolie", "as;dlkfjasd;l"));
             });
 
-            producer.runCycle(new Populator() {
-                public void populate(WriteState newState) throws Exception {
-                    newState.add(new TypeWithPrimaryKey(1, "Brad Pitt", "klsdjfla;sdjkf"));
-                    newState.add(new TypeWithPrimaryKey(1, "Angelina Jolie", "as;dlkfjasd;l"));
-                    newState.add(new TypeWithPrimaryKey(1, "Bruce Willis", "as;dlkfjasd;l"));
-                }
+            producer.runCycle(newState -> {
+                newState.add(new TypeWithPrimaryKey(1, "Brad Pitt", "klsdjfla;sdjkf"));
+                newState.add(new TypeWithPrimaryKey(1, "Angelina Jolie", "as;dlkfjasd;l"));
+                newState.add(new TypeWithPrimaryKey(1, "Bruce Willis", "as;dlkfjasd;l"));
             });
             Assert.fail();
         } catch (ValidationStatusException expected) {
@@ -105,21 +96,15 @@ public class RecordCountVarianceValidatorTests {
                 .withListener(new RecordCountVarianceValidator("TypeWithPrimaryKey", 50f)).build();
 
         // runCycle(producer, 1);
-        producer.runCycle(new Populator() {
-
-            public void populate(WriteState newState) throws Exception {
-                newState.add(new TypeWithPrimaryKey(1, "Brad Pitt", "klsdjfla;sdjkf"));
-                newState.add(new TypeWithPrimaryKey(1, "Angelina Jolie", "as;dlkfjasd;l"));
-            }
+        producer.runCycle(newState -> {
+            newState.add(new TypeWithPrimaryKey(1, "Brad Pitt", "klsdjfla;sdjkf"));
+            newState.add(new TypeWithPrimaryKey(1, "Angelina Jolie", "as;dlkfjasd;l"));
         });
 
-        producer.runCycle(new Populator() {
-
-            public void populate(WriteState newState) throws Exception {
-                newState.add(new TypeWithPrimaryKey(1, "Brad Pitt", "klsdjfla;sdjkf"));
-                newState.add(new TypeWithPrimaryKey(2, "Angelina Jolie", "as;dlkfjasd;l"));
-                newState.add(new TypeWithPrimaryKey(7, "Bruce Willis", "as;dlkfjasd;l"));
-            }
+        producer.runCycle(newState -> {
+            newState.add(new TypeWithPrimaryKey(1, "Brad Pitt", "klsdjfla;sdjkf"));
+            newState.add(new TypeWithPrimaryKey(2, "Angelina Jolie", "as;dlkfjasd;l"));
+            newState.add(new TypeWithPrimaryKey(7, "Bruce Willis", "as;dlkfjasd;l"));
         });
         HollowConsumer consumer = HollowConsumer.withBlobRetriever(blobStore).build();
         consumer.triggerRefresh();

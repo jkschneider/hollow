@@ -30,13 +30,13 @@ import java.util.function.UnaryOperator;
 import org.junit.After;
 
 public class AbstractHollowAPIGeneratorTest {
-    private String tmpFolder = System.getProperty("java.io.tmpdir");
-    private String sourceFolder = String.format("%s/src", tmpFolder);
-    private String clazzFolder = String.format("%s/classes", tmpFolder);
+    private final String tmpFolder = System.getProperty("java.io.tmpdir");
+    private final String sourceFolder = String.format("%s/src", tmpFolder);
+    private final String clazzFolder = String.format("%s/classes", tmpFolder);
 
     void runGenerator(String apiClassName, String packageName, Class<?> clazz,
             UnaryOperator<HollowAPIGenerator.Builder> generatorCustomizer) throws Exception {
-        System.out.println(String.format("Folders (%s) : \n\tsource=%s \n\tclasses=%s",
+        System.out.println(String.format("Folders (%s) : %n\tsource=%s %n\tclasses=%s",
                     getClass().getSimpleName(), sourceFolder, clazzFolder));
 
         // Setup Folders

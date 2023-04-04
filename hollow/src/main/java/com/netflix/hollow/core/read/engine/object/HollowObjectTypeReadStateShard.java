@@ -81,8 +81,9 @@ class HollowObjectTypeReadStateShard {
             refOrdinal = readFixedLengthFieldValue(currentData, ordinal, fieldIndex);
         } while(readWasUnsafe(currentData));
 
-        if(refOrdinal == currentData.nullValueForField[fieldIndex])
+        if(refOrdinal == currentData.nullValueForField[fieldIndex]) {
             return ORDINAL_NONE;
+        }
         return (int)refOrdinal;
     }
 
@@ -95,8 +96,9 @@ class HollowObjectTypeReadStateShard {
             value = readFixedLengthFieldValue(currentData, ordinal, fieldIndex);
         } while(readWasUnsafe(currentData));
 
-        if(value == currentData.nullValueForField[fieldIndex])
+        if(value == currentData.nullValueForField[fieldIndex]) {
             return Integer.MIN_VALUE;
+        }
         return ZigZag.decodeInt((int)value);
     }
 
@@ -109,8 +111,9 @@ class HollowObjectTypeReadStateShard {
             value = (int)readFixedLengthFieldValue(currentData, ordinal, fieldIndex);
         } while(readWasUnsafe(currentData));
 
-        if(value == HollowObjectWriteRecord.NULL_FLOAT_BITS)
+        if(value == HollowObjectWriteRecord.NULL_FLOAT_BITS) {
             return Float.NaN;
+        }
         return Float.intBitsToFloat(value);
     }
 
@@ -124,8 +127,9 @@ class HollowObjectTypeReadStateShard {
             value = currentData.fixedLengthData.getLargeElementValue(bitOffset, 64, -1L);
         } while(readWasUnsafe(currentData));
 
-        if(value == HollowObjectWriteRecord.NULL_DOUBLE_BITS)
+        if(value == HollowObjectWriteRecord.NULL_DOUBLE_BITS) {
             return Double.NaN;
+        }
         return Double.longBitsToDouble(value);
     }
 
@@ -140,8 +144,9 @@ class HollowObjectTypeReadStateShard {
             value = currentData.fixedLengthData.getLargeElementValue(bitOffset, numBitsForField);
         } while(readWasUnsafe(currentData));
 
-        if(value == currentData.nullValueForField[fieldIndex])
+        if(value == currentData.nullValueForField[fieldIndex]) {
             return Long.MIN_VALUE;
+        }
         return ZigZag.decodeLong(value);
     }
 
@@ -154,8 +159,9 @@ class HollowObjectTypeReadStateShard {
             value = readFixedLengthFieldValue(currentData, ordinal, fieldIndex);
         } while(readWasUnsafe(currentData));
 
-        if(value == currentData.nullValueForField[fieldIndex])
+        if(value == currentData.nullValueForField[fieldIndex]) {
             return null;
+        }
         return value == 1 ? Boolean.TRUE : Boolean.FALSE;
     }
 
@@ -163,9 +169,7 @@ class HollowObjectTypeReadStateShard {
         long bitOffset = fieldOffset(currentData, ordinal, fieldIndex);
         int numBitsForField = currentData.bitsPerField[fieldIndex];
 
-        long value = currentData.fixedLengthData.getElementValue(bitOffset, numBitsForField);
-
-        return value;
+        return currentData.fixedLengthData.getElementValue(bitOffset, numBitsForField);
     }
 
     public byte[] readBytes(int ordinal, int fieldIndex) {
@@ -186,15 +190,17 @@ class HollowObjectTypeReadStateShard {
                 startByte = ordinal != 0 ? currentData.fixedLengthData.getElementValue(currentBitOffset - currentData.bitsPerRecord, numBitsForField) : 0;
             } while(readWasUnsafe(currentData));
 
-            if((endByte & (1L << numBitsForField - 1)) != 0)
+            if((endByte & (1L << numBitsForField - 1)) != 0) {
                 return null;
+            }
 
             startByte &= (1L << numBitsForField - 1) - 1;
 
             int length = (int)(endByte - startByte);
             result = new byte[length];
-            for(int i=0;i<length;i++)
+            for(int i = 0;i < length;i++) {
                 result[i] = currentData.varLengthData[fieldIndex].get(startByte + i);
+            }
 
         } while(readWasUnsafe(currentData));
 
@@ -219,8 +225,9 @@ class HollowObjectTypeReadStateShard {
                 startByte = ordinal != 0 ? currentData.fixedLengthData.getElementValue(currentBitOffset - currentData.bitsPerRecord, numBitsForField) : 0;
             } while(readWasUnsafe(currentData));
 
-            if((endByte & (1L << numBitsForField - 1)) != 0)
+            if((endByte & (1L << numBitsForField - 1)) != 0) {
                 return null;
+            }
 
             startByte &= (1L << numBitsForField - 1) - 1;
 
@@ -251,10 +258,12 @@ class HollowObjectTypeReadStateShard {
                 startByte = ordinal != 0 ? currentData.fixedLengthData.getElementValue(currentBitOffset - currentData.bitsPerRecord, numBitsForField) : 0;
             } while(readWasUnsafe(currentData));
 
-            if((endByte & (1L << numBitsForField - 1)) != 0)
+            if((endByte & (1L << numBitsForField - 1)) != 0) {
                 return testValue == null;
-            if(testValue == null)
+            }
+            if(testValue == null) {
                 return false;
+            }
 
             startByte &= (1L << numBitsForField - 1) - 1;
 
@@ -283,8 +292,9 @@ class HollowObjectTypeReadStateShard {
                 startByte = ordinal != 0 ? currentData.fixedLengthData.getElementValue(currentBitOffset - currentData.bitsPerRecord, numBitsForField) : 0;
             } while(readWasUnsafe(currentData));
 
-            if((endByte & (1L << numBitsForField - 1)) != 0)
+            if((endByte & (1L << numBitsForField - 1)) != 0) {
                 return -1;
+            }
 
             startByte &= (1L << numBitsForField - 1) - 1;
 
@@ -332,8 +342,9 @@ class HollowObjectTypeReadStateShard {
     }
 
     private boolean testStringEquality(ByteData data, long position, int length, String testValue) {
-        if(length < testValue.length()) // can't check exact length here; the length argument is in bytes, which is equal to or greater than the number of characters.
+        if(length < testValue.length()) { // can't check exact length here; the length argument is in bytes, which is equal to or greater than the number of characters.
             return false;
+        }
 
         long endPosition = position + length;
 
@@ -341,8 +352,9 @@ class HollowObjectTypeReadStateShard {
 
         while(position < endPosition && count < testValue.length()) {
             int c = VarInt.readVInt(data, position);
-            if(testValue.charAt(count++) != (char)c)
+            if(testValue.charAt(count++) != (char)c) {
                 return false;
+            }
             position += VarInt.sizeOfVInt(c);
         }
 
@@ -392,17 +404,19 @@ class HollowObjectTypeReadStateShard {
     }
 
     protected void applyToChecksum(HollowChecksum checksum, HollowSchema withSchema, BitSet populatedOrdinals, int shardNumber, int numShards) {
-        if(!(withSchema instanceof HollowObjectSchema))
+        if(!(withSchema instanceof HollowObjectSchema)) {
             throw new IllegalArgumentException("HollowObjectTypeReadState can only calculate checksum with a HollowObjectSchema: " + schema.getName());
+        }
 
         HollowObjectSchema commonSchema = schema.findCommonSchema((HollowObjectSchema)withSchema);
 
-        List<String> commonFieldNames = new ArrayList<String>();
-        for(int i=0;i<commonSchema.numFields();i++)
+        List<String> commonFieldNames = new ArrayList<>();
+        for(int i = 0;i < commonSchema.numFields();i++) {
             commonFieldNames.add(commonSchema.getFieldName(i));
+        }
         Collections.sort(commonFieldNames);
         
-        int fieldIndexes[] = new int[commonFieldNames.size()];
+        int[] fieldIndexes = new int[commonFieldNames.size()];
         for(int i=0;i<commonFieldNames.size();i++) {
             fieldIndexes[i] = schema.getPosition(commonFieldNames.get(i));
         }
@@ -421,11 +435,12 @@ class HollowObjectTypeReadStateShard {
                         long fixedLengthValue = numBitsForField <= 56 ?
                                 currentData.fixedLengthData.getElementValue(bitOffset, numBitsForField)
                                 : currentData.fixedLengthData.getLargeElementValue(bitOffset, numBitsForField);
-    
-                        if(fixedLengthValue == currentData.nullValueForField[fieldIdx])
+
+                        if(fixedLengthValue == currentData.nullValueForField[fieldIdx]) {
                             checksum.applyInt(Integer.MAX_VALUE);
-                        else
+                        } else {
                             checksum.applyLong(fixedLengthValue);
+                        }
                     } else {
                         checksum.applyInt(findVarLengthFieldHashCode(shardOrdinal, fieldIdx));
                     }
@@ -443,8 +458,9 @@ class HollowObjectTypeReadStateShard {
         long requiredBytes = bitsPerFixedLengthData / 8;
         
         for(int i=0;i<currentData.varLengthData.length;i++) {
-            if(currentData.varLengthData[i] != null)
+            if(currentData.varLengthData[i] != null) {
                 requiredBytes += currentData.varLengthData[i].size();
+            }
         }
         
         return requiredBytes;
@@ -456,8 +472,9 @@ class HollowObjectTypeReadStateShard {
         
         int holeOrdinal = populatedOrdinals.nextClearBit(0);
         while(holeOrdinal <= currentData.maxOrdinal) {
-            if((holeOrdinal & (numShards - 1)) == shardNumber)
+            if((holeOrdinal & (numShards - 1)) == shardNumber) {
                 holeBits += currentData.bitsPerRecord;
+            }
             
             holeOrdinal = populatedOrdinals.nextClearBit(holeOrdinal + 1);
         }

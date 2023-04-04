@@ -37,7 +37,7 @@ public class HollowStateEngineCreator {
     private final FastBlobStateEngine stateEngine;
     private final HollowSerializationFramework hollowFramework;
 
-    private final Map<String, int[]> ordinalMappings = new ConcurrentHashMap<String, int[]>();
+    private final Map<String, int[]> ordinalMappings = new ConcurrentHashMap<>();
 
 
     public HollowStateEngineCreator(FastBlobStateEngine stateEngine, SerializerFactory serializerFactory, HollowObjectHashCodeFinder hashCodeFinder) {
@@ -57,31 +57,28 @@ public class HollowStateEngineCreator {
         SimultaneousExecutor executor = new SimultaneousExecutor(8, getClass(), "copy-all");
 
         for (final NFTypeSerializer<?> serializer : stateEngine.getOrderedSerializers()) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println("ADDING OBJECTS FOR TYPE " + serializer.getName());
-                    FastBlobTypeDeserializationState<Object> state = stateEngine.getTypeDeserializationState(serializer.getName());
+            executor.execute(() -> {
+                System.out.println("ADDING OBJECTS FOR TYPE " + serializer.getName());
+                FastBlobTypeDeserializationState<Object> state = stateEngine.getTypeDeserializationState(serializer.getName());
 
-                    int maxOrdinal = state.maxOrdinal();
-                    int mapping[] = new int[maxOrdinal + 1];
-                    Arrays.fill(mapping, -1);
+                int maxOrdinal = state.maxOrdinal();
+                int[] mapping = new int[maxOrdinal + 1];
+                Arrays.fill(mapping, -1);
 
-                    for (int i = 0; i <= maxOrdinal; i++) {
-                        Object obj = state.get(i);
-                        if (obj != null) {
-                            int ordinal = hollowFramework.add(serializer.getName(), obj);
-                            while(ordinal >= mapping.length) {
-                                int oldLength = mapping.length;
-                                mapping = Arrays.copyOf(mapping, mapping.length * 2);
-                                Arrays.fill(mapping, oldLength, mapping.length, -1);
-                            }
-                            mapping[ordinal] = i;
+                for(int i = 0;i <= maxOrdinal;i++) {
+                    Object obj = state.get(i);
+                    if(obj != null) {
+                        int ordinal = hollowFramework.add(serializer.getName(), obj);
+                        while(ordinal >= mapping.length) {
+                            int oldLength = mapping.length;
+                            mapping = Arrays.copyOf(mapping, mapping.length * 2);
+                            Arrays.fill(mapping, oldLength, mapping.length, -1);
                         }
+                        mapping[ordinal] = i;
                     }
-
-                    ordinalMappings.put(serializer.getName(), mapping);
                 }
+
+                ordinalMappings.put(serializer.getName(), mapping);
             });
         }
 

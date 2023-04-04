@@ -27,18 +27,18 @@ public class HollowUIWebServer {
     private HttpServer server;
     private final HttpHandlerWithServletSupport handler;
     private final int port;
-    private JoinableExecutorService executor;
+    private final JoinableExecutorService executor;
 
     /**
      * Extends {@code ThreadPoolExecutor} to allow waiting indefinitely for termination of underlying threadpool
      */
     private static class JoinableExecutorService extends ThreadPoolExecutor {
-        private CountDownLatch countDownLatch;
+        private final CountDownLatch countDownLatch;
 
         JoinableExecutorService() {
             super(0, Integer.MAX_VALUE,
                     60L, TimeUnit.SECONDS,
-                    new SynchronousQueue<Runnable>());
+                    new SynchronousQueue<>());
             countDownLatch = new CountDownLatch(1);
         }
 
@@ -75,8 +75,9 @@ public class HollowUIWebServer {
         try {
             if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
                 executor.shutdownNow();
-                if (!executor.awaitTermination(10, TimeUnit.SECONDS))
+                if(!executor.awaitTermination(10, TimeUnit.SECONDS)) {
                     System.err.println("Http Server ThreadPool did not terminate");
+                }
             }
         } catch (InterruptedException ie) {
             executor.shutdownNow();

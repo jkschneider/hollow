@@ -33,9 +33,7 @@ public class HollowDiffViewProvider implements HollowObjectViewProvider {
         String type = req.getParameter("type");
         int fromOrdinal = Integer.parseInt(req.getParameter("fromOrdinal"));
         int toOrdinal = Integer.parseInt(req.getParameter("toOrdinal"));
-
-        HollowDiffView objectView = getObjectView(session, type, fromOrdinal, toOrdinal);
-        return objectView;
+        return getObjectView(session, type, fromOrdinal, toOrdinal);
     }
 
     private HollowDiffView getObjectView(HollowUISession session, String type, int fromOrdinal, int toOrdinal) {

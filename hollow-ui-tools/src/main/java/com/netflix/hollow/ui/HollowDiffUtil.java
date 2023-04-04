@@ -6,7 +6,9 @@ public class HollowDiffUtil {
     private static final String[] HEAP_SIZE_UNITS = new String[] { "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"};
 
     public static String formatBytes(long sizeInBytes) {
-        if (sizeInBytes==0) return "0 B";
+        if(sizeInBytes == 0) {
+            return "0 B";
+        }
 
         String sign = (sizeInBytes < 0) ? "-" : "";
         sizeInBytes = Math.abs(sizeInBytes);

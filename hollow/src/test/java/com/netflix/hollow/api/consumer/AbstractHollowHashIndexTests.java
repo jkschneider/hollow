@@ -238,7 +238,7 @@ public class AbstractHollowHashIndexTests {
 
 
     private void assertIteratorContainsAll(HollowOrdinalIterator iter, int... expectedOrdinals) {
-        Set<Integer> ordinalSet = new HashSet<Integer>();
+        Set<Integer> ordinalSet = new HashSet<>();
         int ordinal = iter.next();
         while (ordinal != HollowOrdinalIterator.NO_MORE_ORDINALS) {
             ordinalSet.add(ordinal);

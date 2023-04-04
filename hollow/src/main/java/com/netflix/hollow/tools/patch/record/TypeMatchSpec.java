@@ -22,7 +22,7 @@ import java.util.List;
 public class TypeMatchSpec {
 
     private final String typeName;
-    private final String keyPaths[];
+    private final String[] keyPaths;
     private final List<Object[]> keyMatchingValues;
 
     public TypeMatchSpec(String typeName, String... keyPaths) {

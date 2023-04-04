@@ -82,7 +82,7 @@ public class UniqueKeyIndexTest {
         api = consumer.getAPI(DataModel.Consumer.Api.class);
     }
 
-    public static abstract class MatchTestParameterized<T extends HollowObject, Q> extends UniqueKeyIndexTest {
+    public abstract static class MatchTestParameterized<T extends HollowObject, Q> extends UniqueKeyIndexTest {
         final String path;
         final Class<Q> type;
         final Q value;
@@ -491,10 +491,10 @@ public class UniqueKeyIndexTest {
             @FieldPath("sub2.i")
             int sub2_i;
 
-            KeyTypeSameOrder(int i, String sub1_s, int sub2_i) {
+            KeyTypeSameOrder(int i, String sub1S, int sub2I) {
                 this.i = i;
-                this.sub1_s = sub1_s;
-                this.sub2_i = sub2_i;
+                this.sub1_s = sub1S;
+                this.sub2_i = sub2I;
             }
         }
 
@@ -537,10 +537,10 @@ public class UniqueKeyIndexTest {
             @FieldPath("sub2.s")
             String sub2_s;
 
-            KeyWithWrongPath(int i, String sub1_s, String sub2_s) {
+            KeyWithWrongPath(int i, String sub1_s, String sub2S) {
                 this.i = i;
                 this.sub1_s = sub1_s;
-                this.sub2_s = sub2_s;
+                this.sub2_s = sub2S;
             }
         }
 

@@ -118,9 +118,10 @@ public class FlatRecord {
                 location += VarInt.sizeOfVInt(c);
                 cnt++;
             }
-            
-            if(cnt < s.length)
+
+            if(cnt < s.length) {
                 s = Arrays.copyOf(s, cnt);
+            }
             
             return new String(s);
         case BYTES:

@@ -43,10 +43,8 @@ public class HollowProducerMetricsTests {
                 .withBlobStager(new HollowInMemoryBlobStager())
                 .build();
 
-        producer.runCycle(new HollowProducer.Populator() {
-            public void populate(HollowProducer.WriteState state) throws Exception {
-                state.add(Integer.valueOf(1));
-            }
+        producer.runCycle(state -> {
+            state.add(Integer.valueOf(1));
         });
 
         HollowProducerMetrics hollowProducerMetrics = producer.getMetrics();
@@ -64,10 +62,8 @@ public class HollowProducerMetricsTests {
 
 
         try {
-            producer.runCycle(new HollowProducer.Populator() {
-                public void populate(HollowProducer.WriteState state) throws Exception {
-                    state.add(null);
-                }
+            producer.runCycle(state -> {
+                state.add(null);
             });
         } catch (Exception ignored){ }
 
